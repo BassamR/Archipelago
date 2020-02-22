@@ -8,8 +8,7 @@ git remote add origin RepoURL
 git status
 git pull
 
-git add FileName
-git commit -m "message"
+git commit -a -m "message" (-a is to automatically do git add FileName)
 git push -u origin master
 
 git revert CommitHash (don't forget to push this revert)
