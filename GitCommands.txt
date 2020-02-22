@@ -1,0 +1,10 @@
+git --version
+git config --global user.name "name"
+git config --global user.email "email"
+
+git init
+git remote add origin RepoURL
+git add FileName
+git commit -m "message"
+git push -u origin master
+git pull
