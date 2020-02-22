@@ -5,6 +5,7 @@ git config --global user.email "email"
 git init
 git remote add origin RepoURL
 
+git status
 git pull
 
 git add FileName
