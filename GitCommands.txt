@@ -4,7 +4,11 @@ git config --global user.email "email"
 
 git init
 git remote add origin RepoURL
+
+git pull
+
 git add FileName
 git commit -m "message"
 git push -u origin master
-git pull
+
+git revert CommitHash (don't forget to push this revert)
