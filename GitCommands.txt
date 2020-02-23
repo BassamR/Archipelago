@@ -8,7 +8,12 @@ git remote add origin RepoURL
 git status
 git pull
 
+git add FileName (adds to staging before committing)
 git commit -a -m "message" (-a is to automatically do git add FileName)
 git push -u origin master
 
+git log (gets history of commits)
 git revert CommitHash (don't forget to push this revert)
+
+git checkout CommitHash (goes back to a certain commit)
+git checkout master (goes back to newest version of project)
