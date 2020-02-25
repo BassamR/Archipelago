@@ -17,3 +17,5 @@ git revert CommitHash (don't forget to push this revert)
 
 git checkout CommitHash (goes back to a certain commit)
 git checkout master (goes back to newest version of project)
+
+git diff --staged (shows unstaged changes)
