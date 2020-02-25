@@ -8,6 +8,9 @@ private:
     //stuff
 };
 
+int someFunction();
+//just testing git stuff
+
 int main() {
     //stuff
     return 0;
