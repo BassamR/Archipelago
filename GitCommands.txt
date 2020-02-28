@@ -19,3 +19,4 @@ git checkout CommitHash (goes back to a certain commit)
 git checkout master (goes back to newest version of project)
 
 git diff (shows unstaged changes)
+
