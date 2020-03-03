@@ -1,15 +1,27 @@
 # Variables
 CXX = g++
 CXXFLAGS = -g -std=c++11
-OFILES = projet.o 
+OFILES = projet.o ville.o noeud.o tools.o error.o
 
 # Commandes
 all: projet
 
-projet: projet.o 
+projet: $(OFILES)
 	$(CXX) $(OFILES) -o $@
 
 projet.o: projet.cc constantes.h
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+ville.o: ville.cc noeud.h tools.h error.h constantes.h
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+noeud.o: noeud.cc error.h tools.h constantes.h
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+tools.o: tools.cc constantes.h
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+error.o: error.cc constantes.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 
