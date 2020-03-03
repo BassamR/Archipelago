@@ -1,4 +1,5 @@
 #include <iostream>
+#include "constantes.h"
 using namespace std;
 
 class Yeet {
@@ -8,10 +9,9 @@ private:
     //stuff
 };
 
-int someFunction();
-//just testing git stuff
+
 
 int main() {
-    //stuff
+    
     return 0;
 }
