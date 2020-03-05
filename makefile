@@ -1,6 +1,6 @@
 # Variables
 CXX = g++
-CXXFLAGS = -g -std=c++11
+CXXFLAGS = -g -Wall -std=c++11
 OFILES = projet.o ville.o noeud.o tools.o error.o
 
 # Commandes
