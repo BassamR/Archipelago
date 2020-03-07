@@ -8,7 +8,8 @@ using namespace std;
 int main(int argc, char* argv[]) {
     if (argc != 2) {
         cout << "Lecture impossible: arguments manquants" << endl;
+    } else {
+        lecture(argv[1]);
     }
-    lecture(argv[1]);
     return 0;
 }
