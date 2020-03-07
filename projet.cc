@@ -5,7 +5,10 @@
 #include "constantes.h"
 using namespace std;
 
-int main(int agrc, char* argv[]) {
-    
+int main(int argc, char* argv[]) {
+    if (argc != 2) {
+        cout << "Lecture impossible: arguments manquants" << endl;
+    }
+    lecture(argv[1]);
     return 0;
 }

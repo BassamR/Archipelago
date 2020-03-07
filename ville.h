@@ -1,0 +1,1 @@
+void lecture(char* nomFichier);
