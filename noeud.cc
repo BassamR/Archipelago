@@ -67,6 +67,7 @@ void createNoeud(unsigned int uid, Cercle coord, unsigned int size, string type)
     ensembleNoeuds.push_back(obj);
     uidIndex.push_back(uid);
     //obj.~delete(); ?
+    //add all of this to the constructor itself?
 }
 
 //given a uid, find the node's index in ensembleNoeud:
@@ -76,7 +77,7 @@ unsigned int findNoeudIndex(unsigned int uid) {
             return i;
         }
     }
-    cout << "no uid found" << endl;
+    cout << "No uid found" << endl;
     return 0;
 }
 

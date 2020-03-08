@@ -31,6 +31,24 @@ public:
     void setLiens(unsigned int linkUid);
 };
 
+class errorFunctions { //will actually test for error, unlike error module which just outputs message
+private:
+public:
+    void identicalUid(unsigned int uid);
+    void linkVacuum(unsigned int uid);
+    void maxLink(unsigned int uid);
+    void multipleSameLink(unsigned int uid1, unsigned int uid2);
+    void nodeLinkSuperposition(unsigned int uid);
+    void nodeNodeSuperposition(unsigned int uid1, unsigned int uid2);
+    void reservedUid();
+    void success();
+    void selfLinkNode(unsigned int uid);
+    void tooLittleCapacity(unsigned int capacity);
+    void tooMuchCapacity(unsigned int capacity);
+    //all void functions: if error -> calls function from error module and exits. else: continue
+};
+
+
 void createNoeud(unsigned int uid, Cercle coord, unsigned int size, std::string type);
 //Ville va lire une ligne, et appelera cette fonction
 
