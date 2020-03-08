@@ -13,7 +13,7 @@ vector<unsigned int> uidIndex;
 vector<unsigned int> emptyVector; //used to initalize obj.liens
 
 Noeud::Noeud(unsigned int uid, Cercle coord, unsigned int size, string type, vector<unsigned int> liens):
-    uid(uid), type(type), size(size), liens(liens) {
+    uid(uid), size(size), type(type), liens(liens) {
     coords.x = coord.x; coords.y = coord.y;
 }
 
