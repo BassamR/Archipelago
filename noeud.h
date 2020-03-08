@@ -8,17 +8,21 @@ class Noeud {
 private:
     unsigned int uid;
     Cercle coords;
+    unsigned int size; //rayon du cercle
     std::string type;
     std::vector<unsigned int> liens; //each Noeud has a list of nodes its connected to
 
 public:
-    Noeud(unsigned int uid, Cercle coord, std::string type, std::vector<unsigned int> liens);
+    Noeud(unsigned int uid, Cercle coord, unsigned int size, std::string type, std::vector<unsigned int> liens);
 
     unsigned int getUid();
     void setUid(unsigned int x);
 
     Cercle getCoords();
     void setCoords(Cercle cer);
+
+    unsigned int getSize();
+    void setSize(unsigned int x);
 
     std::string getType();
     void setType(std::string valeur);
@@ -27,7 +31,7 @@ public:
     void setLiens(unsigned int linkUid);
 };
 
-void createNoeud(unsigned int uid, Cercle coord, std::string type);
+void createNoeud(unsigned int uid, Cercle coord, unsigned int size, std::string type);
 //Ville va lire une ligne, et appelera cette fonction
 
 //la creation + le controle des liens est fait separement, apres creation/controle des noeuds

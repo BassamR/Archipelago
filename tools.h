@@ -8,7 +8,6 @@ double norme();
 struct Cercle {
     int x;
     int y;
-    int r;
 }; //temporary, just to be able to use the type Cercle in other modules
 
 #endif

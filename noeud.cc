@@ -12,9 +12,9 @@ vector<Noeud> ensembleNoeuds;
 vector<unsigned int> uidIndex;
 vector<unsigned int> emptyVector; //used to initalize obj.liens
 
-Noeud::Noeud(unsigned int uid, Cercle coord, string type, vector<unsigned int> liens):
-    uid(uid), type(type), liens(liens) {
-    coords.x = coord.x; coords.y = coord.y; coords.r = coord.r;
+Noeud::Noeud(unsigned int uid, Cercle coord, unsigned int size, string type, vector<unsigned int> liens):
+    uid(uid), type(type), size(size), liens(liens) {
+    coords.x = coord.x; coords.y = coord.y;
 }
 
 unsigned int Noeud::getUid() {
@@ -32,7 +32,14 @@ Cercle Noeud::getCoords() {
 void Noeud::setCoords(Cercle cer) {
     coords.x = cer.x;
     coords.y = cer.y;
-    coords.r = sqrt(cer.r);
+}
+
+unsigned int Noeud::getSize() {
+    return size;
+}
+
+void Noeud::setSize(unsigned int x) {
+    size = sqrt(x);
 }
 
 string Noeud::getType() {
@@ -55,8 +62,8 @@ void Noeud::setLiens(unsigned int linkUid) {
     liens.push_back(linkUid);
 }
 
-void createNoeud(unsigned int uid, Cercle coord, string type) {
-    Noeud obj(uid, coord, type, emptyVector);
+void createNoeud(unsigned int uid, Cercle coord, unsigned int size, string type) {
+    Noeud obj(uid, coord, size, type, emptyVector);
     ensembleNoeuds.push_back(obj);
     uidIndex.push_back(uid);
     //obj.~delete(); ?
