@@ -5,3 +5,7 @@
 #include "error.h"
 #include "constantes.h"
 using namespace std;
+
+void lecture(char* nomFichier) {
+    cout << "stub" << endl;
+}
