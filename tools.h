@@ -6,8 +6,8 @@ double distancePointVecteur();
 double norme();
 
 struct Cercle {
-    int x;
-    int y;
+    unsigned int x;
+    unsigned int y;
 }; //temporary, just to be able to use the type Cercle in other modules
 
 #endif

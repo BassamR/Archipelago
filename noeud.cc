@@ -8,12 +8,8 @@
 #include "constantes.h"
 using namespace std;
 
-vector<Noeud> ensembleNoeuds;
-vector<unsigned int> uidIndex;
-vector<unsigned int> emptyVector; //used to initalize obj.liens
-
-Noeud::Noeud(unsigned int uid, Cercle coord, unsigned int size, string type, vector<unsigned int> liens):
-    uid(uid), size(size), type(type), liens(liens) {
+Noeud::Noeud(unsigned int uid, Cercle coord, unsigned int size, string type):
+    uid(uid), size(size), type(type) {
     coords.x = coord.x; coords.y = coord.y;
 }
 
@@ -60,28 +56,4 @@ vector<unsigned int> Noeud::getLiens() {
 
 void Noeud::setLiens(unsigned int linkUid) {
     liens.push_back(linkUid);
-}
-
-void createNoeud(unsigned int uid, Cercle coord, unsigned int size, string type) {
-    Noeud obj(uid, coord, size, type, emptyVector);
-    ensembleNoeuds.push_back(obj);
-    uidIndex.push_back(uid);
-    //obj.~delete(); ?
-    //add all of this to the constructor itself?
-}
-
-//given a uid, find the node's index in ensembleNoeud:
-unsigned int findNoeudIndex(unsigned int uid) {
-    for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
-        if(uid == ensembleNoeuds[i].getUid()) {
-            return i;
-        }
-    }
-    cout << "No uid found" << endl;
-    return 0;
-}
-
-void createLien(unsigned int uid1, unsigned int uid2) {
-    ensembleNoeuds[findNoeudIndex(uid1)].setLiens(uid2); //adds uid2 to uid1's list of links
-    ensembleNoeuds[findNoeudIndex(uid2)].setLiens(uid1); //adds uid1 to uid2's list of links
 }
