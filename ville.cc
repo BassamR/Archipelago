@@ -12,8 +12,8 @@ using namespace std;
 void lecture(char* nomFichier) {
 }
 
-void Ville::createNoeud(unsigned int uid, Cercle coord, unsigned int size, string type) {
-    Noeud obj(uid, coord, size, type);
+void Ville::createNoeud(unsigned int uid, double x, double y, unsigned int size, string type) {
+    Noeud obj(uid, x, y, size, type);
     ensembleNoeuds.push_back(obj);
     uidIndex.push_back(uid);
     //obj.~delete(); ?
@@ -36,6 +36,7 @@ unsigned int Ville::findNoeudIndex(unsigned int uid) {
 }
 
 void Ville::createLien(unsigned int uid1, unsigned int uid2) {
+    //add function that adds both uid1-uid2 to a vector of links in Ville
     ensembleNoeuds[findNoeudIndex(uid1)].setLiens(uid2); //adds uid2 to uid1's list of links
     ensembleNoeuds[findNoeudIndex(uid2)].setLiens(uid1); //adds uid1 to uid2's list of links
 }

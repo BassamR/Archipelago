@@ -8,9 +8,9 @@
 #include "constantes.h"
 using namespace std;
 
-Noeud::Noeud(unsigned int uid, Cercle coord, unsigned int size, string type):
-    uid(uid), size(size), type(type) {
-    coords.x = coord.x; coords.y = coord.y;
+Noeud::Noeud(unsigned int uid, double x, double y, unsigned int size, string type):
+    uid(uid), type(type) {
+    position.centre.x = x; position.centre.y = y; position.rayon = sqrt(size);
 }
 
 unsigned int Noeud::getUid() {
@@ -21,21 +21,25 @@ void Noeud::setUid(unsigned int x) {
     uid = x;
 }
 
-Cercle Noeud::getCoords() {
-    return coords;
+Cercle Noeud::getPosition() {
+    return position;
 }
 
-void Noeud::setCoords(Cercle cer) {
-    coords.x = cer.x;
-    coords.y = cer.y;
+Coords Noeud::getCoords() {
+    return position.centre;
+}
+
+void Noeud::setCoords(double x, double y) {
+    position.centre.x = x;
+    position.centre.y = y;
 }
 
 unsigned int Noeud::getSize() {
-    return size;
+    return position.rayon;
 }
 
 void Noeud::setSize(unsigned int x) {
-    size = sqrt(x);
+    position.rayon = sqrt(x);
 }
 
 string Noeud::getType() {
@@ -43,11 +47,7 @@ string Noeud::getType() {
 }
 
 void Noeud::setType(string valeur) {
-    if(valeur != "Logement " or "Transport" or "Production") {
-        cout << "Type incorrect" << endl;
-    } else { //this control might be useless, depends on how ville is structured
-        type = valeur;
-    }
+    type = valeur;
 }
 
 vector<unsigned int> Noeud::getLiens() {

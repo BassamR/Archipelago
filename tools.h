@@ -3,39 +3,29 @@
 
 #include "constantes.h"
 
-double distancePoints();
-double distancePointVecteur();
-double norme();
-
-struct Cercle {
-    unsigned int x;
-    unsigned int y;
-};
-//above is temporary, just to be able to use the type Cercle in other modules
-
-struct coordo {
+struct Coords {
      double x;
      double y;
 };
 
-struct vecteur {
+struct Vecteur {
      double a;
      double b;
 };
 
-struct cercle {
-     coordo centre;
+struct Cercle {
+     Coords centre;
      double rayon;
 };
 
-struct segment {
-     coordo p;
-     vecteur v;
+struct Segment {
+     Coords p;
+     Vecteur v;
 };
 
-void cvecteur(coordo a, coordo b, vecteur v);
-double norme(vecteur v);
-bool intersectioncc(cercle p, cercle l);
-bool intersectioncs(cercle c, segment s);
+void creeVecteur(Coords a, Coords b, Vecteur v);
+double norme(Vecteur v);
+bool intersectionCC(Cercle p, Cercle l);
+bool intersectionCS(Cercle c, Segment s);
 
 #endif

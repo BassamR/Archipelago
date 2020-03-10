@@ -7,19 +7,20 @@
 class Noeud {
 private:
     unsigned int uid;
-    Cercle coords;
-    unsigned int size; //rayon du cercle
+    Cercle position; //contient les coords du centre + le rayon (rayon = sqrt(size))
     std::string type;
     std::vector<unsigned int> liens; //each Noeud has a list of nodes its connected to
 
 public:
-    Noeud(unsigned int uid, Cercle coord, unsigned int size, std::string type);
+    Noeud(unsigned int uid, double x, double y, unsigned int size, std::string type);
 
     unsigned int getUid();
     void setUid(unsigned int x);
 
-    Cercle getCoords();
-    void setCoords(Cercle cer);
+    Cercle getPosition();
+
+    Coords getCoords();
+    void setCoords(double x, double y);
 
     unsigned int getSize();
     void setSize(unsigned int x);
