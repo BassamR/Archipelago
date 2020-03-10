@@ -36,7 +36,7 @@ unsigned int Ville::findNoeudIndex(unsigned int uid) {
 }
 
 void Ville::createLien(unsigned int uid1, unsigned int uid2) {
-    //add function that adds both uid1-uid2 to a vector of links in Ville
+    liens.push_back({uid1, uid2}); //add both links to Ville's vector<vector>> of links
     ensembleNoeuds[findNoeudIndex(uid1)].setLiens(uid2); //adds uid2 to uid1's list of links
     ensembleNoeuds[findNoeudIndex(uid2)].setLiens(uid1); //adds uid1 to uid2's list of links
 }

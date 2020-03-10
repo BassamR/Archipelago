@@ -23,9 +23,9 @@ struct Segment {
      Vecteur v;
 };
 
-void creeVecteur(Coords a, Coords b, Vecteur v);
+void creeVecteur(Coords p1, Coords p2, Vecteur v);
 double norme(Vecteur v);
-bool intersectionCC(Cercle p, Cercle l);
-bool intersectionCS(Cercle c, Segment s);
+bool intersectionCC(Cercle c1, Cercle c2);
+bool intersectionCS(Cercle c, Cercle s, Cercle t);
 
 #endif

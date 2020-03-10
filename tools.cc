@@ -28,7 +28,7 @@ bool intersectionCS(Cercle c, Cercle s, Cercle t) { //cs = cercle-segment
     Vecteur cs; //creation du vecteur allant du centre de c au centre de s
     creeVecteur(c.centre, s.centre, cs);
     Vecteur ct;
-    creeVecteur(c.centre, s.centre, ct);
+    creeVecteur(c.centre, t.centre, ct);
 
     //ct.cs = |ct||cs|cos(ct;cs), produit scalaire
     double angleCTCS = acos((ct.a*cs.a + ct.b*cs.b)/(norme(cs)*norme(ct))); 
