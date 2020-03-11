@@ -13,15 +13,17 @@ void lecture(char* nomFichier) {
 }
 
 void Ville::createNoeud(unsigned int uid, double x, double y, unsigned int size, string type) {
-    Noeud obj(uid, x, y, size, type);
-    ensembleNoeuds.push_back(obj);
+    //Noeud obj(uid, x, y, size, type);
+    ensembleNoeuds.push_back({uid, x, y, size, type});
     uidIndex.push_back(uid);
-    //obj.~delete(); ?
-    //add all of this to the constructor itself?
 }
 
 Noeud Ville::getNoeud(unsigned int index) {
     return ensembleNoeuds[index];
+}
+
+vector<Noeud> Ville::getAllNoeuds() {
+    return ensembleNoeuds;
 }
 
 //given a uid, find the node's index in ensembleNoeud:
@@ -36,7 +38,7 @@ unsigned int Ville::findNoeudIndex(unsigned int uid) {
 }
 
 void Ville::createLien(unsigned int uid1, unsigned int uid2) {
-    liens.push_back({uid1, uid2}); //add both links to Ville's vector<vector>> of links
+    liens.push_back(vector<unsigned int>{uid1, uid2}); //add both links to Ville's vector<vector>> of links
     ensembleNoeuds[findNoeudIndex(uid1)].setLiens(uid2); //adds uid2 to uid1's list of links
     ensembleNoeuds[findNoeudIndex(uid2)].setLiens(uid1); //adds uid1 to uid2's list of links
 }

@@ -36,17 +36,18 @@ class errorFunctions { //will actually test for error, unlike error module which
 private:
 public:
     void identicalUid(unsigned int uid);
-    void linkVacuum(unsigned int uid);
-    void maxLink(unsigned int uid);
+    bool linkVacuum(unsigned int uid1, unsigned int uid2, std::vector<Noeud> ensembleNoeuds); //after creating 1 link
+    bool maxLink(Noeud obj); //after creating all links
     void multipleSameLink(unsigned int uid1, unsigned int uid2);
     void nodeLinkSuperposition(unsigned int uid);
     void nodeNodeSuperposition(unsigned int uid1, unsigned int uid2);
-    void reservedUid();
+    bool reservedUid(Noeud obj); //after creating 1 obj
     void success();
-    void selfLinkNode(unsigned int uid);
-    void tooLittleCapacity(unsigned int capacity);
-    void tooMuchCapacity(unsigned int capacity);
-    //all void functions: if error -> calls function from error module and exits. else: continue
+    bool selfLinkNode(unsigned int uid1, unsigned int uid2); //after creating 1 link
+    bool tooLittleCapacity(Noeud obj); //after creating an obj
+    bool tooMuchCapacity(Noeud obj); //after creating an obj
+    
+    //if(error), the cout is automatic, just exit. else: do nth, continue
 };
 
 #endif

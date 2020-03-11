@@ -15,6 +15,7 @@ public:
     
     void createNoeud(unsigned int uid, double x, double y, unsigned int size, std::string type);
     Noeud getNoeud(unsigned int index); //returns the noeud object at wanted index
+    std::vector<Noeud> getAllNoeuds();
 
     void createLien(unsigned int uid1, unsigned int uid2);
 
