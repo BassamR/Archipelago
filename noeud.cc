@@ -61,11 +61,17 @@ void Noeud::setLiens(unsigned int linkUid) {
 
 //Error functions:
 
-void errorFunctions::identicalUid(unsigned int uid) {
-
+bool errorFunctions::identicalUid(vector<Noeud> ensembleNoeuds, unsigned int uid) { //before creating 1 node
+    for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
+        if(uid == ensembleNoeuds[i].getUid()) {
+            cout << error::identical_uid(uid) << endl;
+            return true;
+        }
+    }
+    return false;
 }
 
-bool errorFunctions::linkVacuum(unsigned int uid1, unsigned int uid2, vector<Noeud> ensembleNoeuds) { //after creating 1 link
+bool errorFunctions::linkVacuum(unsigned int uid1, unsigned int uid2, vector<Noeud> ensembleNoeuds) { //before creating 1 link
     bool uid1Existe(false), uid2Existe(false);
     for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
         if(uid1 == ensembleNoeuds[i].getUid()) {
@@ -87,7 +93,7 @@ bool errorFunctions::linkVacuum(unsigned int uid1, unsigned int uid2, vector<Noe
     return false;
 }
 
-bool errorFunctions::maxLink(Noeud obj) { //after all creating links
+bool errorFunctions::maxLink(Noeud obj) { //after creating all links
     if(obj.getLiens().size() > max_link) {
         cout << error::max_link(obj.getUid()) << endl;
         return true;
@@ -95,19 +101,33 @@ bool errorFunctions::maxLink(Noeud obj) { //after all creating links
     return false;
 }
 
-void errorFunctions::multipleSameLink(unsigned int uid1, unsigned int uid2) {
-
+bool errorFunctions::multipleSameLink(unsigned int uid1, unsigned int uid2, vector<vector<unsigned int>> liens) { //before creating 1 link
+    for(unsigned int i = 0; i < liens[0].size(); ++i) {
+        if(liens[i][0] == uid1 and liens[i][1] == uid2) {
+            cout << error::multiple_same_link(uid1, uid2) << endl;
+            return true;
+        }
+    }
+    return false;
 }
 
-void errorFunctions::nodeLinkSuperposition(unsigned int uid) {
-
+bool errorFunctions::nodeLinkSuperposition(Noeud obj1, Noeud obj2, Noeud obj3) { //pb, when to run?
+    if(intersectionCS(obj1.getPosition(), obj2.getPosition(), obj3.getPosition())) {
+        cout << error::node_link_superposition(obj3.getUid()) << endl;
+        return true;
+    }
+    return false;
 }
 
-void errorFunctions::nodeNodeSuperposition(unsigned int uid1, unsigned int uid2) {
-
+bool errorFunctions::nodeNodeSuperposition(Noeud obj1, Noeud obj2) { //pb, when to run?
+    if(intersectionCC(obj1.getPosition(), obj2.getPosition())) {
+        cout << error::node_node_superposition(obj1.getUid(), obj2.getUid()) << endl;
+        return true;
+    }
+    return false;
 }
 
-bool errorFunctions::reservedUid(Noeud obj) { //after creating 1 obj
+bool errorFunctions::reservedUid(Noeud obj) { //before creating 1 node
     if(obj.getUid() == no_link) {
         cout << error::reserved_uid() << endl;
         return true;
@@ -115,11 +135,7 @@ bool errorFunctions::reservedUid(Noeud obj) { //after creating 1 obj
     return false;
 }
 
-void errorFunctions::success() {
-
-}
-
-bool errorFunctions::selfLinkNode(unsigned int uid1, unsigned int uid2) { //after creating 1 link
+bool errorFunctions::selfLinkNode(unsigned int uid1, unsigned int uid2) { //before creating 1 link
     if(uid1 == uid2) {
         cout << error::self_link_node(uid1) << endl;
         return true;
@@ -127,18 +143,16 @@ bool errorFunctions::selfLinkNode(unsigned int uid1, unsigned int uid2) { //afte
     return false;
 }
 
-bool errorFunctions::tooLittleCapacity(Noeud obj) { //after creating an obj
+bool errorFunctions::capacityProblem(Noeud obj) { //before creating 1 node
     if(obj.getSize() <= min_capacity) {
         cout << error::too_little_capacity(obj.getSize()) << endl;
         return true;
     }
-    return false;
-}
 
-bool errorFunctions::tooMuchCapacity(Noeud obj) { //after creating an obj
     if(obj.getSize() >= max_capacity) {
         cout << error::too_much_capacity(obj.getSize()) << endl;
         return true;
     }
+
     return false;
 }

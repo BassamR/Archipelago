@@ -35,19 +35,15 @@ public:
 class errorFunctions { //will actually test for error, unlike error module which just outputs message
 private:
 public:
-    void identicalUid(unsigned int uid);
-    bool linkVacuum(unsigned int uid1, unsigned int uid2, std::vector<Noeud> ensembleNoeuds); //after creating 1 link
+    bool identicalUid(std::vector<Noeud> ensembleNoeuds, unsigned int uid); //befpre creating 1 node
+    bool linkVacuum(unsigned int uid1, unsigned int uid2, std::vector<Noeud> ensembleNoeuds); //before creating 1 link
     bool maxLink(Noeud obj); //after creating all links
-    void multipleSameLink(unsigned int uid1, unsigned int uid2);
-    void nodeLinkSuperposition(unsigned int uid);
-    void nodeNodeSuperposition(unsigned int uid1, unsigned int uid2);
-    bool reservedUid(Noeud obj); //after creating 1 obj
-    void success();
-    bool selfLinkNode(unsigned int uid1, unsigned int uid2); //after creating 1 link
-    bool tooLittleCapacity(Noeud obj); //after creating an obj
-    bool tooMuchCapacity(Noeud obj); //after creating an obj
-    
-    //if(error), the cout is automatic, just exit. else: do nth, continue
+    bool multipleSameLink(unsigned int uid1, unsigned int uid2, std::vector<std::vector<unsigned int>> liens); //before creating 1 link
+    bool nodeLinkSuperposition(Noeud obj1, Noeud obj2, Noeud obj3); //pb: when to run this? 
+    bool nodeNodeSuperposition(Noeud obj1, Noeud obj2); //pb: when to run this? efficiency
+    bool reservedUid(Noeud obj); //before creating 1 node
+    bool selfLinkNode(unsigned int uid1, unsigned int uid2); //before creating 1 link
+    bool capacityProblem(Noeud obj); //before creating 1 obj
 };
 
 #endif
