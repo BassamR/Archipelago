@@ -59,7 +59,7 @@ void Noeud::setLiens(unsigned int linkUid) {
     liens.push_back(linkUid);
 }
 
-//Error functions:
+//Error functions for creating nodes:
 bool Noeud::testIdenticalUid(vector<Noeud> ensembleNoeuds) { //before creating 1 node
     if(ensembleNoeuds.empty() == true) {
         return false;
@@ -81,10 +81,15 @@ bool Noeud::testNodeLinkSuperposition(Noeud obj1, Noeud obj2, Noeud obj3) { //pb
     return false;
 }
 
-bool Noeud::testNodeNodeSuperposition(Noeud obj1, Noeud obj2) { //pb, when to run?
-    if(intersectionCC(obj1.getPosition(), obj2.getPosition())) {
-        cout << error::node_node_superposition(obj1.getUid(), obj2.getUid()) << endl;
-        return true;
+bool Noeud::testNodeNodeSuperposition(std::vector<Noeud> ensembleNoeuds) { //pb, when to run?
+    if(ensembleNoeuds.empty() == true) {
+        return false;
+    }
+    for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
+        if(intersectionCC(getPosition(), ensembleNoeuds[i].getPosition())) {
+            cout << error::node_node_superposition(getUid(), ensembleNoeuds[i].getUid()) << endl;
+            return true;
+        }
     }
     return false;
 }
@@ -112,7 +117,8 @@ bool Noeud::testCapacityProblem() { //before creating 1 node
 }
 
 bool Noeud::testNodeValidity(vector<Noeud> ensembleNoeuds) { //regroups all
-    bool notValid = testIdenticalUid(ensembleNoeuds) or testReservedUid() or testCapacityProblem();
+    bool notValid = testIdenticalUid(ensembleNoeuds) or testReservedUid() or testCapacityProblem() 
+        or testNodeNodeSuperposition(ensembleNoeuds);
     if(notValid == true) {
         return false; //noeud IS NOT valid
     }

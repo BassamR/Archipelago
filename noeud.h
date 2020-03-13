@@ -34,7 +34,7 @@ public:
     //Error Functions for creating Nodes
     bool testIdenticalUid(std::vector<Noeud> ensembleNoeuds); //before creating 1 node
     bool testNodeLinkSuperposition(Noeud obj1, Noeud obj2, Noeud obj3); //pb: when to run this? do it brute force
-    bool testNodeNodeSuperposition(Noeud obj1, Noeud obj2); //pb: when to run this? efficiency
+    bool testNodeNodeSuperposition(std::vector<Noeud> ensembleNoeuds); //pb: when to run this? efficiency
     bool testReservedUid(); //before creating 1 node
     bool testCapacityProblem(); //before creating 1 node
     bool testNodeValidity(std::vector<Noeud> ensembleNoeuds); //regroups all the above

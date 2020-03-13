@@ -53,7 +53,7 @@ void Ville::createLien(unsigned int uid1, unsigned int uid2) {
     }
 }
 
-//Error functions regarding links
+//Error functions for creating links
 bool Ville::testLinkVacuum(unsigned int uid1, unsigned int uid2) { //before creating 1 link
     bool uid1Existe(false), uid2Existe(false);
     for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
