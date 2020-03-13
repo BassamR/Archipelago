@@ -19,6 +19,13 @@ public:
     void createLien(unsigned int uid1, unsigned int uid2);
 
     unsigned int findNoeudIndex(unsigned int neededUid);
+
+    //Error functions for creating links
+    bool testLinkVacuum(unsigned int uid1, unsigned int uid2); //before creating 1 link
+    bool testMultipleSameLink(unsigned int uid1, unsigned int uid2); //before creating 1 link
+    bool testSelfLinkNode(unsigned int uid1, unsigned int uid2); //before creating 1 link
+    bool testMaxLink(); //after creating all links
+    bool testLinkValidity(unsigned int uid1, unsigned int uid2); //regroups all above functions
 };
 
 void lecture(char* nomFichier);

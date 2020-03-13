@@ -30,20 +30,14 @@ public:
 
     std::vector<unsigned int> getLiens();
     void setLiens(unsigned int linkUid);
-};
 
-class errorFunctions { //will actually test for error, unlike error module which just outputs message
-private:
-public:
-    bool identicalUid(std::vector<Noeud> ensembleNoeuds, unsigned int uid); //befpre creating 1 node
-    bool linkVacuum(unsigned int uid1, unsigned int uid2, std::vector<Noeud> ensembleNoeuds); //before creating 1 link
-    bool maxLink(Noeud obj); //after creating all links
-    bool multipleSameLink(unsigned int uid1, unsigned int uid2, std::vector<std::vector<unsigned int>> liens); //before creating 1 link
-    bool nodeLinkSuperposition(Noeud obj1, Noeud obj2, Noeud obj3); //pb: when to run this? 
-    bool nodeNodeSuperposition(Noeud obj1, Noeud obj2); //pb: when to run this? efficiency
-    bool reservedUid(Noeud obj); //before creating 1 node
-    bool selfLinkNode(unsigned int uid1, unsigned int uid2); //before creating 1 link
-    bool capacityProblem(Noeud obj); //before creating 1 obj
+    //Error Functions for creating Nodes
+    bool testIdenticalUid(std::vector<Noeud> ensembleNoeuds); //before creating 1 node
+    bool testNodeLinkSuperposition(Noeud obj1, Noeud obj2, Noeud obj3); //pb: when to run this? do it brute force
+    bool testNodeNodeSuperposition(Noeud obj1, Noeud obj2); //pb: when to run this? efficiency
+    bool testReservedUid(); //before creating 1 node
+    bool testCapacityProblem(); //before creating 1 node
+    bool testNodeValidity(std::vector<Noeud> ensembleNoeuds); //regroups all the above
 };
 
 #endif
