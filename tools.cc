@@ -4,6 +4,8 @@
 #include "constantes.h"
 using namespace std;
 
+const double PI = 3.14159265358979323846;
+
 void creeVecteur(Coords p1, Coords p2, Vecteur& v) {
      v.a = p2.x - p1.x;
      v.b = p2.y - p1.y;
@@ -24,16 +26,26 @@ bool intersectionCC(Cercle c1, Cercle c2) { //cc = cercle-cercle
     }
 }
 
+//intersection entre lien c-s, et noeud t
 bool intersectionCS(Cercle c, Cercle s, Cercle t) { //cs = cercle-segment
     Vecteur cs; //creation du vecteur allant du centre de c au centre de s
     creeVecteur(c.centre, s.centre, cs);
     Vecteur ct;
     creeVecteur(c.centre, t.centre, ct);
 
-    //ct.cs = |ct||cs|cos(ct;cs), produit scalaire
-    double angleCTCS = acos((ct.a*cs.a + ct.b*cs.b)/(norme(cs)*norme(ct))); 
-    double dist = norme(ct)*sin(angleCTCS); //distance entre le lien c-s et le noeud t
+    Vecteur st, sc;
+    creeVecteur(s.centre, t.centre, st);
+    creeVecteur(s.centre, t.centre, sc);
 
+    //ct.cs = |ct||cs|cos(ct;cs), produit scalaire
+    double angleCTCS = acos((ct.a * cs.a + ct.b * cs.b)/(norme(cs)*norme(ct))); 
+    double angleSTSC = acos((st.a * sc.a + st.b * sc.b)/(norme(st)*norme(sc)));
+
+    if(angleCTCS >= PI/2 or angleCTCS <= -PI/2 or angleSTSC >= PI/2 or angleSTSC <= -PI/2) {
+        return false;
+    } //impossible to have link-node superposition in this case
+
+    double dist = norme(ct)*sin(angleCTCS); //distance entre le lien c-s et le noeud t
     if(dist <= dist_min) { //la distance prend en compte le rayon de t
         return true;
     } else {
