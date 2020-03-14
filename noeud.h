@@ -32,11 +32,10 @@ public:
     std::vector<unsigned int> getLiens();
     void setLiens(unsigned int linkUid);
 
-    //Error Functions for creating Nodes
-    bool testIdenticalUid(std::vector<Noeud> ensembleNoeuds); //before creating 1 node
-    bool testNodeNodeSuperposition(std::vector<Noeud> ensembleNoeuds); //before creating 1 node
-    bool testReservedUid(); //before creating 1 node
-    bool testCapacityProblem(); //before creating 1 node
+    bool testIdenticalUid(std::vector<Noeud> ensembleNoeuds);
+    bool testNodeNodeSuperposition(std::vector<Noeud> ensembleNoeuds);
+    bool testReservedUid();
+    bool testCapacityProblem();
     bool testNodeValidity(std::vector<Noeud> ensembleNoeuds); //regroups all the above
 };
 

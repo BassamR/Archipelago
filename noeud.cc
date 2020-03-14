@@ -61,7 +61,7 @@ void Noeud::setLiens(unsigned int linkUid) {
 }
 
 //Error functions for creating nodes:
-bool Noeud::testIdenticalUid(vector<Noeud> ensembleNoeuds) { //before creating 1 node
+bool Noeud::testIdenticalUid(vector<Noeud> ensembleNoeuds) {
     if(ensembleNoeuds.empty() == true) {
         return false;
     }
@@ -74,7 +74,7 @@ bool Noeud::testIdenticalUid(vector<Noeud> ensembleNoeuds) { //before creating 1
     return false;
 }
 
-bool Noeud::testNodeNodeSuperposition(std::vector<Noeud> ensembleNoeuds) { //before creating 1 node
+bool Noeud::testNodeNodeSuperposition(std::vector<Noeud> ensembleNoeuds) {
     if(ensembleNoeuds.empty() == true) {
         return false;
     }
@@ -87,7 +87,7 @@ bool Noeud::testNodeNodeSuperposition(std::vector<Noeud> ensembleNoeuds) { //bef
     return false;
 }
 
-bool Noeud::testReservedUid() { //before creating 1 node
+bool Noeud::testReservedUid() {
     if(uid == no_link) {
         cout << error::reserved_uid() << endl;
         return true;
@@ -95,7 +95,7 @@ bool Noeud::testReservedUid() { //before creating 1 node
     return false;
 }
 
-bool Noeud::testCapacityProblem() { //before creating 1 node
+bool Noeud::testCapacityProblem() {
     if(getSize() < min_capacity) {
         cout << error::too_little_capacity(getSize()) << endl;
         return true;
@@ -109,11 +109,11 @@ bool Noeud::testCapacityProblem() { //before creating 1 node
     return false;
 }
 
-bool Noeud::testNodeValidity(vector<Noeud> ensembleNoeuds) { //regroups all
+bool Noeud::testNodeValidity(vector<Noeud> ensembleNoeuds) {
     bool notValid = testIdenticalUid(ensembleNoeuds) or testReservedUid() or testCapacityProblem() 
         or testNodeNodeSuperposition(ensembleNoeuds);
     if(notValid == true) {
         return false; //noeud IS NOT valid
     }
     return true;
-}
+} //runs before creating a node
