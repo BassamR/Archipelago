@@ -28,14 +28,19 @@ bool intersectionCC(Cercle c1, Cercle c2) { //cc = cercle-cercle
 
 //intersection entre lien c-s, et noeud t
 bool intersectionCS(Cercle c, Cercle s, Cercle t) { //cs = cercle-segment
+    if(t.centre.x == c.centre.x and t.centre.y == c.centre.y) {
+        return false;
+    }
+    if(t.centre.x == s.centre.x and t.centre.y == s.centre.y) {
+        return false;
+    } //pas le droit de tester avec un 3e noeud egal aux 2 premiers
+    
     Vecteur cs; //creation du vecteur allant du centre de c au centre de s
     creeVecteur(c.centre, s.centre, cs);
-    Vecteur ct;
+    Vecteur ct, st, sc;
     creeVecteur(c.centre, t.centre, ct);
-
-    Vecteur st, sc;
     creeVecteur(s.centre, t.centre, st);
-    creeVecteur(s.centre, t.centre, sc);
+    creeVecteur(s.centre, c.centre, sc);
 
     //ct.cs = |ct||cs|cos(ct;cs), produit scalaire
     double angleCTCS = acos((ct.a * cs.a + ct.b * cs.b)/(norme(cs)*norme(ct))); 
@@ -45,8 +50,8 @@ bool intersectionCS(Cercle c, Cercle s, Cercle t) { //cs = cercle-segment
         return false;
     } //impossible to have link-node superposition in this case
 
-    double dist = norme(ct)*sin(angleCTCS); //distance entre le lien c-s et le noeud t
-    if(dist <= dist_min) { //la distance prend en compte le rayon de t
+    double dist = norme(ct)*sin(angleCTCS); //distance entre le lien c-s et le centre du noeud t
+    if(dist - t.rayon <= dist_min) { //distmin = dist minimale entre lien + exterieur du noeud t
         return true;
     } else {
         return false;
