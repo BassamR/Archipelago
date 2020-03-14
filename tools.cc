@@ -4,13 +4,13 @@
 #include "constantes.h"
 using namespace std;
 
-void creeVecteur(Coords p1, Coords p2, Vecteur v) {
+void creeVecteur(Coords p1, Coords p2, Vecteur& v) {
      v.a = p2.x - p1.x;
      v.b = p2.y - p1.y;
 }
 
 double norme(Vecteur v) {
-    return sqrt(v.a*v.a + v.b*v.b);
+    return sqrt(v.a * v.a + v.b * v.b);
 }
 
 bool intersectionCC(Cercle c1, Cercle c2) { //cc = cercle-cercle
