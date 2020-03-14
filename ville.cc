@@ -41,7 +41,7 @@ unsigned int Ville::findNoeudIndex(unsigned int uid) {
     }
     cout << "No uid found" << endl;
     return 0;
-} //given a uid, find the node's index in ensembleNoeud:
+} //given a uid, find the node's index in ensembleNoeud
 
 void Ville::createLien(unsigned int uid1, unsigned int uid2) {
     if(testLinkValidity(uid1, uid2) == false) {
@@ -77,8 +77,12 @@ bool Ville::testLinkVacuum(unsigned int uid1, unsigned int uid2) { //before crea
 }
 
 bool Ville::testMultipleSameLink(unsigned int uid1, unsigned int uid2) { //before creating 1 link
-    for(unsigned int i = 0; i < liens[0].size(); ++i) {
-        if(liens[i][0] == uid1 and liens[i][1] == uid2) {
+    if(liens.empty() == true) {
+        return false;
+    }
+    
+    for(unsigned int i = 0; i < liens.size(); ++i) {
+        if((liens[i][0] == uid1 and liens[i][1] == uid2) or (liens[i][0] == uid2 and liens[i][1] == uid1)) {
             cout << error::multiple_same_link(uid1, uid2) << endl;
             return true;
         }
