@@ -10,7 +10,7 @@ using namespace std;
 
 //Noeud functions:
 Noeud::Noeud(unsigned int uid, double x, double y, unsigned int size, string type):
-    uid(uid), type(type) {
+    uid(uid), size(size), type(type) {
     position.centre.x = x; position.centre.y = y; position.rayon = sqrt(size);
 }
 
@@ -36,11 +36,12 @@ void Noeud::setCoords(double x, double y) {
 }
 
 unsigned int Noeud::getSize() {
-    return position.rayon * position.rayon;
+    return size;
 }
 
 void Noeud::setSize(unsigned int x) {
     position.rayon = sqrt(x);
+    size = x;
 }
 
 string Noeud::getType() {
@@ -81,7 +82,7 @@ bool Noeud::testNodeLinkSuperposition(Noeud obj1, Noeud obj2, Noeud obj3) { //pb
     return false;
 }
 
-bool Noeud::testNodeNodeSuperposition(std::vector<Noeud> ensembleNoeuds) { //pb, when to run?
+bool Noeud::testNodeNodeSuperposition(std::vector<Noeud> ensembleNoeuds) { //before creating 1 node
     if(ensembleNoeuds.empty() == true) {
         return false;
     }
@@ -103,12 +104,12 @@ bool Noeud::testReservedUid() { //before creating 1 node
 }
 
 bool Noeud::testCapacityProblem() { //before creating 1 node
-    if(getSize() <= min_capacity) {
+    if(getSize() < min_capacity) {
         cout << error::too_little_capacity(getSize()) << endl;
         return true;
     }
 
-    if(getSize() >= max_capacity) {
+    if(getSize() > max_capacity) {
         cout << error::too_much_capacity(getSize()) << endl;
         return true;
     }
