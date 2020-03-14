@@ -74,14 +74,6 @@ bool Noeud::testIdenticalUid(vector<Noeud> ensembleNoeuds) { //before creating 1
     return false;
 }
 
-bool Noeud::testNodeLinkSuperposition(Noeud obj1, Noeud obj2, Noeud obj3) { //pb, when to run?
-    if(intersectionCS(obj1.getPosition(), obj2.getPosition(), obj3.getPosition())) {
-        cout << error::node_link_superposition(obj3.getUid()) << endl;
-        return true;
-    }
-    return false;
-}
-
 bool Noeud::testNodeNodeSuperposition(std::vector<Noeud> ensembleNoeuds) { //before creating 1 node
     if(ensembleNoeuds.empty() == true) {
         return false;

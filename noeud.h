@@ -10,7 +10,7 @@ private:
     unsigned int size;
     Cercle position; //contient les coords du centre + le rayon (rayon = sqrt(size))
     std::string type;
-    std::vector<unsigned int> liens; //each Noeud has a list of nodes its connected to
+    std::vector<unsigned int> liens; //each node has a list of nodes its connected to
 
 public:
     Noeud(unsigned int uid, double x, double y, unsigned int size, std::string type);
@@ -34,7 +34,6 @@ public:
 
     //Error Functions for creating Nodes
     bool testIdenticalUid(std::vector<Noeud> ensembleNoeuds); //before creating 1 node
-    bool testNodeLinkSuperposition(Noeud obj1, Noeud obj2, Noeud obj3); //pb: when to run this? do it brute force
     bool testNodeNodeSuperposition(std::vector<Noeud> ensembleNoeuds); //before creating 1 node
     bool testReservedUid(); //before creating 1 node
     bool testCapacityProblem(); //before creating 1 node

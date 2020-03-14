@@ -98,6 +98,18 @@ bool Ville::testSelfLinkNode(unsigned int uid1, unsigned int uid2) { //before cr
     return false;
 }
 
+bool Ville::testNodeLinkSuperposition(unsigned int uid1, unsigned int uid2) { //pb, when to run?
+    unsigned int index1 = findNoeudIndex(uid1);
+    unsigned int index2 = findNoeudIndex(uid2);
+    for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
+        if(intersectionCS(ensembleNoeuds[index1].getPosition(), ensembleNoeuds[index2].getPosition(), ensembleNoeuds[i].getPosition())) {
+            cout << error::node_link_superposition(ensembleNoeuds[i].getUid()) << endl;
+            return true;
+        }
+    }
+    return false;
+}
+
 bool Ville::testMaxLink() { //after creating all links
     for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
         if(ensembleNoeuds[i].getLiens().size() > max_link) {
@@ -109,7 +121,8 @@ bool Ville::testMaxLink() { //after creating all links
 }
 
 bool Ville::testLinkValidity(unsigned int uid1, unsigned int uid2) {   
-    bool notValid = testLinkVacuum(uid1, uid2) or testMultipleSameLink(uid1, uid2) or testSelfLinkNode(uid1, uid2);
+    bool notValid = testLinkVacuum(uid1, uid2) or testMultipleSameLink(uid1, uid2) 
+        or testSelfLinkNode(uid1, uid2) or testNodeLinkSuperposition(uid1, uid2);
     if(notValid == true) {
         return false;
     }
