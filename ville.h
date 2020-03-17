@@ -29,5 +29,6 @@ public:
 };
 
 void lecture(char* nomFichier);
+void decodageLigne(std::string line);
 
 #endif

@@ -1,4 +1,6 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <string>
 #include <vector>
 #include <cmath>
@@ -14,7 +16,95 @@ namespace {
 }
 
 //Reading functions
+//TODO: max_line, ainsi que les # en milieu de ligne
 void lecture(char* nomFichier) {
+     string line;
+     ifstream fichier(nomFichier);
+     if(not fichier.fail()) {
+        // l’appel de getline filtre aussi les séparateurs
+        while(getline(fichier >> ws, line)) {
+            if(line[0] == '#') continue; // ligne de commentaire à ignorer, on passe à la suivante
+            decodageLigne(line);
+        }
+        cout << error::success() << endl;
+    } else {
+        cout << "lecture du fichier impossible" << endl; //temp
+    }
+}
+
+void decodageLigne(string line) {
+    istringstream data(line);
+
+    enum Etat_lecture {nbh, housing, nbt, transport, nbp, production, nbl, link, fin};
+    static int etat(nbh); // état initial
+    static int i(0), total(0); //i: compteur, total: represente nbh, nbt...
+
+    unsigned int uid, size;
+    double x, y;
+    unsigned int uid1, uid2;
+
+    switch(etat) {
+        case nbh:
+            data >> total; i = 0;
+            if(total == 0) etat = nbt;
+            else etat = housing;
+            cout << "nb housing: " << total << endl; //temp, just to keep track of stuff
+            break;
+
+        case housing:
+            data >> uid >> x >> y >> size; ++i;
+            if(i == total) etat = nbt;
+            cout << "house: " << uid << " " << x << " " << y << " " << size << endl; //temp
+            ville.createNoeud(uid, x, y, size, "housing");
+            break;
+        
+        case nbt:
+            data >> total; i = 0;
+            if(total == 0) etat = nbp;
+            else etat = transport;
+            cout << "nb transport: " << total << endl; //temp
+            break;
+
+        case transport:
+            data >> uid >> x >> y >> size; ++i;
+            if(i == total) etat = nbp;
+            cout << "transport: " << uid << " " << x << " " << y << " " << size << endl; //temp
+            ville.createNoeud(uid, x, y, size, "transport");
+            break;
+
+        case nbp:
+            data >> total; i = 0;
+            if(total == 0) etat = nbl;
+            else etat = production;
+            cout << "nb production: " << total << endl; //temp
+            break;
+
+        case production:
+            data >> uid >> x >> y >> size; ++i;
+            if(i == total) etat = nbl;
+            cout << "production: " << uid << " " << x << " " << y << " " << size << endl; //temp
+            ville.createNoeud(uid, x, y, size, "production");
+            break;
+
+        case nbl:
+            data >> total; i = 0;
+            if(total == 0) etat = fin;
+            else etat = link;
+            cout << "nb de liens: " << total << endl; //temp
+            break;
+
+        case link:
+            data >> uid1 >> uid2; ++i;
+            if(i == total) etat = fin;
+            cout << "lien: " << uid1 << " " << uid2 << endl; //temp
+            ville.createLien(uid1, uid2);
+            break;
+
+        case fin:
+            break;
+        
+        default: cout << "erreur dans la lecture de l'etat" << endl;
+    }
 }
 
 //Ville functions
@@ -22,7 +112,7 @@ void Ville::createNoeud(unsigned int uid, double x, double y, unsigned int size,
     Noeud obj(uid, x, y, size, type);
 
     if(obj.testNodeValidity(ensembleNoeuds) == false) {
-        cout << "temporary. the noeud is bad" << endl;
+        exit(EXIT_FAILURE);
     } else {
         ensembleNoeuds.push_back(obj);
         uidIndex.push_back(uid);
@@ -45,7 +135,7 @@ unsigned int Ville::findNoeudIndex(unsigned int uid) {
 
 void Ville::createLien(unsigned int uid1, unsigned int uid2) {
     if(testLinkValidity(uid1, uid2) == false) {
-        cout << "temporary. link is bad" << endl;
+        exit(EXIT_FAILURE);
     } else {
         liens.push_back(vector<unsigned int>{uid1, uid2}); //add both links to Ville's vector<vector> of links
         ensembleNoeuds[findNoeudIndex(uid1)].setLiens(uid2); //adds uid2 to uid1's list of links
