@@ -16,7 +16,7 @@ namespace {
 }
 
 //Reading functions
-//TODO: max_line, ainsi que les # en milieu de ligne
+//TODO: max_line
 void lecture(char* nomFichier) {
      string line;
      ifstream fichier(nomFichier);
@@ -26,7 +26,6 @@ void lecture(char* nomFichier) {
             if(line[0] == '#') continue; // ligne de commentaire à ignorer, on passe à la suivante
             decodageLigne(line);
         }
-        cout << error::success() << endl;
     } else {
         cout << "lecture du fichier impossible" << endl; //temp
     }
@@ -48,13 +47,11 @@ void decodageLigne(string line) {
             data >> total; i = 0;
             if(total == 0) etat = nbt;
             else etat = housing;
-            cout << "nb housing: " << total << endl; //temp, just to keep track of stuff
             break;
 
         case housing:
             data >> uid >> x >> y >> size; ++i;
             if(i == total) etat = nbt;
-            cout << "house: " << uid << " " << x << " " << y << " " << size << endl; //temp
             ville.createNoeud(uid, x, y, size, "housing");
             break;
         
@@ -62,13 +59,11 @@ void decodageLigne(string line) {
             data >> total; i = 0;
             if(total == 0) etat = nbp;
             else etat = transport;
-            cout << "nb transport: " << total << endl; //temp
             break;
 
         case transport:
             data >> uid >> x >> y >> size; ++i;
             if(i == total) etat = nbp;
-            cout << "transport: " << uid << " " << x << " " << y << " " << size << endl; //temp
             ville.createNoeud(uid, x, y, size, "transport");
             break;
 
@@ -76,13 +71,11 @@ void decodageLigne(string line) {
             data >> total; i = 0;
             if(total == 0) etat = nbl;
             else etat = production;
-            cout << "nb production: " << total << endl; //temp
             break;
 
         case production:
             data >> uid >> x >> y >> size; ++i;
             if(i == total) etat = nbl;
-            cout << "production: " << uid << " " << x << " " << y << " " << size << endl; //temp
             ville.createNoeud(uid, x, y, size, "production");
             break;
 
@@ -90,20 +83,20 @@ void decodageLigne(string line) {
             data >> total; i = 0;
             if(total == 0) etat = fin;
             else etat = link;
-            cout << "nb de liens: " << total << endl; //temp
             break;
 
         case link:
             data >> uid1 >> uid2; ++i;
-            if(i == total) etat = fin;
-            cout << "lien: " << uid1 << " " << uid2 << endl; //temp
             ville.createLien(uid1, uid2);
+            if(i == total) {
+                etat = fin;
+                if(ville.testMaxLink() == true) exit(EXIT_FAILURE);
+                else cout << error::success() << endl;
+            }
             break;
 
-        case fin:
-            break;
-        
-        default: cout << "erreur dans la lecture de l'etat" << endl;
+        case fin: cout << "erreur dans le format du fichier" << endl; break;
+        default: cout << "erreur dans la lecture de l'etat" << endl; break;
     }
 }
 
