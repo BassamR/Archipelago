@@ -202,12 +202,12 @@ bool Ville::testLinkValidity(unsigned int uid1, unsigned int uid2) {
     return true;
 } //runs before creating a link
 
-bool Ville::testMaxLink() { //after creating all links
+bool Ville::testMaxLink() {
     for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
-        if(ensembleNoeuds[i].getLiens().size() > max_link) {
+        if(ensembleNoeuds[i].getType() == "housing" and ensembleNoeuds[i].getLiens().size() > max_link) {
             cout << error::max_link(ensembleNoeuds[i].getUid()) << endl;
             return true;
         }
     }
     return false;
-}
+} //after creating all links
