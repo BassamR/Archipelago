@@ -1,5 +1,5 @@
-// un module modeste de haut niveau, qui ne peut communiquer que avec ville et qui
-// fournira le fichier executable
+//Projet Archipelago
+//Auteurs: Hugo Masson, Bassam El Rawas (Sciper xxx, 310635)
 #include <iostream>
 #include "ville.h"
 #include "constantes.h"
@@ -13,3 +13,6 @@ int main(int argc, char* argv[]) {
     }
     return 0;
 }
+
+//Conventions de prog, problemes:
+//Indentations, namespace
