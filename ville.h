@@ -25,7 +25,7 @@ public:
     bool testSelfLinkNode(unsigned int uid1, unsigned int uid2); 
     bool testNodeLinkSuperposition(unsigned int uid1, unsigned int uid2);
     bool testLinkValidity(unsigned int uid1, unsigned int uid2); //regroups all the above
-    bool testMaxLink(); //after creating all links
+    bool testMaxLink(); //test after creating all links
 };
 
 void lecture(char* nomFichier);

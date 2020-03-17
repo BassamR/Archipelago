@@ -8,7 +8,7 @@ class Noeud {
 private:
     unsigned int uid;
     unsigned int size;
-    Cercle position; //contient les coords du centre + le rayon (rayon = sqrt(size))
+    Cercle position; //contient les coords du centre + le rayon
     std::string type;
     std::vector<unsigned int> liens; //each node has a list of nodes its connected to
 

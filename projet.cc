@@ -1,5 +1,5 @@
 //Projet Archipelago
-//Auteurs: Hugo Masson, Bassam El Rawas (Sciper xxx, 310635)
+//Auteurs: Hugo Masson, Bassam El Rawas (Sciper 314886, 310635)
 #include <iostream>
 #include "ville.h"
 #include "constantes.h"

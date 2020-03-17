@@ -12,7 +12,7 @@
 using namespace std;
 
 namespace {
-    Ville ville; //main ville
+    Ville ville;
 }
 
 //Reading functions
@@ -21,21 +21,20 @@ void lecture(char* nomFichier) {
      string line;
      ifstream fichier(nomFichier);
      if(not fichier.fail()) {
-        // l’appel de getline filtre aussi les séparateurs
         while(getline(fichier >> ws, line)) {
-            if(line[0] == '#') continue; // ligne de commentaire à ignorer, on passe à la suivante
+            if(line[0] == '#') continue;
             decodageLigne(line);
         }
     } else {
-        cout << "lecture du fichier impossible" << endl; //temp
+        cout << "Lecture du fichier impossible" << endl; //temp
     }
 }
 
 void decodageLigne(string line) {
     istringstream data(line);
 
-    enum Etat_lecture {nbh, housing, nbt, transport, nbp, production, nbl, link, fin};
-    static int etat(nbh); // état initial
+    enum Etat_lecture {NBH, HOUSING, NBT, TRANSPORT, NBP, PRODUCTION, NBL, LINK, FIN};
+    static int etat(NBH); // etat initial
     static int i(0), total(0); //i: compteur, total: represente nbh, nbt...
 
     unsigned int uid, size;
@@ -43,60 +42,60 @@ void decodageLigne(string line) {
     unsigned int uid1, uid2;
 
     switch(etat) {
-        case nbh:
+        case NBH:
             data >> total; i = 0;
-            if(total == 0) etat = nbt;
-            else etat = housing;
+            if(total == 0) etat = NBT;
+            else etat = HOUSING;
             break;
 
-        case housing:
+        case HOUSING:
             data >> uid >> x >> y >> size; ++i;
-            if(i == total) etat = nbt;
+            if(i == total) etat = NBT;
             ville.createNoeud(uid, x, y, size, "housing");
             break;
         
-        case nbt:
+        case NBT:
             data >> total; i = 0;
-            if(total == 0) etat = nbp;
-            else etat = transport;
+            if(total == 0) etat = NBP;
+            else etat = TRANSPORT;
             break;
 
-        case transport:
+        case TRANSPORT:
             data >> uid >> x >> y >> size; ++i;
-            if(i == total) etat = nbp;
+            if(i == total) etat = NBP;
             ville.createNoeud(uid, x, y, size, "transport");
             break;
 
-        case nbp:
+        case NBP:
             data >> total; i = 0;
-            if(total == 0) etat = nbl;
-            else etat = production;
+            if(total == 0) etat = NBL;
+            else etat = PRODUCTION;
             break;
 
-        case production:
+        case PRODUCTION:
             data >> uid >> x >> y >> size; ++i;
-            if(i == total) etat = nbl;
+            if(i == total) etat = NBL;
             ville.createNoeud(uid, x, y, size, "production");
             break;
 
-        case nbl:
+        case NBL:
             data >> total; i = 0;
-            if(total == 0) etat = fin;
-            else etat = link;
+            if(total == 0) etat = FIN;
+            else etat = LINK;
             break;
 
-        case link:
+        case LINK:
             data >> uid1 >> uid2; ++i;
             ville.createLien(uid1, uid2);
             if(i == total) {
-                etat = fin;
+                etat = FIN;
                 if(ville.testMaxLink() == true) exit(EXIT_FAILURE);
                 else cout << error::success() << endl;
             }
             break;
 
-        case fin: cout << "erreur dans le format du fichier" << endl; break;
-        default: cout << "erreur dans la lecture de l'etat" << endl; break;
+        case FIN: cout << "Erreur dans le format du fichier" << endl; break;
+        default: cout << "Erreur dans la lecture de l'etat" << endl; break;
     }
 }
 

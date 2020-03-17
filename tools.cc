@@ -4,7 +4,7 @@
 #include "constantes.h"
 using namespace std;
 
-const double PI = 3.14159265358979323846;
+const double pi = 3.14159265358979323846;
 
 void creeVecteur(Coords p1, Coords p2, Vecteur& v) {
      v.a = p2.x - p1.x;
@@ -26,7 +26,7 @@ bool intersectionCC(Cercle c1, Cercle c2) { //cc = cercle-cercle
     }
 }
 
-//intersection entre lien c-s, et noeud t
+//intersection entre lien c-s et noeud t
 bool intersectionCS(Cercle c, Cercle s, Cercle t) { //cs = cercle-segment
     if(t.centre.x == c.centre.x and t.centre.y == c.centre.y) {
         return false;
@@ -35,9 +35,9 @@ bool intersectionCS(Cercle c, Cercle s, Cercle t) { //cs = cercle-segment
         return false;
     } //pas le droit de tester avec un 3e noeud egal aux 2 premiers
     
-    Vecteur cs; //creation du vecteur allant du centre de c au centre de s
+    //creation des vecteurs c-s, c-t...
+    Vecteur cs, ct, st, sc;
     creeVecteur(c.centre, s.centre, cs);
-    Vecteur ct, st, sc;
     creeVecteur(c.centre, t.centre, ct);
     creeVecteur(s.centre, t.centre, st);
     creeVecteur(s.centre, c.centre, sc);
@@ -46,12 +46,13 @@ bool intersectionCS(Cercle c, Cercle s, Cercle t) { //cs = cercle-segment
     double angleCTCS = acos((ct.a * cs.a + ct.b * cs.b)/(norme(cs)*norme(ct))); 
     double angleSTSC = acos((st.a * sc.a + st.b * sc.b)/(norme(st)*norme(sc)));
 
-    if(angleCTCS >= PI/2 or angleCTCS <= -PI/2 or angleSTSC >= PI/2 or angleSTSC <= -PI/2) {
+    if(angleCTCS >= pi/2 or angleCTCS <= -pi/2 or angleSTSC >= pi/2 or angleSTSC <= -pi/2) {
         return false;
-    } //impossible to have link-node superposition in this case
+    }
 
-    double dist = norme(ct)*sin(angleCTCS); //distance entre le lien c-s et le centre du noeud t
-    if(dist - t.rayon <= dist_min) { //distmin = dist minimale entre lien + exterieur du noeud t
+    //distance entre le lien c-s et le centre du noeud t
+    double dist = norme(ct)*sin(angleCTCS);
+    if(dist - t.rayon <= dist_min) {
         return true;
     } else {
         return false;

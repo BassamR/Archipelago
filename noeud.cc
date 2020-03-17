@@ -113,7 +113,7 @@ bool Noeud::testNodeValidity(vector<Noeud> ensembleNoeuds) {
     bool notValid = testIdenticalUid(ensembleNoeuds) or testReservedUid() or testCapacityProblem() 
         or testNodeNodeSuperposition(ensembleNoeuds);
     if(notValid == true) {
-        return false; //noeud IS NOT valid
+        return false; //node IS NOT valid
     }
     return true;
 } //runs before creating a node
