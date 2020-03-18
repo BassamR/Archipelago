@@ -15,11 +15,11 @@ double norme(Vecteur v) {
     return sqrt(v.a * v.a + v.b * v.b);
 }
 
-bool intersectionCC(Cercle c1, Cercle c2) { //cc = cercle-cercle
+bool intersectionCC(Cercle c1, Cercle c2, double safeDistance) { //cc = cercle-cercle
     Vecteur c1c2;
     creeVecteur(c1.centre, c2.centre, c1c2);
     
-    if (c1.rayon + c2.rayon >= norme(c1c2)) {
+    if (c1.rayon + c2.rayon + safeDistance >= norme(c1c2)) {
         return true;
     } else {
         return false;
@@ -27,7 +27,7 @@ bool intersectionCC(Cercle c1, Cercle c2) { //cc = cercle-cercle
 }
 
 //intersection entre lien c-s et noeud t
-bool intersectionCS(Cercle c, Cercle s, Cercle t) { //cs = cercle-segment
+bool intersectionCS(Cercle c, Cercle s, Cercle t, double safeDistance) { //cs = cercle-segment
     if(t.centre.x == c.centre.x and t.centre.y == c.centre.y) {
         return false;
     }
@@ -52,7 +52,7 @@ bool intersectionCS(Cercle c, Cercle s, Cercle t) { //cs = cercle-segment
 
     //distance entre le lien c-s et le centre du noeud t
     double dist = norme(ct)*sin(angleCTCS);
-    if(dist <= t.rayon) {
+    if(dist <= t.rayon + safeDistance) {
         return true;
     } else {
         return false;
