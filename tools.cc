@@ -19,7 +19,7 @@ bool intersectionCC(Cercle c1, Cercle c2) { //cc = cercle-cercle
     Vecteur c1c2;
     creeVecteur(c1.centre, c2.centre, c1c2);
     
-    if (c1.rayon + c2.rayon + dist_min >= norme(c1c2)) {
+    if (c1.rayon + c2.rayon >= norme(c1c2)) {
         return true;
     } else {
         return false;
@@ -52,7 +52,7 @@ bool intersectionCS(Cercle c, Cercle s, Cercle t) { //cs = cercle-segment
 
     //distance entre le lien c-s et le centre du noeud t
     double dist = norme(ct)*sin(angleCTCS);
-    if(dist - t.rayon <= dist_min) {
+    if(dist <= t.rayon) {
         return true;
     } else {
         return false;
