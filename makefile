@@ -1,9 +1,9 @@
 # Variables
 CXX = g++
-CXXFLAGS = -g -Wall -std=c++11
+CXXFLAGS = -Wall -std=c++11
 OFILES = projet.o ville.o noeud.o tools.o error.o
 
-# Commandes
+# Dependances
 all: projet
 
 error.o: error.cc constantes.h
@@ -25,7 +25,7 @@ projet: $(OFILES)
 	$(CXX) $(OFILES) -o $@
 
 
-# Misc
+# Commandes
 clean:
 	@echo " *** EFFACE MODULES OBJET ET EXECUTABLE ***"
 	@/bin/rm -f *.o *.x *.cc~ *.h~ projet
