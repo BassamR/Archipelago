@@ -18,7 +18,7 @@ noeud.o: noeud.cc error.h tools.h constantes.h
 ville.o: ville.cc noeud.h tools.h error.h constantes.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-projet.o: projet.cc constantes.h
+projet.o: projet.cc ville.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 projet: $(OFILES)
