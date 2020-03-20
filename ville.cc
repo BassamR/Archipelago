@@ -14,25 +14,24 @@
 #include "constantes.h"
 using namespace std;
 
-namespace {
-    Ville ville;
-}
+static void decodageLigne(string line);
+static Ville ville;
 
 //Reading functions
 void lecture(char* nomFichier) {
      string line;
      ifstream fichier(nomFichier);
      if(not fichier.fail()) {
-        while(getline(fichier >> ws, line)) { //check documentation for max_line
+        while(getline(fichier >> ws, line)) {
             if(line[0] == '#') continue;
             decodageLigne(line);
         }
     } else {
-        cout << "Lecture du fichier impossible" << endl; //temp
+        cout << "Lecture du fichier impossible" << endl;
     }
 }
 
-void decodageLigne(string line) {
+static void decodageLigne(string line) {
     istringstream data(line);
 
     enum Etat_lecture {NBH, HOUSING, NBT, TRANSPORT, NBP, PRODUCTION, NBL, LINK, FIN};

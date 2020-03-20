@@ -9,7 +9,6 @@
 #include "noeud.h"
 
 void lecture(char* nomFichier);
-void decodageLigne(std::string line);
 
 class Ville {
 private:
@@ -18,8 +17,6 @@ private:
     std::vector<std::vector<unsigned int>> liens;
 
 public:
-    Ville() {}
-    
     void createNoeud(unsigned int uid, double x, double y, unsigned int size, std::string type);
     Noeud getNoeud(unsigned int index); //returns the noeud object at wanted index
 
