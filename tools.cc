@@ -1,6 +1,9 @@
-//tools.cc
-//Version 1.0
-//Auteurs: Hugo Masson, Bassam El Rawas (Sciper 314886, 310635)
+/**
+* \name tools.cc
+* \author Hugo Masson, Bassam El Rawas (Sciper 314886, 310635)
+* \date Mars 2020
+* \version 1.0
+*/
 #include <iostream>
 #include <cmath>
 #include "tools.h"

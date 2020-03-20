@@ -1,12 +1,14 @@
-//ville.cc
-//Version 1.0
-//Auteurs: Hugo Masson, Bassam El Rawas (Sciper 314886, 310635)
+/**
+* \name ville.cc
+* \author Hugo Masson, Bassam El Rawas (Sciper 314886, 310635)
+* \date Mars 2020
+* \version 1.0
+*/
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <vector>
-#include <cmath>
 #include "ville.h"
 #include "noeud.h"
 #include "tools.h"

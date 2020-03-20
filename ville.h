@@ -1,9 +1,12 @@
 #ifndef VILLE_HEADER_H
 #define VILLE_HEADER_H
 
-//ville.h
-//Version 1.0
-//Auteurs: Hugo Masson, Bassam El Rawas (Sciper 314886, 310635)
+/**
+* \name ville.h
+* \author Hugo Masson, Bassam El Rawas (Sciper 314886, 310635)
+* \date Mars 2020
+* \version 1.0
+*/
 
 #include <vector>
 #include "noeud.h"
