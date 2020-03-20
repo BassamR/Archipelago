@@ -1,8 +1,8 @@
-//Projet Archipelago
+//projet.cc
+//Version 1.0
 //Auteurs: Hugo Masson, Bassam El Rawas (Sciper 314886, 310635)
 #include <iostream>
 #include "ville.h"
-#include "constantes.h"
 using namespace std;
 
 int main(int argc, char* argv[]) {
@@ -13,6 +13,3 @@ int main(int argc, char* argv[]) {
     }
     return 0;
 }
-
-//Conventions de prog, problemes:
-//Indentations, namespace

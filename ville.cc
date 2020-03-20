@@ -1,3 +1,6 @@
+//ville.cc
+//Version 1.0
+//Auteurs: Hugo Masson, Bassam El Rawas (Sciper 314886, 310635)
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -16,12 +19,11 @@ namespace {
 }
 
 //Reading functions
-//TODO: max_line
 void lecture(char* nomFichier) {
      string line;
      ifstream fichier(nomFichier);
      if(not fichier.fail()) {
-        while(getline(fichier >> ws, line)) {
+        while(getline(fichier >> ws, line)) { //check documentation for max_line
             if(line[0] == '#') continue;
             decodageLigne(line);
         }
@@ -34,12 +36,11 @@ void decodageLigne(string line) {
     istringstream data(line);
 
     enum Etat_lecture {NBH, HOUSING, NBT, TRANSPORT, NBP, PRODUCTION, NBL, LINK, FIN};
-    static int etat(NBH); // etat initial
-    static int i(0), total(0); //i: compteur, total: represente nbh, nbt...
+    static int etat(NBH); //etat initial
+    static int i(0), total(0); //i: compteur, total: nbh, nbt...
 
-    unsigned int uid, size;
+    unsigned int uid, size, uid1, uid2;
     double x, y;
-    unsigned int uid1, uid2;
 
     switch(etat) {
         case NBH:
@@ -99,8 +100,9 @@ void decodageLigne(string line) {
     }
 }
 
-//Ville functions
-void Ville::createNoeud(unsigned int uid, double x, double y, unsigned int size, string type) {
+//Ville functions:
+void Ville::createNoeud(unsigned int uid, double x, double y, 
+                            unsigned int size, string type) {
     Noeud obj(uid, x, y, size, type);
 
     if(obj.testNodeValidity(ensembleNoeuds) == false) {
@@ -115,6 +117,16 @@ Noeud Ville::getNoeud(unsigned int index) {
     return ensembleNoeuds[index];
 }
 
+void Ville::createLien(unsigned int uid1, unsigned int uid2) {
+    if(testLinkValidity(uid1, uid2) == false) {
+        exit(EXIT_FAILURE);
+    } else {
+        liens.push_back(vector<unsigned int>{uid1, uid2}); 
+        ensembleNoeuds[findNoeudIndex(uid1)].setLiens(uid2); 
+        ensembleNoeuds[findNoeudIndex(uid2)].setLiens(uid1); 
+    }
+}
+
 unsigned int Ville::findNoeudIndex(unsigned int uid) {
     for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
         if(uid == ensembleNoeuds[i].getUid()) {
@@ -125,17 +137,7 @@ unsigned int Ville::findNoeudIndex(unsigned int uid) {
     return 0;
 } //given a uid, find the node's index in vector ensembleNoeud
 
-void Ville::createLien(unsigned int uid1, unsigned int uid2) {
-    if(testLinkValidity(uid1, uid2) == false) {
-        exit(EXIT_FAILURE);
-    } else {
-        liens.push_back(vector<unsigned int>{uid1, uid2}); //add both links to Ville's vector<vector> of links
-        ensembleNoeuds[findNoeudIndex(uid1)].setLiens(uid2); //adds uid2 to uid1's list of links
-        ensembleNoeuds[findNoeudIndex(uid2)].setLiens(uid1); //adds uid1 to uid2's list of links
-    }
-}
-
-//Error functions for creating links
+//Error functions for creating links:
 bool Ville::testLinkVacuum(unsigned int uid1, unsigned int uid2) {
     bool uid1Existe(false), uid2Existe(false);
     for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
@@ -164,7 +166,8 @@ bool Ville::testMultipleSameLink(unsigned int uid1, unsigned int uid2) {
     }
     
     for(unsigned int i = 0; i < liens.size(); ++i) {
-        if((liens[i][0] == uid1 and liens[i][1] == uid2) or (liens[i][0] == uid2 and liens[i][1] == uid1)) {
+        if((liens[i][0] == uid1 and liens[i][1] == uid2) or 
+            (liens[i][0] == uid2 and liens[i][1] == uid1)) {
             cout << error::multiple_same_link(uid1, uid2) << endl;
             return true;
         }
@@ -181,14 +184,17 @@ bool Ville::testSelfLinkNode(unsigned int uid1, unsigned int uid2) {
 }
 
 bool Ville::testNodeLinkSuperposition(unsigned int uid1, unsigned int uid2) {
-    unsigned int index1 = findNoeudIndex(uid1);
-    unsigned int index2 = findNoeudIndex(uid2);
+    Cercle posNoeud1 = ensembleNoeuds[findNoeudIndex(uid1)].getPosition();
+    Cercle posNoeud2 = ensembleNoeuds[findNoeudIndex(uid2)].getPosition();
+
     for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
-        if(intersectionCS(ensembleNoeuds[index1].getPosition(), ensembleNoeuds[index2].getPosition(), ensembleNoeuds[i].getPosition())) {
-            cout << error::node_link_superposition(ensembleNoeuds[i].getUid()) << endl;
+        if(intersectionCS(posNoeud1, posNoeud2, ensembleNoeuds[i].getPosition())) {
+            unsigned int badUid = ensembleNoeuds[i].getUid();
+            cout << error::node_link_superposition(badUid) << endl;
             return true;
         }
     }
+
     return false;
 }
 
@@ -203,7 +209,8 @@ bool Ville::testLinkValidity(unsigned int uid1, unsigned int uid2) {
 
 bool Ville::testMaxLink() {
     for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
-        if(ensembleNoeuds[i].getType() == "housing" and ensembleNoeuds[i].getLiens().size() > max_link) {
+        if(ensembleNoeuds[i].getType() == "housing" and 
+                ensembleNoeuds[i].getLiens().size() > max_link) {
             cout << error::max_link(ensembleNoeuds[i].getUid()) << endl;
             return true;
         }

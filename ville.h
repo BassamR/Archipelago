@@ -1,8 +1,15 @@
 #ifndef VILLE_HEADER_H
 #define VILLE_HEADER_H
 
+//ville.h
+//Version 1.0
+//Auteurs: Hugo Masson, Bassam El Rawas (Sciper 314886, 310635)
+
 #include <vector>
 #include "noeud.h"
+
+void lecture(char* nomFichier);
+void decodageLigne(std::string line);
 
 class Ville {
 private:
@@ -27,8 +34,5 @@ public:
     bool testLinkValidity(unsigned int uid1, unsigned int uid2); //regroups all the above
     bool testMaxLink(); //test after creating all links
 };
-
-void lecture(char* nomFichier);
-void decodageLigne(std::string line);
 
 #endif

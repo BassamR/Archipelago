@@ -1,6 +1,10 @@
 #ifndef NOEUD_HEADER_H
 #define NOEUD_HEADER_H
 
+//noeud.h
+//Version 1.0
+//Auteurs: Hugo Masson, Bassam El Rawas (Sciper 314886, 310635)
+
 #include <vector>
 #include "tools.h"
 
@@ -10,7 +14,7 @@ private:
     unsigned int size;
     Cercle position; //contient les coords du centre + le rayon
     std::string type;
-    std::vector<unsigned int> liens; //each node has a list of nodes its connected to
+    std::vector<unsigned int> liens; //each node has a list of nodes it's connected to
 
 public:
     Noeud(unsigned int uid, double x, double y, unsigned int size, std::string type);

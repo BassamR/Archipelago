@@ -1,3 +1,6 @@
+//noeud.cc
+//Version 1.0
+//Auteurs: Hugo Masson, Bassam El Rawas (Sciper 314886, 310635)
 #include <iostream>
 #include <cmath>
 #include <string>
@@ -8,7 +11,7 @@
 #include "constantes.h"
 using namespace std;
 
-//Noeud functions:
+//Node functions:
 Noeud::Noeud(unsigned int uid, double x, double y, unsigned int size, string type):
     uid(uid), size(size), type(type) {
     position.centre.x = x; position.centre.y = y; position.rayon = sqrt(size);
@@ -80,7 +83,8 @@ bool Noeud::testNodeNodeSuperposition(std::vector<Noeud> ensembleNoeuds) {
     }
     for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
         if(intersectionCC(getPosition(), ensembleNoeuds[i].getPosition())) {
-            cout << error::node_node_superposition(getUid(), ensembleNoeuds[i].getUid()) << endl;
+            cout << error::node_node_superposition(getUid(), 
+                ensembleNoeuds[i].getUid()) << endl;
             return true;
         }
     }
@@ -110,8 +114,8 @@ bool Noeud::testCapacityProblem() {
 }
 
 bool Noeud::testNodeValidity(vector<Noeud> ensembleNoeuds) {
-    bool notValid = testIdenticalUid(ensembleNoeuds) or testReservedUid() or testCapacityProblem() 
-        or testNodeNodeSuperposition(ensembleNoeuds);
+    bool notValid = testIdenticalUid(ensembleNoeuds) or testReservedUid() or 
+        testCapacityProblem() or testNodeNodeSuperposition(ensembleNoeuds);
     if(notValid == true) {
         return false; //node IS NOT valid
     }
