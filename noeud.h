@@ -36,11 +36,11 @@ public:
     std::vector<unsigned int> getLiens();
     void setLiens(unsigned int linkUid);
 
-    bool testIdenticalUid(std::vector<Noeud> ensembleNoeuds);
-    bool testNodeNodeSuperposition(std::vector<Noeud> ensembleNoeuds);
+    bool testIdenticalUid(std::vector<Noeud>& ensembleNoeuds);
+    bool testNodeNodeSuperposition(std::vector<Noeud>& ensembleNoeuds);
     bool testReservedUid();
     bool testCapacityProblem();
-    bool testNodeValidity(std::vector<Noeud> ensembleNoeuds); //regroups all the above
+    bool testNodeValidity(std::vector<Noeud>& ensembleNoeuds); //regroups all the above
 };
 
 #endif
