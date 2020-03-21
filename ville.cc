@@ -110,7 +110,6 @@ void Ville::createNoeud(unsigned int uid, double x, double y,
         exit(EXIT_FAILURE);
     } else {
         ensembleNoeuds.push_back(obj);
-        uidIndex.push_back(uid);
     }
 }
 

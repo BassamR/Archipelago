@@ -16,7 +16,6 @@ void lecture(char* nomFichier);
 class Ville {
 private:
     std::vector<Noeud> ensembleNoeuds;
-    std::vector<unsigned int> uidIndex;
     std::vector<std::vector<unsigned int>> liens;
 
 public:
