@@ -4,6 +4,7 @@
 * \date Mars 2020
 * \version 1.0
 */
+
 #include <iostream>
 #include <cmath>
 #include <string>

@@ -4,6 +4,7 @@
 * \date Mars 2020
 * \version 1.0
 */
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -103,7 +104,7 @@ static void decodageLigne(string line) {
 
 //Ville functions:
 void Ville::createNoeud(unsigned int uid, double x, double y, 
-                            unsigned int size, string type) {
+                        unsigned int size, string type) {
     Noeud obj(uid, x, y, size, type);
 
     if(obj.testNodeValidity(ensembleNoeuds) == false) {
