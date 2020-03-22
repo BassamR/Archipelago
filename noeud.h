@@ -10,14 +10,15 @@
 
 #include <vector>
 #include "tools.h"
+#include <string>
 
 class Noeud {
 private:
     unsigned int uid;
     unsigned int size;
-    Cercle position; //contient les coords du centre + le rayon
+    Cercle position; //contient les coords du centre + le rayon (rayon= sqrt(size))
     std::string type;
-    std::vector<unsigned int> liens; //each node has a list of nodes it's connected to
+    std::vector<Noeud*> liens; //node has a list of address of nodes its connected to
 
 public:
     Noeud(unsigned int uid, double x, double y, unsigned int size, std::string type);
@@ -36,14 +37,15 @@ public:
     std::string getType();
     void setType(std::string valeur);
 
-    std::vector<unsigned int> getLiens();
-    void setLiens(unsigned int linkUid);
+    std::vector<Noeud*> getLiens();
+    void setLiens(Noeud* linkUid);
 
-    bool testIdenticalUid(std::vector<Noeud>& ensembleNoeuds);
-    bool testNodeNodeSuperposition(std::vector<Noeud>& ensembleNoeuds);
+    bool testIdenticalUid(std::vector<Noeud*> ensembleNoeuds);
+    bool testNodeNodeSuperposition(std::vector<Noeud*> ensembleNoeuds);
     bool testReservedUid();
     bool testCapacityProblem();
-    bool testNodeValidity(std::vector<Noeud>& ensembleNoeuds); //regroups all the above
+    //regroups all the above:
+    bool testNodeValidity(std::vector<Noeud*> ensembleNoeuds);
 };
 
 #endif

@@ -15,7 +15,7 @@
 #include "constantes.h"
 using namespace std;
 
-//Node functions:
+//Noeud functions:
 Noeud::Noeud(unsigned int uid, double x, double y, unsigned int size, string type):
     uid(uid), size(size), type(type) {
     position.centre.x = x; position.centre.y = y; position.rayon = sqrt(size);
@@ -59,39 +59,43 @@ void Noeud::setType(string valeur) {
     type = valeur;
 }
 
-vector<unsigned int> Noeud::getLiens() {
+vector<Noeud*> Noeud::getLiens() {
     return liens;
 }
 
-void Noeud::setLiens(unsigned int linkUid) {
+void Noeud::setLiens(Noeud* linkUid) {
     liens.push_back(linkUid);
 }
 
 //Error functions for creating nodes:
-bool Noeud::testIdenticalUid(vector<Noeud>& ensembleNoeuds) {
+bool Noeud::testIdenticalUid(vector<Noeud*> ensembleNoeuds) {
     if(ensembleNoeuds.empty() == true) {
         return false;
     }
+
     for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
-        if(uid == ensembleNoeuds[i].getUid()) {
+        if(uid == ensembleNoeuds[i]->getUid()) {
             cout << error::identical_uid(uid) << endl;
             return true;
         }
     }
+
     return false;
 }
 
-bool Noeud::testNodeNodeSuperposition(vector<Noeud>& ensembleNoeuds) {
+bool Noeud::testNodeNodeSuperposition(std::vector<Noeud*> ensembleNoeuds) {
     if(ensembleNoeuds.empty() == true) {
         return false;
     }
-    for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
-        if(intersectionCC(getPosition(), ensembleNoeuds[i].getPosition())) {
+
+     for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
+         if(intersectionCC(getPosition(), ensembleNoeuds[i]->getPosition())) {
             cout << error::node_node_superposition(getUid(), 
-                ensembleNoeuds[i].getUid()) << endl;
+                ensembleNoeuds[i]->getUid()) << endl;
             return true;
         }
     }
+
     return false;
 }
 
@@ -117,11 +121,11 @@ bool Noeud::testCapacityProblem() {
     return false;
 }
 
-bool Noeud::testNodeValidity(vector<Noeud>& ensembleNoeuds) {
-    bool notValid = testIdenticalUid(ensembleNoeuds) or testReservedUid() or 
-        testCapacityProblem() or testNodeNodeSuperposition(ensembleNoeuds);
+bool Noeud::testNodeValidity(vector<Noeud*> ensembleNoeuds) {
+    bool notValid = testIdenticalUid(ensembleNoeuds) or testReservedUid()
+            or testCapacityProblem() or testNodeNodeSuperposition(ensembleNoeuds);
     if(notValid == true) {
-        return false; //node IS NOT valid
+        return false; //noeud IS NOT valid
     }
     return true;
 } //runs before creating a node
