@@ -1,12 +1,12 @@
-#ifndef VILLE_HEADER_H
-#define VILLE_HEADER_H
-
 /**
 * \name ville.h
 * \author Hugo Masson, Bassam El Rawas (Sciper 314886, 310635)
 * \date Mars 2020
 * \version 1.0
 */
+
+#ifndef VILLE_HEADER_H
+#define VILLE_HEADER_H
 
 #include <vector>
 #include "noeud.h"
@@ -26,13 +26,17 @@ public:
     void createLien(unsigned int uid1, unsigned int uid2);
 
     unsigned int findNoeudIndex(unsigned int uid);
+    
+    bool testIdenticalUid(Noeud* testNoeud);
+    bool testNodeNodeSuperposition(Noeud* testNoeud);
+    bool testNodeValidity(Noeud* testNoeud);
 
     bool testLinkVacuum(unsigned int uid1, unsigned int uid2);
     bool testMultipleSameLink(unsigned int uid1, unsigned int uid2);
     bool testSelfLinkNode(unsigned int uid1, unsigned int uid2);
     bool testNodeLinkSuperposition(unsigned int uid1, unsigned int uid2);
-    //regroups all the above:
     bool testLinkValidity(unsigned int uid1, unsigned int uid2);
+
     //test after creating all links:
     bool testMaxLink();
 };

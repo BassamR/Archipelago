@@ -106,12 +106,12 @@ static void decodageLigne(string line) {
 //Ville functions:
 void Ville::createNoeud(unsigned int uid, double x, double y, unsigned int size, 
         string type) {
-    Noeud* obj = new Noeud(uid,x,y,size, type);
+    Noeud* newNode = new Noeud(uid,x,y,size, type);
 
-    if(obj->testNodeValidity(ensembleNoeuds) == false) {
+    if(ville.testNodeValidity(newNode) == false) {
         exit(EXIT_FAILURE);
     } else {
-        ensembleNoeuds.push_back(obj);
+        ensembleNoeuds.push_back(newNode);
     }
 }
 
@@ -140,7 +140,51 @@ unsigned int Ville::findNoeudIndex(unsigned int uid) {
     return 0;
 } //given a uid, find the node's index in vector ensembleNoeud
 
-//Error functions for creating links:
+//Error functions (nodes):
+bool Ville::testIdenticalUid(Noeud* testNoeud) {
+    if(ensembleNoeuds.empty() == true) {
+        return false;
+    }
+
+    for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
+        if(testNoeud->getUid() == ensembleNoeuds[i]->getUid()) {
+            cout << error::identical_uid(testNoeud->getUid()) << endl;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool Ville::testNodeNodeSuperposition(Noeud* testNoeud) {
+    if(ensembleNoeuds.empty() == true) {
+        return false;
+    }
+
+     for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
+         if(intersectionCC(testNoeud->getPosition(), 
+             ensembleNoeuds[i]->getPosition())) {
+            cout << error::node_node_superposition(testNoeud->getUid(), 
+                ensembleNoeuds[i]->getUid()) << endl;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool Ville::testNodeValidity(Noeud* testNoeud) {
+    bool notValid = testNoeud->testCapacityProblem() or testNoeud->testReservedUid()
+            or testIdenticalUid(testNoeud) or testNodeNodeSuperposition(testNoeud);
+
+    if(notValid == true) {
+        return false; //noeud IS NOT valid
+    }
+    
+    return true;
+} //runs before creating a node
+
+//Error functions (links):
 bool Ville::testLinkVacuum(unsigned int uid1, unsigned int uid2) {
     bool uid1Existe(false), uid2Existe(false);
 

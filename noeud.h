@@ -1,12 +1,12 @@
-#ifndef NOEUD_HEADER_H
-#define NOEUD_HEADER_H
-
 /**
 * \name noeud.h
 * \author Hugo Masson, Bassam El Rawas (Sciper 314886, 310635)
 * \date Mars 2020
 * \version 1.0
 */
+
+#ifndef NOEUD_HEADER_H
+#define NOEUD_HEADER_H
 
 #include <vector>
 #include "tools.h"
@@ -40,12 +40,8 @@ public:
     std::vector<Noeud*> getLiens();
     void setLiens(Noeud* linkUid);
 
-    bool testIdenticalUid(std::vector<Noeud*> ensembleNoeuds);
-    bool testNodeNodeSuperposition(std::vector<Noeud*> ensembleNoeuds);
     bool testReservedUid();
     bool testCapacityProblem();
-    //regroups all the above:
-    bool testNodeValidity(std::vector<Noeud*> ensembleNoeuds);
 };
 
 #endif
