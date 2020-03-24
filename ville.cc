@@ -106,7 +106,7 @@ static void decodageLigne(string line) {
 //Ville functions:
 void Ville::createNoeud(unsigned int uid, double x, double y, unsigned int size, 
         string type) {
-    Noeud* newNode = new Noeud(uid,x,y,size, type);
+    Noeud* newNode = new Noeud(uid, x, y, size, type);
 
     if(ville.testNodeValidity(newNode) == false) {
         exit(EXIT_FAILURE);

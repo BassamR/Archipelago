@@ -8,7 +8,6 @@
 #ifndef VILLE_HEADER_H
 #define VILLE_HEADER_H
 
-#include <vector>
 #include "noeud.h"
 
 void lecture(char* nomFichier);
@@ -21,7 +20,7 @@ private:
 public:
     Ville() {}
 
-    void createNoeud(unsigned int uid, double x, double y, unsigned int size, 
+    void createNoeud(unsigned int uid, double x, double y, unsigned int size,
         std::string type);
     void createLien(unsigned int uid1, unsigned int uid2);
 
@@ -37,7 +36,6 @@ public:
     bool testNodeLinkSuperposition(unsigned int uid1, unsigned int uid2);
     bool testLinkValidity(unsigned int uid1, unsigned int uid2);
 
-    //test after creating all links:
     bool testMaxLink();
 };
 

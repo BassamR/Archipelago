@@ -10,15 +10,14 @@
 
 #include <vector>
 #include "tools.h"
-#include <string>
 
 class Noeud {
 private:
     unsigned int uid;
     unsigned int size;
-    Cercle position; //contient les coords du centre + le rayon (rayon= sqrt(size))
+    Cercle position; //contient les coords du centre + le rayon
     std::string type;
-    std::vector<Noeud*> liens; //node has a list of address of nodes its connected to
+    std::vector<Noeud*> liens; //liste des adresses des noeuds voisins
 
 public:
     Noeud(unsigned int uid, double x, double y, unsigned int size, std::string type);
