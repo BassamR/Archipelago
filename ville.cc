@@ -135,14 +135,14 @@ void Ville::createTransport(unsigned int uid, double x, double y, unsigned int s
 }
 
 void Ville::createLien(unsigned int uid1, unsigned int uid2) {
-    unsigned int index1 = findNoeudIndex(uid1);
-    unsigned int index2 = findNoeudIndex(uid2);
-    Noeud* noeud1 = ensembleNoeuds[index1];
-    Noeud* noeud2 = ensembleNoeuds[index2];
-
      if(testLinkValidity(uid1, uid2) == false) {
          exit(EXIT_FAILURE);
      } else {
+        unsigned int index1 = findNoeudIndex(uid1);
+        unsigned int index2 = findNoeudIndex(uid2);
+        Noeud* noeud1 = ensembleNoeuds[index1];
+        Noeud* noeud2 = ensembleNoeuds[index2];
+
         liens.push_back(vector<Noeud*>{noeud1, noeud2});
         ensembleNoeuds[index1]->setLiens(ensembleNoeuds[index2]);
         ensembleNoeuds[index2]->setLiens(ensembleNoeuds[index1]);
@@ -275,7 +275,7 @@ bool Ville::testLinkValidity(unsigned int uid1, unsigned int uid2) {
 bool Ville::testMaxLink() {
     for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
         if(ensembleNoeuds[i]->testMaxLink() == true) {
-            cout << error::max_link(ensembleNoeuds[i]->getUid());
+            cout << error::max_link(ensembleNoeuds[i]->getUid()) << endl;
             return true;
         }
     }
