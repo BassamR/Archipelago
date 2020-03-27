@@ -4,7 +4,7 @@ CXX = g++
 CXXFLAGS = -g -Wall -std=c++11
 LINKING = `pkg-config --cflags gtkmm-3.0`
 LDLIBS = `pkg-config --libs gtkmm-3.0`
-OFILES = projet.o ville.o noeud.o tools.o error.o
+OFILES = projet.o gui.o ville.o noeud.o tools.o error.o graphic.o
 
 # Dependances
 all: $(OUT)
