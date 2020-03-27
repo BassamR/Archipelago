@@ -9,6 +9,7 @@
 #include <cmath>
 #include "tools.h"
 #include "constantes.h"
+#include "graphic.h"
 using namespace std;
 
 

@@ -6,7 +6,10 @@
 */
 
 #include <iostream>
+#include <gtkmm/application.h>
+#include <gtkmm/window.h>
 #include "ville.h"
+#include "gui.h"
 using namespace std;
 
 int main(int argc, char* argv[]) {
