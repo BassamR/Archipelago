@@ -12,18 +12,19 @@
 #include "tools.h"
 
 class Noeud {
-private:
+protected:
     unsigned int uid;
     unsigned int size;
     Cercle position; //contient les coords du centre + le rayon
-    std::string type;
     std::vector<Noeud*> liens; //liste des adresses des noeuds voisins
 
 public:
-    Noeud(unsigned int uid, double x, double y, unsigned int size, std::string type);
+    Noeud(unsigned int uid, double x, double y, unsigned int size);
 
     unsigned int getUid();
     void setUid(unsigned int x);
+
+    virtual std::string getType();
 
     Cercle getPosition();
 
@@ -33,14 +34,40 @@ public:
     unsigned int getSize();
     void setSize(unsigned int x);
 
-    std::string getType();
-    void setType(std::string valeur);
-
     std::vector<Noeud*> getLiens();
     void setLiens(Noeud* linkUid);
 
     bool testReservedUid();
     bool testCapacityProblem();
+    virtual bool testMaxLink();
+
+    virtual void draw();
+};
+
+class Housing: public Noeud {
+public:
+    Housing(unsigned int uid, double x, double y, unsigned int size);
+
+    std::string getType();
+    void draw();
+
+    bool testMaxLink();
+};
+
+class Transport: public Noeud {
+public:
+    Transport(unsigned int uid, double x, double y, unsigned int size);
+
+    std::string getType();
+    void draw();
+};
+
+class Production: public Noeud {
+public:
+    Production(unsigned int uid, double x, double y, unsigned int size);
+
+    std::string getType();
+    void draw();
 };
 
 #endif

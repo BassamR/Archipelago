@@ -15,18 +15,35 @@
 #include "constantes.h"
 using namespace std;
 
-//Noeud functions:
-Noeud::Noeud(unsigned int uid, double x, double y, unsigned int size, string type):
-    uid(uid), size(size), type(type) {
+//Constructors:
+Noeud::Noeud(unsigned int uid, double x, double y, unsigned int size):
+    uid(uid), size(size) {
     position.centre.x = x; position.centre.y = y; position.rayon = sqrt(size);
 }
 
+Housing::Housing(unsigned int uid, double x, double y, unsigned int size):
+    Noeud(uid, x, y, size) {
+}
+
+Transport::Transport(unsigned int uid, double x, double y, unsigned int size):
+    Noeud(uid, x, y, size) {
+}
+
+Production::Production(unsigned int uid, double x, double y, unsigned int size):
+    Noeud(uid, x, y, size) {
+}
+
+//General methods:
 unsigned int Noeud::getUid() {
     return uid;
 }
 
 void Noeud::setUid(unsigned int x) {
     uid = x;
+}
+
+string Noeud::getType() {
+    return "";
 }
 
 Cercle Noeud::getPosition() {
@@ -51,14 +68,6 @@ void Noeud::setSize(unsigned int x) {
     size = x;
 }
 
-string Noeud::getType() {
-    return type;
-}
-
-void Noeud::setType(string valeur) {
-    type = valeur;
-}
-
 vector<Noeud*> Noeud::getLiens() {
     return liens;
 }
@@ -67,7 +76,6 @@ void Noeud::setLiens(Noeud* linkUid) {
     liens.push_back(linkUid);
 }
 
-//Error functions unique to one node:
 bool Noeud::testReservedUid() {
     if(uid == no_link) {
         cout << error::reserved_uid() << endl;
@@ -88,4 +96,41 @@ bool Noeud::testCapacityProblem() {
     }
 
     return false;
+}
+
+bool Noeud::testMaxLink() {
+    return false;
+}
+
+void Noeud::draw(){
+}
+
+//Housing methods:
+string Housing::getType() {
+    return "housing";
+}
+
+void Housing::draw() {
+}
+
+bool Housing::testMaxLink() {
+    if(liens.empty() == true) return false;
+    if(liens.size() > max_link) return true;
+    return false;
+}
+
+//Transport methods:
+string Transport::getType() {
+    return "transport";
+}
+
+void Transport::draw() {
+}
+
+//Production methods:
+string Production::getType() {
+    return "production";
+}
+
+void Production::draw() {
 }

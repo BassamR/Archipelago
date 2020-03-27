@@ -20,8 +20,10 @@ private:
 public:
     Ville() {}
 
-    void createNoeud(unsigned int uid, double x, double y, unsigned int size,
-        std::string type);
+    void createHousing(unsigned int uid, double x, double y, unsigned int size);
+    void createProduction(unsigned int uid, double x, double y, unsigned int size);
+    void createTransport(unsigned int uid, double x, double y, unsigned int size);
+
     void createLien(unsigned int uid1, unsigned int uid2);
 
     unsigned int findNoeudIndex(unsigned int uid);

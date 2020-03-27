@@ -55,7 +55,7 @@ static void decodageLigne(string line) {
         case HOUSING:
             data >> uid >> x >> y >> size; ++i;
             if(i == total) etat = NBT;
-            ville.createNoeud(uid, x, y, size, "housing");
+            ville.createHousing(uid, x, y, size);
             break;
 
         case NBT:
@@ -67,7 +67,7 @@ static void decodageLigne(string line) {
         case TRANSPORT:
             data >> uid >> x >> y >> size; ++i;
             if(i == total) etat = NBP;
-            ville.createNoeud(uid, x, y, size, "transport");
+            ville.createTransport(uid, x, y, size);
             break;
 
         case NBP:
@@ -79,7 +79,7 @@ static void decodageLigne(string line) {
         case PRODUCTION:
             data >> uid >> x >> y >> size; ++i;
             if(i == total) etat = NBL;
-            ville.createNoeud(uid, x, y, size, "production");
+            ville.createProduction(uid, x, y, size);
             break;
 
         case NBL:
@@ -104,14 +104,33 @@ static void decodageLigne(string line) {
 }
 
 //Ville functions:
-void Ville::createNoeud(unsigned int uid, double x, double y, unsigned int size, 
-        string type) {
-    Noeud* newNode = new Noeud(uid, x, y, size, type);
+void Ville::createHousing(unsigned int uid, double x, double y, unsigned int size) {
+    Housing* newHouse = new Housing(uid, x, y, size);
 
-    if(ville.testNodeValidity(newNode) == false) {
+    if(ville.testNodeValidity(newHouse) == false) {
         exit(EXIT_FAILURE);
     } else {
-        ensembleNoeuds.push_back(newNode);
+        ensembleNoeuds.push_back(newHouse);
+    }
+}
+
+void Ville::createProduction(unsigned int uid, double x, double y, unsigned int size) {
+    Production* newProd = new Production(uid, x, y, size);
+
+    if(ville.testNodeValidity(newProd) == false) {
+        exit(EXIT_FAILURE);
+    } else {
+        ensembleNoeuds.push_back(newProd);
+    }
+}
+
+void Ville::createTransport(unsigned int uid, double x, double y, unsigned int size) {
+    Transport* newTrans = new Transport(uid, x, y, size);
+
+    if(ville.testNodeValidity(newTrans) == false) {
+        exit(EXIT_FAILURE);
+    } else {
+        ensembleNoeuds.push_back(newTrans);
     }
 }
 
@@ -255,9 +274,8 @@ bool Ville::testLinkValidity(unsigned int uid1, unsigned int uid2) {
 
 bool Ville::testMaxLink() {
     for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
-        if(ensembleNoeuds[i]->getType() == "housing" and
-                ensembleNoeuds[i]->getLiens().size() > max_link) {
-            cout << error::max_link(ensembleNoeuds[i]->getUid()) << endl;
+        if(ensembleNoeuds[i]->testMaxLink() == true) {
+            cout << error::max_link(ensembleNoeuds[i]->getUid());
             return true;
         }
     }
