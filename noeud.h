@@ -24,7 +24,7 @@ public:
     unsigned int getUid();
     void setUid(unsigned int x);
 
-    virtual std::string getType();
+    virtual std::string getType() = 0;
 
     Cercle getPosition();
 
@@ -41,7 +41,7 @@ public:
     bool testCapacityProblem();
     virtual bool testMaxLink();
 
-    virtual void draw();
+    virtual void draw() = 0;
 };
 
 class Housing: public Noeud {

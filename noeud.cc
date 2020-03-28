@@ -42,10 +42,6 @@ void Noeud::setUid(unsigned int x) {
     uid = x;
 }
 
-string Noeud::getType() {
-    return "";
-}
-
 Cercle Noeud::getPosition() {
     return position;
 }
@@ -100,9 +96,6 @@ bool Noeud::testCapacityProblem() {
 
 bool Noeud::testMaxLink() {
     return false;
-}
-
-void Noeud::draw(){
 }
 
 //Housing methods:
