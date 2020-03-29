@@ -8,8 +8,6 @@
 #ifndef TOOLS_HEADER_H
 #define TOOLS_HEADER_H
 
-#include "constantes.h"
-
 struct Coords {
      double x;
      double y;
