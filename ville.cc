@@ -107,7 +107,7 @@ static void decodageLigne(string line) {
 void Ville::createHousing(unsigned int uid, double x, double y, unsigned int size) {
     Housing* newHouse = new Housing(uid, x, y, size);
 
-    if(ville.testNodeValidity(newHouse) == false) {
+    if(newHouse->testNodeValidity(ensembleNoeuds) == false) {
         exit(EXIT_FAILURE);
     } else {
         ensembleNoeuds.push_back(newHouse);
@@ -117,7 +117,7 @@ void Ville::createHousing(unsigned int uid, double x, double y, unsigned int siz
 void Ville::createProduction(unsigned int uid, double x, double y, unsigned int size) {
     Production* newProd = new Production(uid, x, y, size);
 
-    if(ville.testNodeValidity(newProd) == false) {
+    if(newProd->testNodeValidity(ensembleNoeuds) == false) {
         exit(EXIT_FAILURE);
     } else {
         ensembleNoeuds.push_back(newProd);
@@ -127,7 +127,7 @@ void Ville::createProduction(unsigned int uid, double x, double y, unsigned int 
 void Ville::createTransport(unsigned int uid, double x, double y, unsigned int size) {
     Transport* newTrans = new Transport(uid, x, y, size);
 
-    if(ville.testNodeValidity(newTrans) == false) {
+    if(newTrans->testNodeValidity(ensembleNoeuds) == false) {
         exit(EXIT_FAILURE);
     } else {
         ensembleNoeuds.push_back(newTrans);
@@ -159,50 +159,6 @@ unsigned int Ville::findNoeudIndex(unsigned int uid) {
     return 0;
 } //given a uid, find the node's index in vector ensembleNoeud
 
-//Error functions (nodes):
-bool Ville::testIdenticalUid(Noeud* testNoeud) {
-    if(ensembleNoeuds.empty() == true) {
-        return false;
-    }
-
-    for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
-        if(testNoeud->getUid() == ensembleNoeuds[i]->getUid()) {
-            cout << error::identical_uid(testNoeud->getUid()) << endl;
-            return true;
-        }
-    }
-
-    return false;
-}
-
-bool Ville::testNodeNodeSuperposition(Noeud* testNoeud) {
-    if(ensembleNoeuds.empty() == true) {
-        return false;
-    }
-
-     for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
-         if(intersectionCC(testNoeud->getPosition(), 
-             ensembleNoeuds[i]->getPosition())) {
-            cout << error::node_node_superposition(testNoeud->getUid(), 
-                ensembleNoeuds[i]->getUid()) << endl;
-            return true;
-        }
-    }
-
-    return false;
-}
-
-bool Ville::testNodeValidity(Noeud* testNoeud) {
-    bool notValid = testNoeud->testCapacityProblem() or testNoeud->testReservedUid()
-            or testIdenticalUid(testNoeud) or testNodeNodeSuperposition(testNoeud);
-
-    if(notValid == true) {
-        return false; //noeud IS NOT valid
-    }
-    
-    return true;
-} //runs before creating a node
-
 //Error functions (links):
 bool Ville::testLinkVacuum(unsigned int uid1, unsigned int uid2) {
     bool uid1Existe(false), uid2Existe(false);
@@ -231,7 +187,7 @@ bool Ville::testMultipleSameLink(unsigned int uid1, unsigned int uid2) {
 
     for(unsigned int i = 0; i < liens.size(); ++i) {
         if((liens[i][0]->getUid() == uid1 and liens[i][1]->getUid() == uid2) or
-            (liens[i][0]->getUid() == uid2 and liens[i][1]->getUid() == uid1)) {
+           (liens[i][0]->getUid() == uid2 and liens[i][1]->getUid() == uid1)) {
             cout << error::multiple_same_link(uid1, uid2) << endl;
             return true;
         }
@@ -267,7 +223,7 @@ bool Ville::testLinkValidity(unsigned int uid1, unsigned int uid2) {
     bool notValid = testLinkVacuum(uid1, uid2) or testMultipleSameLink(uid1, uid2)
         or testSelfLinkNode(uid1, uid2) or testNodeLinkSuperposition(uid1, uid2);
     if(notValid == true) {
-        return false;
+        return false; //link is NOT valid
     }
     return true;
 } //runs before creating a link
@@ -281,3 +237,9 @@ bool Ville::testMaxLink() {
     }
     return false;
 } //after creating all links
+
+void Ville::drawVille() {
+    for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
+        ensembleNoeuds[i]->draw();
+    }
+}

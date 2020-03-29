@@ -72,6 +72,7 @@ void Noeud::setLiens(Noeud* linkUid) {
     liens.push_back(linkUid);
 }
 
+//Error functions (node):
 bool Noeud::testReservedUid() {
     if(uid == no_link) {
         cout << error::reserved_uid() << endl;
@@ -97,6 +98,48 @@ bool Noeud::testCapacityProblem() {
 bool Noeud::testMaxLink() {
     return false;
 }
+
+bool Noeud::testIdenticalUid(const vector<Noeud*> ensemble) {
+    if(ensemble.empty() == true) {
+        return false;
+    }
+
+    for(unsigned int i = 0; i < ensemble.size(); ++i) {
+        if(getUid() == ensemble[i]->getUid()) {
+            cout << error::identical_uid(getUid()) << endl;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool Noeud::testNodeNodeSuperposition(const vector<Noeud*> ensemble) {
+    if(ensemble.empty() == true) {
+        return false;
+    }
+
+     for(unsigned int i = 0; i < ensemble.size(); ++i) {
+         if(intersectionCC(getPosition(), ensemble[i]->getPosition())) {
+            cout << error::node_node_superposition(getUid(), 
+                ensemble[i]->getUid()) << endl;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool Noeud::testNodeValidity(const vector<Noeud*> ensemble) {
+    bool notValid = testCapacityProblem() or testReservedUid()
+            or testIdenticalUid(ensemble) or testNodeNodeSuperposition(ensemble);
+
+    if(notValid == true) {
+        return false; //noeud IS NOT valid
+    }
+    
+    return true;
+} //runs before creating a node
 
 //Housing methods:
 string Housing::getType() {

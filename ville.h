@@ -28,10 +28,6 @@ public:
 
     unsigned int findNoeudIndex(unsigned int uid);
     
-    bool testIdenticalUid(Noeud* testNoeud);
-    bool testNodeNodeSuperposition(Noeud* testNoeud);
-    bool testNodeValidity(Noeud* testNoeud);
-
     bool testLinkVacuum(unsigned int uid1, unsigned int uid2);
     bool testMultipleSameLink(unsigned int uid1, unsigned int uid2);
     bool testSelfLinkNode(unsigned int uid1, unsigned int uid2);
@@ -39,6 +35,8 @@ public:
     bool testLinkValidity(unsigned int uid1, unsigned int uid2);
 
     bool testMaxLink();
+
+    void drawVille();
 };
 
 #endif

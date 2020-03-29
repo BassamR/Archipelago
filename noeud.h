@@ -40,6 +40,9 @@ public:
     bool testReservedUid();
     bool testCapacityProblem();
     virtual bool testMaxLink();
+    bool testIdenticalUid(const std::vector<Noeud*> ensemble);
+    bool testNodeNodeSuperposition(const std::vector<Noeud*> ensemble);
+    bool testNodeValidity(const std::vector<Noeud*> ensemble);
 
     virtual void draw() = 0;
 };
