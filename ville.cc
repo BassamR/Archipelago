@@ -21,6 +21,10 @@ using namespace std;
 static void decodageLigne(string line);
 static Ville ville;
 
+void drawCity() {
+    ville.drawVille();
+}
+
 //Reading functions
 void lecture(char* nomFichier) {
     string line;

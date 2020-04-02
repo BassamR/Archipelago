@@ -11,6 +11,7 @@
 #include "noeud.h"
 
 void lecture(char* nomFichier);
+void drawCity();
 
 class Ville {
 private:

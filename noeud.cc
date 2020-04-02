@@ -147,6 +147,7 @@ string Housing::getType() {
 }
 
 void Housing::draw() {
+    cout << "housing draw called" << endl;
 }
 
 bool Housing::testMaxLink() {
@@ -161,6 +162,7 @@ string Transport::getType() {
 }
 
 void Transport::draw() {
+    cout << "transport draw called" << endl;
 }
 
 //Production methods:
@@ -169,4 +171,5 @@ string Production::getType() {
 }
 
 void Production::draw() {
+    cout << "transport draw called" << endl;
 }
