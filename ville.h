@@ -12,6 +12,7 @@
 
 void lecture(char* nomFichier);
 void drawCity();
+void deleteCity();
 
 class Ville {
 private:
@@ -37,7 +38,9 @@ public:
 
     bool testMaxLink();
 
-    void drawVille();
+    void drawNodes();
+    void drawLinks();
+    void resetVille();
 };
 
 #endif

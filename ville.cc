@@ -21,8 +21,14 @@ using namespace std;
 static void decodageLigne(string line);
 static Ville ville;
 
+//Functions used by gui:
 void drawCity() {
-    ville.drawVille();
+    ville.drawLinks();
+    ville.drawNodes();
+}
+
+void deleteCity() {
+    ville.resetVille();
 }
 
 //Reading functions
@@ -38,6 +44,8 @@ void lecture(char* nomFichier) {
         cout << "Lecture du fichier impossible" << endl;
     }
 }
+
+//ostream to output stuff
 
 static void decodageLigne(string line) {
     istringstream data(line);
@@ -242,8 +250,36 @@ bool Ville::testMaxLink() {
     return false;
 } //after creating all links
 
-void Ville::drawVille() {
+void Ville::drawNodes() {
+    if(ensembleNoeuds.empty() == true) {
+        cout << "cannot draw empty city" << endl;
+        return;
+    }
+
     for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
         ensembleNoeuds[i]->draw();
     }
+}
+
+void Ville::drawLinks() {
+    if(liens.empty() == true) {
+        cout << "cannot draw empty links" << endl;
+        return;
+    }
+
+    for(unsigned int i = 0; i < liens.size(); ++i) {
+        drawSegment(liens[i][0]->getCoords(), liens[i][1]->getCoords());
+    }
+}
+
+void Ville::resetVille() {
+    for(unsigned int i = 0; i < liens.size(); ++i) {
+        liens[i].clear();
+    }
+    liens.clear();
+
+    for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
+        delete ensembleNoeuds[i];
+    }
+    ensembleNoeuds.clear();
 }

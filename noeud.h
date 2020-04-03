@@ -20,6 +20,7 @@ protected:
 
 public:
     Noeud(unsigned int uid, double x, double y, unsigned int size);
+    virtual ~Noeud();
 
     unsigned int getUid();
     void setUid(unsigned int x);

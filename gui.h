@@ -12,12 +12,19 @@
 #include <gtkmm/drawingarea.h>
 
 class MyArea: public Gtk::DrawingArea {
+private:
+    bool empty;
+    void refresh();
+
 protected:
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
 public:
     MyArea();
     virtual ~MyArea();
+
+    void clear(); //equivalent de New sur l'interface
+    void draw(); //equivalent de Open sur l'interface
 };
 
 class MyGui: public Gtk::Window {

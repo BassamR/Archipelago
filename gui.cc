@@ -8,8 +8,27 @@
 using namespace std;
 
 //MyArea class definition:
-MyArea::MyArea() {}
+MyArea::MyArea(): empty(false) {}
 MyArea::~MyArea() {}
+
+void MyArea::clear() {
+    empty = true;
+    refresh();
+}
+
+void MyArea::draw() {
+    empty = false;
+    refresh();
+}
+
+void MyArea::refresh() {
+    auto win = get_window();
+    if(win) {
+        Gdk::Rectangle r(0,0, get_allocation().get_width(), 
+            get_allocation().get_height());
+        win->invalidate_rect(r, false); //forces a call to on_draw
+    }
+}
 
 bool MyArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     Gtk::Allocation allocation = get_allocation();
@@ -22,11 +41,14 @@ bool MyArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     yc = height / 2;
     graphic_set_context(cr);
 
-    //call draw function from ville in here, which will call noeud's individual draw functions
-    //they will call functions from tools which will call functions from graphic
-    graphic_draw_shape(width, height,xc,yc);
-
-    drawCity();
+    if(not empty) {
+        //graphic_draw_shape(width, height,xc,yc); //placeholder
+        makeBgWhite();
+        drawCity(); //this function properly draws a city
+    } else {
+        makeBgWhite();
+        cout << "canvas cleared!" << endl;
+    }
 
     return true;
 }
@@ -49,7 +71,7 @@ MyGui::MyGui():
 
     mBBGeneral(Gtk::ORIENTATION_VERTICAL), mBBDisplay(Gtk::ORIENTATION_VERTICAL), 
     mBBEditor(Gtk::ORIENTATION_VERTICAL), mBBInformations(Gtk::ORIENTATION_VERTICAL),
-    
+
     mRButtonH("housing"), mRButtonT("transport"), mRButtonP("production") {
     //Basic definitions
     set_title("Archipelago");
@@ -63,7 +85,7 @@ MyGui::MyGui():
     mBox.pack_start(mBoxRight);
 
     //Start canvas
-    mArea.set_size_request(600, 600);
+    mArea.set_size_request(default_drawing_size, default_drawing_size);
     mBoxRight.pack_start(mFrameCanvas, false, false);
     mFrameCanvas.add(mArea);
 
@@ -147,15 +169,21 @@ void MyGui::onButtonClickExit() {
 }
 
 void MyGui::onButtonClickNew() {
+    deleteCity();
     cout << "new button clicked" << endl;
+    mArea.clear();
 }
 
 void MyGui::onButtonClickOpen() {
     cout << "open button clicked" << endl;
+    mArea.draw();
+    //add a ville function that reads a new file
+    //lecture(thatfile.txt)
 }
 
 void MyGui::onButtonClickSave() {
     cout << "save button clicked" << endl;
+    //call ville function that prints current info into a file 
 }
 
 void MyGui::onButtonClickZoomIn() {

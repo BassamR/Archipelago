@@ -33,6 +33,8 @@ Production::Production(unsigned int uid, double x, double y, unsigned int size):
     Noeud(uid, x, y, size) {
 }
 
+Noeud::~Noeud() {}
+
 //General methods:
 unsigned int Noeud::getUid() {
     return uid;
@@ -148,6 +150,7 @@ string Housing::getType() {
 
 void Housing::draw() {
     cout << "housing draw called" << endl;
+    drawCircle(position);
 }
 
 bool Housing::testMaxLink() {
@@ -163,6 +166,27 @@ string Transport::getType() {
 
 void Transport::draw() {
     cout << "transport draw called" << endl;
+    drawCircle(position);
+    double x = position.centre.x;
+    double y = position.centre.y;
+    double r = position.rayon;
+
+    //dessin des traits
+    Coords p1{x - r, y};
+    Coords p2{x + r, y};
+    drawSegment(p1, p2);
+
+    Coords p3{x, y - r};
+    Coords p4{x, y + r};
+    drawSegment(p3, p4);
+
+    Coords p5{x + r*cos(5*M_PI/4), y + r*sin(5*M_PI/4)};
+    Coords p6{x + r*cos(M_PI/4), y + r*sin(M_PI/4)};
+    drawSegment(p5, p6);
+
+    Coords p7{x + r*cos(-M_PI/4), y + r*sin(-M_PI/4)};
+    Coords p8{x + r*cos(3*M_PI/4), y + r*sin(3*M_PI/4)};
+    drawSegment(p7, p8);
 }
 
 //Production methods:
@@ -171,5 +195,26 @@ string Production::getType() {
 }
 
 void Production::draw() {
-    cout << "transport draw called" << endl;
+    cout << "production draw called" << endl;
+    drawCircle(position);
+    double x = position.centre.x;
+    double y = position.centre.y;
+    double d = 2 * position.rayon;
+
+    //dessin des traits
+    Coords p1{x - d*0.375, y - d*0.0625};
+    Coords p2{x + d*0.375, y - d*0.0625};
+    drawSegment(p1, p2);
+
+    Coords p3{x - d*0.375, y + d*0.0625};
+    Coords p4{x + d*0.375, y + d*0.0625};
+    drawSegment(p3, p4);
+
+    Coords p5{x - d*0.375, y - d*0.0625};
+    Coords p6{x - d*0.375, y + d*0.0625};
+    drawSegment(p5, p6);
+
+    Coords p8{x + d*0.375, y - d*0.0625};
+    Coords p7{x + d*0.375, y + d*0.0625};
+    drawSegment(p7, p8);
 }
