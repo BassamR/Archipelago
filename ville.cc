@@ -53,7 +53,7 @@ void lecture(char* nomFichier) {
 static void initVille(string line) {
     istringstream data(line);
 
-    enum EtatLecture {NBH, HOUSING, NBT, TRANSPORT, NBP, PRODUCTION, NBL, LINK, FIN};
+    enum EtatLecture {NBH, HOUSING, NBT, TRANSPORT, NBP, PRODUCTION, NBL, LINK, END};
     static int etat(NBH); //etat initial
     static int i(0), total(0); //i: compteur, total: nbh, nbt...
 
@@ -70,7 +70,7 @@ static void initVille(string line) {
         case HOUSING:
             data >> uid >> x >> y >> size; ++i;
             if(i == total) etat = NBT;
-            ville.createHousing(uid, x, y, size);
+            if(not ville.createHousing(uid, x, y, size)) etat = END;
             break;
 
         case NBT:
@@ -82,7 +82,7 @@ static void initVille(string line) {
         case TRANSPORT:
             data >> uid >> x >> y >> size; ++i;
             if(i == total) etat = NBP;
-            ville.createTransport(uid, x, y, size);
+            if(not ville.createTransport(uid, x, y, size)) etat = END;
             break;
 
         case NBP:
@@ -94,26 +94,26 @@ static void initVille(string line) {
         case PRODUCTION:
             data >> uid >> x >> y >> size; ++i;
             if(i == total) etat = NBL;
-            ville.createProduction(uid, x, y, size);
+            if(not ville.createProduction(uid, x, y, size)) etat = END;
             break;
 
         case NBL:
             data >> total; i = 0;
-            if(total == 0) etat = FIN;
+            if(total == 0) etat = END;
             else etat = LINK;
             break;
 
         case LINK:
             data >> uid1 >> uid2; ++i;
-            ville.createLien(uid1, uid2);
+            if(not ville.createLien(uid1, uid2)) etat = END;
             if(i == total) {
-                etat = FIN;
-                if(ville.testMaxLink() == true) exit(EXIT_FAILURE);
+                etat = END;
+                if(ville.testMaxLink() == true) ville.resetVille();
                 else cout << error::success() << endl;
             }
             break;
 
-        case FIN: cout << "Erreur dans le format du fichier" << endl; break;
+        case END: break;
         default: cout << "Erreur dans la lecture de l'etat" << endl; break;
     }
 }
@@ -127,39 +127,46 @@ static void outputNode(ofstream& str, vector<Noeud*> nodes) {
 }
 
 //Ville functions:
-void Ville::createHousing(unsigned int uid, double x, double y, unsigned int size) {
+bool Ville::createHousing(unsigned int uid, double x, double y, unsigned int size) {
     Housing* newHouse = new Housing(uid, x, y, size);
 
     if(newHouse->testNodeValidity(ensembleNoeuds) == false) {
-        exit(EXIT_FAILURE);
+        resetVille();
+        return false;
     } else {
         ensembleNoeuds.push_back(newHouse);
+        return true;
     }
 }
 
-void Ville::createProduction(unsigned int uid, double x, double y, unsigned int size) {
+bool Ville::createProduction(unsigned int uid, double x, double y, unsigned int size) {
     Production* newProd = new Production(uid, x, y, size);
 
     if(newProd->testNodeValidity(ensembleNoeuds) == false) {
-        exit(EXIT_FAILURE);
+        resetVille();
+        return false;    
     } else {
         ensembleNoeuds.push_back(newProd);
+        return true;
     }
 }
 
-void Ville::createTransport(unsigned int uid, double x, double y, unsigned int size) {
+bool Ville::createTransport(unsigned int uid, double x, double y, unsigned int size) {
     Transport* newTrans = new Transport(uid, x, y, size);
 
     if(newTrans->testNodeValidity(ensembleNoeuds) == false) {
-        exit(EXIT_FAILURE);
+        resetVille();
+        return false;   
     } else {
         ensembleNoeuds.push_back(newTrans);
+        return true;
     }
 }
 
-void Ville::createLien(unsigned int uid1, unsigned int uid2) {
+bool Ville::createLien(unsigned int uid1, unsigned int uid2) {
      if(testLinkValidity(uid1, uid2) == false) {
-         exit(EXIT_FAILURE);
+        resetVille();
+        return false;
      } else {
         unsigned int index1 = findNoeudIndex(uid1);
         unsigned int index2 = findNoeudIndex(uid2);
@@ -169,6 +176,7 @@ void Ville::createLien(unsigned int uid1, unsigned int uid2) {
         liens.push_back(vector<Noeud*>{noeud1, noeud2});
         ensembleNoeuds[index1]->setLiens(ensembleNoeuds[index2]);
         ensembleNoeuds[index2]->setLiens(ensembleNoeuds[index1]);
+        return true;
     }
 }
 

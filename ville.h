@@ -23,11 +23,11 @@ private:
 public:
     Ville() {}
 
-    void createHousing(unsigned int uid, double x, double y, unsigned int size);
-    void createProduction(unsigned int uid, double x, double y, unsigned int size);
-    void createTransport(unsigned int uid, double x, double y, unsigned int size);
+    bool createHousing(unsigned int uid, double x, double y, unsigned int size);
+    bool createProduction(unsigned int uid, double x, double y, unsigned int size);
+    bool createTransport(unsigned int uid, double x, double y, unsigned int size);
 
-    void createLien(unsigned int uid1, unsigned int uid2);
+    bool createLien(unsigned int uid1, unsigned int uid2);
 
     unsigned int findNoeudIndex(unsigned int uid);
     
