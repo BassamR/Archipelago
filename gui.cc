@@ -183,6 +183,7 @@ void MyGui::onButtonClickOpen() {
 
 void MyGui::onButtonClickSave() {
     cout << "save button clicked" << endl;
+    saveCity();
     //call ville function that prints current info into a file 
 }
 

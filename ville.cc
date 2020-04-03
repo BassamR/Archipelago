@@ -18,8 +18,9 @@
 using namespace std;
 
 //Declaration of local variables/functions:
-static void decodageLigne(string line);
+static void initVille(string line);
 static Ville ville;
+static void outputNode(ofstream& str, vector<Noeud*> nodes);
 
 //Functions used by gui:
 void drawCity() {
@@ -31,23 +32,25 @@ void deleteCity() {
     ville.resetVille();
 }
 
-//Reading functions
+void saveCity() {
+    ville.saveVille();
+}
+
+//Reading/Outputting functions:
 void lecture(char* nomFichier) {
     string line;
     ifstream fichier(nomFichier);
     if(not fichier.fail()) {
         while(getline(fichier >> ws, line)) {
             if(line[0] == '#') continue;
-            decodageLigne(line);
+            initVille(line);
         }
     } else {
         cout << "Lecture du fichier impossible" << endl;
     }
 }
 
-//ostream to output stuff
-
-static void decodageLigne(string line) {
+static void initVille(string line) {
     istringstream data(line);
 
     enum EtatLecture {NBH, HOUSING, NBT, TRANSPORT, NBP, PRODUCTION, NBL, LINK, FIN};
@@ -113,6 +116,14 @@ static void decodageLigne(string line) {
         case FIN: cout << "Erreur dans le format du fichier" << endl; break;
         default: cout << "Erreur dans la lecture de l'etat" << endl; break;
     }
+}
+
+static void outputNode(ofstream& str, vector<Noeud*> nodes) {
+    for(unsigned int i = 0; i < nodes.size(); ++i) {
+        str << "\t" << nodes[i]->getUid() << " " << nodes[i]->getCoords().x << " ";
+        str << nodes[i]->getCoords().y << " " << nodes[i]->getSize() << "\n";
+    }
+    str << "\n" << "\n";
 }
 
 //Ville functions:
@@ -270,6 +281,45 @@ void Ville::drawLinks() {
     for(unsigned int i = 0; i < liens.size(); ++i) {
         drawSegment(liens[i][0]->getCoords(), liens[i][1]->getCoords());
     }
+}
+
+void Ville::saveVille() {
+    unsigned int nbH(0), nbT(0), nbP(0), nbL(liens.size());
+    vector<Noeud*> housingNodes, transportNodes, productionNodes;
+
+    for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
+        if(ensembleNoeuds[i]->getType() == "housing") {
+            ++nbH;
+            housingNodes.push_back(ensembleNoeuds[i]);
+        } else if(ensembleNoeuds[i]->getType() == "transport") {
+            ++nbT;
+            transportNodes.push_back(ensembleNoeuds[i]);
+        } else {
+            ++nbP;
+            productionNodes.push_back(ensembleNoeuds[i]);
+        }
+    }
+
+    ofstream fichier("savedCity.txt");
+
+    if(fichier.is_open()) {
+        fichier << "#Saved city" << "\n" << "\n";
+
+        fichier << nbH << " #nb housing" << "\n";
+        outputNode(fichier, housingNodes);
+
+        fichier << nbT << " #nb transport" << "\n";
+        outputNode(fichier, transportNodes);
+
+        fichier << nbP << " #nb production" << "\n";
+        outputNode(fichier, productionNodes);
+
+        fichier << nbL << " #nb links" << "\n";
+        for(unsigned int i = 0; i < liens.size(); ++i) {
+            fichier << liens[i][0]->getUid() << " " << liens[i][1]->getUid() << "\n";
+        }
+    }
+    fichier.close();
 }
 
 void Ville::resetVille() {

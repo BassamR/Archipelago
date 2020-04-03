@@ -13,6 +13,7 @@
 void lecture(char* nomFichier);
 void drawCity();
 void deleteCity();
+void saveCity();
 
 class Ville {
 private:
@@ -40,6 +41,7 @@ public:
 
     void drawNodes();
     void drawLinks();
+    void saveVille();
     void resetVille();
 };
 
