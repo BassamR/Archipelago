@@ -34,4 +34,7 @@ bool intersectionCC(Cercle c1, Cercle c2, double safeDistance = 0);
 bool intersectionCS(Cercle c, Cercle s, Cercle t, double safeDistance = 0);
 //safedistance=0 pour la lecture, =dist_min pour l'ajout d'un noeud manuellement
 
+void drawCircle(Cercle c);
+void drawSegment(Coords v1, Coords v2);
+
 #endif

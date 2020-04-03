@@ -67,3 +67,11 @@ bool intersectionCS(Cercle c, Cercle s, Cercle t, double safeDistance) {
         return false;
     }
 }
+
+void drawCircle(Cercle c) {
+    drawCircleG(c.centre.x, c.centre.y, c.rayon);
+}
+
+void drawSegment(Coords v1, Coords v2) {
+    drawSegmentG(v1.x, v1.y, v2.x, v2.y);
+}

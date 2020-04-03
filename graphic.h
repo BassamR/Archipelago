@@ -4,8 +4,9 @@
 #define GRAPHIC_HEADER_H
 
 //uniquement les fonctions de dessin
-void graphic_draw_shape(const int width, const int height, int xc, int yc);
+void makeBgWhite();
 
-void graphicDrawOthergg(int x, int y);
+void drawCircleG(double x, double y, double r);
+void drawSegmentG(double x1, double y1, double x2, double y2);
 
 #endif
