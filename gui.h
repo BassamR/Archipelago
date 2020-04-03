@@ -7,6 +7,8 @@
 #include <gtkmm/label.h>
 #include <gtkmm/frame.h>
 #include <gtkmm/buttonbox.h>
+#include <gtkmm/togglebutton.h>
+#include <gtkmm/radiobutton.h>
 #include <gtkmm/drawingarea.h>
 
 class MyArea: public Gtk::DrawingArea {
@@ -23,17 +25,49 @@ private:
     //stuff
 
 protected:
-    Gtk::Box mBox, mBoxLeft, mBoxRight, mBoxDisplay;
+    Gtk::Box mBox, mBoxLeft, mBoxRight, mBoxDisplay, mBoxEditor;
     MyArea mArea;
 
     Gtk::Frame mFrameCanvas, mFrameGeneral, mFrameDisplay, mFrameEditor, mFrameInformations;
 
-    Gtk::Button mButtonExit, mButtonNew, mButtonOpen, mButtonSave, mButtonShortest, 
-        mButtonZoomIn, mButtonZoomOut, mButtonZoomR, mButtonEditLink;
+    Gtk::Button mButtonExit, mButtonNew, mButtonOpen, mButtonSave, mButtonZoomIn, 
+            mButtonZoomOut, mButtonZoomR;
+
+    Gtk::ToggleButton mTButtonShortest, mTButtonEditLink;
 
     Gtk::Label mLabelENJ, mLabelCI, mLabelMTA, mLabelZoom;
 
     Gtk::ButtonBox mBBGeneral, mBBDisplay, mBBEditor, mBBInformations;
+
+    Gtk::RadioButton mRButtonH, mRButtonT, mRButtonP;
+
+    void onButtonClickExit();
+    void onButtonClickNew();
+    void onButtonClickOpen();
+    void onButtonClickSave();
+    void onButtonClickZoomIn();
+    void onButtonClickZoomOut();
+    void onButtonClickZoomR();
+
+    void onTButtonClickShortest();
+    void onTButtonPressShortest();
+    void onTButtonReleaseShortest(); //maybe make these 2 static?
+
+    void onTButtonClickEditLink();
+    void onTButtonPressEditLink();
+    void onTButtonReleaseEditLink();
+
+    void onRButtonClickH();
+    void onRButtonPressH();
+    void onRButtonReleaseH();
+
+    void onRButtonClickT();
+    void onRButtonPressT();
+    void onRButtonReleaseT();
+
+    void onRButtonClickP();
+    void onRButtonPressP();
+    void onRButtonReleaseP();
 
 public:
     MyGui();
