@@ -42,7 +42,6 @@ bool MyArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     graphic_set_context(cr);
 
     if(not empty) {
-        //graphic_draw_shape(width, height,xc,yc); //placeholder
         makeBgWhite();
         drawCity(); //this function properly draws a city
     } else {
@@ -184,7 +183,6 @@ void MyGui::onButtonClickOpen() {
 void MyGui::onButtonClickSave() {
     cout << "save button clicked" << endl;
     saveCity();
-    //call ville function that prints current info into a file 
 }
 
 void MyGui::onButtonClickZoomIn() {
@@ -254,7 +252,6 @@ void MyGui::onRButtonPressT() {
 void MyGui::onRButtonReleaseT() {
     cout << "transport radiobutton released" << endl;
 }
-
 
 //Production radiobutton 
 void MyGui::onRButtonClickP() {
