@@ -12,14 +12,12 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    int arg = 1;
-    auto app = Gtk::Application::create(arg, argv, "org.gtkmm.example");
+    int fakeArgc = 1; //tricks Gtk into thinking argc=1
+    auto app = Gtk::Application::create(fakeArgc, argv, "org.gtkmm.example");
 
     MyGui archipelagoGui;
 
-    if(argc == 2) {
-        lecture(argv[1]);
-    }
+    if(argc == 2) lecture(argv[1]);
 
     return app->run(archipelagoGui);
 }
