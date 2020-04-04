@@ -45,6 +45,8 @@ public:
     bool testNodeNodeSuperposition(const std::vector<Noeud*> ensemble);
     bool testNodeValidity(const std::vector<Noeud*> ensemble);
 
+    void outputInfo(std::ofstream& str);
+
     virtual void draw() = 0;
 };
 

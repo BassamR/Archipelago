@@ -11,9 +11,6 @@
 #include "noeud.h"
 
 void lecture(char* nomFichier);
-void drawCity();
-void deleteCity();
-void saveCity();
 
 class Ville {
 private:
@@ -44,5 +41,9 @@ public:
     void saveVille();
     void resetVille();
 };
+
+void drawCity();
+void deleteCity();
+void saveCity();
 
 #endif

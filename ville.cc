@@ -18,23 +18,9 @@
 using namespace std;
 
 //Declaration of local variables/functions:
-static void initVille(string line);
 static Ville ville;
+static void initVille(string line);
 static void outputNode(ofstream& str, vector<Noeud*> nodes);
-
-//Functions used by gui:
-void drawCity() {
-    ville.drawLinks();
-    ville.drawNodes();
-}
-
-void deleteCity() {
-    ville.resetVille();
-}
-
-void saveCity() {
-    ville.saveVille();
-}
 
 //Reading/Outputting functions:
 void lecture(char* nomFichier) {
@@ -119,10 +105,12 @@ static void initVille(string line) {
 }
 
 static void outputNode(ofstream& str, vector<Noeud*> nodes) {
+    if(nodes.empty()) return;
+
     for(unsigned int i = 0; i < nodes.size(); ++i) {
-        str << "\t" << nodes[i]->getUid() << " " << nodes[i]->getCoords().x << " ";
-        str << nodes[i]->getCoords().y << " " << nodes[i]->getSize() << "\n";
+        nodes[i]->outputInfo(str);
     }
+    
     str << "\n" << "\n";
 }
 
@@ -327,6 +315,7 @@ void Ville::saveVille() {
             fichier << liens[i][0]->getUid() << " " << liens[i][1]->getUid() << "\n";
         }
     }
+
     fichier.close();
 }
 
@@ -340,4 +329,18 @@ void Ville::resetVille() {
         delete ensembleNoeuds[i];
     }
     ensembleNoeuds.clear();
+}
+
+//Functions used by gui:
+void drawCity() {
+    ville.drawLinks();
+    ville.drawNodes();
+}
+
+void deleteCity() {
+    ville.resetVille();
+}
+
+void saveCity() {
+    ville.saveVille();
 }

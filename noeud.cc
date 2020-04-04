@@ -9,6 +9,7 @@
 #include <cmath>
 #include <string>
 #include <vector>
+#include <fstream>
 #include "noeud.h"
 #include "error.h"
 #include "tools.h"
@@ -73,6 +74,11 @@ vector<Noeud*> Noeud::getLiens() {
 void Noeud::setLiens(Noeud* linkUid) {
     liens.push_back(linkUid);
 }
+
+void Noeud::outputInfo(ofstream& str) {
+    str << "\t" << uid << " " << position.centre.x << " " << position.centre.y << " ";
+    str << size << "\n"; 
+} //writes its uid x y size into a stream
 
 //Error functions (node):
 bool Noeud::testReservedUid() {
