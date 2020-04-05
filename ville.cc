@@ -19,25 +19,33 @@ using namespace std;
 
 //Declaration of local variables/functions:
 static Ville ville;
-static void initVille(string line);
+static void initVille(string line, bool& continueLecture);
 static void outputNode(ofstream& str, vector<Noeud*> nodes);
 
 //Reading/Outputting functions:
 void lecture(char* nomFichier) {
+    ville.resetVille();
+    cout << "lecture called" << endl;
+
+    bool continueLecture = true;
     string line;
     ifstream fichier(nomFichier);
+    
     if(not fichier.fail()) {
-        while(getline(fichier >> ws, line)) {
+        while(getline(fichier >> ws, line) and continueLecture) {
             if(line[0] == '#') continue;
-            initVille(line);
+            initVille(line, continueLecture);
         }
     } else {
         cout << "Lecture du fichier impossible" << endl;
     }
+
+    fichier.close();
 }
 
-static void initVille(string line) {
+static void initVille(string line, bool& continueLecture) {
     istringstream data(line);
+    cout << "initville really called" << endl;
 
     enum EtatLecture {NBH, HOUSING, NBT, TRANSPORT, NBP, PRODUCTION, NBL, LINK, END};
     static int etat(NBH); //etat initial
@@ -93,13 +101,21 @@ static void initVille(string line) {
             data >> uid1 >> uid2; ++i;
             if(not ville.createLien(uid1, uid2)) etat = END;
             if(i == total) {
-                etat = END;
+                etat = NBH;
+                i = 0;
+                total = 0; //resets the static stuff back to original
                 if(ville.testMaxLink() == true) ville.resetVille();
                 else cout << error::success() << endl;
             }
             break;
 
-        case END: break;
+        case END: //when we want to finish with initializing
+            etat = NBH;
+            i = 0;
+            total = 0; //resets static stuff back to original
+            continueLecture = false; //stops lecture from calling initville
+            break;
+        
         default: cout << "Erreur dans la lecture de l'etat" << endl; break;
     }
 }
@@ -123,6 +139,7 @@ bool Ville::createHousing(unsigned int uid, double x, double y, unsigned int siz
         return false;
     } else {
         ensembleNoeuds.push_back(newHouse);
+        cout << "pushback node" << endl;
         return true;
     }
 }
@@ -135,6 +152,8 @@ bool Ville::createProduction(unsigned int uid, double x, double y, unsigned int 
         return false;    
     } else {
         ensembleNoeuds.push_back(newProd);
+                cout << "pushback node" << endl;
+
         return true;
     }
 }
@@ -147,6 +166,8 @@ bool Ville::createTransport(unsigned int uid, double x, double y, unsigned int s
         return false;   
     } else {
         ensembleNoeuds.push_back(newTrans);
+                cout << "pushback node" << endl;
+
         return true;
     }
 }
@@ -156,6 +177,8 @@ bool Ville::createLien(unsigned int uid1, unsigned int uid2) {
         resetVille();
         return false;
      } else {
+                 cout << "pushback link" << endl;
+
         unsigned int index1 = findNoeudIndex(uid1);
         unsigned int index2 = findNoeudIndex(uid2);
         Noeud* noeud1 = ensembleNoeuds[index1];
@@ -279,7 +302,7 @@ void Ville::drawLinks() {
     }
 }
 
-void Ville::saveVille() {
+void Ville::saveVille(string nomFichier) {
     unsigned int nbH(0), nbT(0), nbP(0), nbL(liens.size());
     vector<Noeud*> housingNodes, transportNodes, productionNodes;
 
@@ -296,7 +319,7 @@ void Ville::saveVille() {
         }
     }
 
-    ofstream fichier("savedCity.txt");
+    ofstream fichier(nomFichier);
 
     if(fichier.is_open()) {
         fichier << "#Saved city" << "\n" << "\n";
@@ -320,15 +343,22 @@ void Ville::saveVille() {
 }
 
 void Ville::resetVille() {
+    if(ensembleNoeuds.empty()) {
+        cout << "cannot delete empty city" << endl;
+        return;
+    }
+
     for(unsigned int i = 0; i < liens.size(); ++i) {
         liens[i].clear();
     }
     liens.clear();
+    cout << "deleted links" << endl;
 
     for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
         delete ensembleNoeuds[i];
     }
     ensembleNoeuds.clear();
+    cout << "deleted nodes" << endl;
 }
 
 //Functions used by gui:
@@ -341,6 +371,6 @@ void deleteCity() {
     ville.resetVille();
 }
 
-void saveCity() {
-    ville.saveVille();
+void saveCity(string nomFichier) {
+    ville.saveVille(nomFichier);
 }

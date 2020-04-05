@@ -38,12 +38,12 @@ public:
 
     void drawNodes();
     void drawLinks();
-    void saveVille();
+    void saveVille(std::string nomFichier);
     void resetVille();
 };
 
 void drawCity();
 void deleteCity();
-void saveCity();
+void saveCity(std::string nomFichier);
 
 #endif
