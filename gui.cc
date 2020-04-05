@@ -1,5 +1,9 @@
 #include <iostream>
+#include <string>
 #include <cairomm/context.h>
+// #include <gtkmm/filechooser.h>
+// #include <gtkmm/filechooserdialog.h>
+#include <gtkmm.h>
 #include "gui.h"
 #include "ville.h"
 #include "tools.h"
@@ -31,14 +35,14 @@ void MyArea::refresh() {
 }
 
 bool MyArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
-    Gtk::Allocation allocation = get_allocation();
-    const int width = allocation.get_width();
-    const int height = allocation.get_height();
+    // Gtk::Allocation allocation = get_allocation();
+    // const int width = allocation.get_width();
+    // const int height = allocation.get_height();
 
     // coordinates for the center of the GTKmm window
-    int xc, yc;
-    xc = width / 2;
-    yc = height / 2;
+    // int xc, yc;
+    // xc = width / 2;
+    // yc = height / 2;
     graphic_set_context(cr);
 
     if(not empty) {
@@ -46,8 +50,11 @@ bool MyArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
         drawCity(); //this function properly draws a city
     } else {
         makeBgWhite();
+        deleteCity();
         cout << "canvas cleared!" << endl;
     }
+
+    cout << "ondraw called" << endl;
 
     return true;
 }
@@ -84,9 +91,9 @@ MyGui::MyGui():
     mBox.pack_start(mBoxRight);
 
     //Start canvas
-    mArea.set_size_request(default_drawing_size, default_drawing_size);
+    mArea.set_size_request(800, 800);
     mBoxRight.pack_start(mFrameCanvas, false, false);
-    mFrameCanvas.add(mArea);
+    mFrameCanvas.add(mArea); //if i remove this, Open button works...
 
     //Add general frame
     mBoxLeft.pack_start(mFrameGeneral, false, false);
@@ -175,14 +182,84 @@ void MyGui::onButtonClickNew() {
 
 void MyGui::onButtonClickOpen() {
     cout << "open button clicked" << endl;
-    mArea.draw();
-    //add a ville function that reads a new file
-    //lecture(thatfile.txt)
+    //mArea.clear();
+
+    Gtk::FileChooserDialog dialog("Please choose a file",
+            Gtk::FILE_CHOOSER_ACTION_OPEN);
+    //dialog.set_transient_for(*this); //if i remove this, Open works...
+
+    //Add response buttons the the dialog:
+    dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
+    dialog.add_button("_Open", Gtk::RESPONSE_OK);
+
+    //Show the dialog and wait for a user response:
+    int result = dialog.run();
+
+    //Handle the response:
+    switch(result) {
+        case(Gtk::RESPONSE_OK): {
+            // mArea.clear();
+            // deleteCity();
+            std::cout << "Open clicked." << std::endl;
+
+            //Notice that this is a std::string, not a Glib::ustring.
+            std::string filename = dialog.get_filename();
+            std::cout << "File selected: " <<  filename << std::endl;
+            
+            char* fileChar = const_cast<char*>(filename.c_str());
+            
+            lecture(fileChar); //this does not work!
+            mArea.draw();
+            //delete fileChar;
+            break;
+        }
+
+        case(Gtk::RESPONSE_CANCEL): {
+            std::cout << "Cancel clicked." << std::endl;
+            break;
+        }
+        
+        default: {
+            std::cout << "Unexpected button clicked." << std::endl;
+            break;
+        }
+    }
 }
 
 void MyGui::onButtonClickSave() {
     cout << "save button clicked" << endl;
-    saveCity();
+
+    Gtk::FileChooserDialog dialog("Please choose a file",
+            Gtk::FILE_CHOOSER_ACTION_SAVE);
+    //dialog.set_transient_for(*this); //if i remove this, Open works...
+
+    dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
+    dialog.add_button("_Save", Gtk::RESPONSE_OK);
+
+    int result = dialog.run();
+
+    switch(result) {
+        case(Gtk::RESPONSE_OK): {
+            std::cout << "Save clicked." << std::endl;
+
+            std::string filename = dialog.get_filename();
+            std::cout << "File selected for save: " <<  filename << std::endl;
+            
+            saveCity(filename);
+            break;
+        }
+
+        case(Gtk::RESPONSE_CANCEL): {
+            std::cout << "Cancel clicked." << std::endl;
+            break;
+        }
+
+        default: {
+            std::cout << "Unexpected button clicked." << std::endl;
+            break;
+        }
+    }
+
 }
 
 void MyGui::onButtonClickZoomIn() {

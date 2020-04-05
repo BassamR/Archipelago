@@ -1,15 +1,16 @@
 #ifndef GUI_HEADER_H
 #define GUI_HEADER_H
 
-#include <gtkmm/window.h>
-#include <gtkmm/box.h>
-#include <gtkmm/button.h>
-#include <gtkmm/label.h>
-#include <gtkmm/frame.h>
-#include <gtkmm/buttonbox.h>
-#include <gtkmm/togglebutton.h>
-#include <gtkmm/radiobutton.h>
-#include <gtkmm/drawingarea.h>
+// #include <gtkmm/window.h>
+// #include <gtkmm/box.h>
+// #include <gtkmm/button.h>
+// #include <gtkmm/label.h>
+// #include <gtkmm/frame.h>
+// #include <gtkmm/buttonbox.h>
+// #include <gtkmm/togglebutton.h>
+// #include <gtkmm/radiobutton.h>
+// #include <gtkmm/drawingarea.h>
+#include <gtkmm.h>
 
 class MyArea: public Gtk::DrawingArea {
 private:
