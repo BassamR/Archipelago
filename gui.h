@@ -29,7 +29,12 @@ public:
 
 class MyGui: public Gtk::Window {
 private:
-    //stuff
+    void setupGui();
+    void initGeneral();
+    void initDisplay();
+    void initEditor();
+    void initInformations();
+    void connectButtons();
 
 protected:
     Gtk::Box mBox, mBoxLeft, mBoxRight, mBoxDisplay, mBoxEditor;

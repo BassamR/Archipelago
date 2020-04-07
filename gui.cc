@@ -80,96 +80,25 @@ MyGui::MyGui():
     mBBEditor(Gtk::ORIENTATION_VERTICAL), mBBInformations(Gtk::ORIENTATION_VERTICAL),
 
     mRButtonH("housing"), mRButtonT("transport"), mRButtonP("production") {
-    //Basic definitions
-    set_title("Archipelago");
-    set_border_width(5);
-
-    //Add main box
-    add(mBox);
-
-    //Fill main box
-    mBox.pack_start(mBoxLeft);
-    mBox.pack_start(mBoxRight);
-
-    //Start canvas
-    mArea.set_size_request(default_drawing_size, default_drawing_size);
-    mBoxRight.pack_start(mFrameCanvas, false, false);
-    mFrameCanvas.add(mArea); //if i remove this, Open button works...
+    //General setup
+    setupGui();
 
     //Add general frame
-    mBoxLeft.pack_start(mFrameGeneral, false, false);
-    //add a box here which will contain the buttonbox
-    //Add ButtonBox inside frame
-    mFrameGeneral.add(mBBGeneral);
-    mBBGeneral.set_spacing(5);
-    mBBGeneral.add(mButtonExit);
-    mBBGeneral.add(mButtonNew);
-    mBBGeneral.add(mButtonOpen);
-    mBBGeneral.add(mButtonSave);
+    initGeneral();
 
     //Add Display Frame
-    mBoxLeft.pack_start(mFrameDisplay, false, false);
-    //Add box inside (to be able to put multiple widgets)
-    mFrameDisplay.add(mBoxDisplay);
-    //Add ButtonBox
-    mBoxDisplay.pack_start(mBBDisplay, false, false);
-    mBBDisplay.set_spacing(5);
-    mBBDisplay.add(mTButtonShortest);
-    mBBDisplay.add(mButtonZoomIn);
-    mBBDisplay.add(mButtonZoomOut);
-    mBBDisplay.add(mButtonZoomR);
-    //Add zoom label
-    mBoxDisplay.pack_start(mLabelZoom);
-    mLabelZoom.set_text(string("zoom: ") + string("1.00x")); //temp nonfunctional zoom
+    initDisplay();
 
     //Add Editor Frame
-    mBoxLeft.pack_start(mFrameEditor, false, false);
-    mFrameEditor.add(mBoxEditor);
-    mBoxEditor.pack_start(mTButtonEditLink, false, false);
-    mRButtonT.join_group(mRButtonH);
-    mRButtonP.join_group(mRButtonH); //RadioButtons work in "groups"
-    mBoxEditor.pack_start(mRButtonH);
-    mBoxEditor.pack_start(mRButtonT);
-    mBoxEditor.pack_start(mRButtonP);
-    mRButtonH.set_active();
+    initEditor();
 
     //Add Informations Frame
-    mBoxLeft.pack_start(mFrameInformations, false, false);
-    mFrameInformations.add(mLabelCriteres);
-    mLabelCriteres.set_text(string("ENJ: ") 
-        + to_string(Ville::getVilleInstance()->critereENJ()) + string("\nCI: ") 
-            + to_string(Ville::getVilleInstance()->critereCI()) + string("\nMTA: ") 
-                + to_string(Ville::getVilleInstance()->critereMTA()));
+    initInformations();
 
     //Connect buttons to signal handlers
-    mButtonExit.signal_clicked().connect(sigc::mem_fun(*this,
-                    &MyGui::onButtonClickExit));
-    mButtonNew.signal_clicked().connect(sigc::mem_fun(*this,
-                    &MyGui::onButtonClickNew));
-    mButtonOpen.signal_clicked().connect(sigc::mem_fun(*this,
-                    &MyGui::onButtonClickOpen));
-    mButtonSave.signal_clicked().connect(sigc::mem_fun(*this,
-                    &MyGui::onButtonClickSave));
-    mButtonZoomIn.signal_clicked().connect(sigc::mem_fun(*this,
-                    &MyGui::onButtonClickZoomIn));
-    mButtonZoomOut.signal_clicked().connect(sigc::mem_fun(*this,
-                    &MyGui::onButtonClickZoomOut));
-    mButtonZoomR.signal_clicked().connect(sigc::mem_fun(*this,
-                    &MyGui::onButtonClickZoomR));
+    connectButtons();
 
-    mTButtonShortest.signal_clicked().connect(sigc::mem_fun(*this,
-                    &MyGui::onTButtonClickShortest));
-    mTButtonEditLink.signal_clicked().connect(sigc::mem_fun(*this,
-                    &MyGui::onTButtonClickEditLink));
-    
-    mRButtonH.signal_clicked().connect(sigc::mem_fun(*this,
-                    &MyGui::onRButtonClickH));
-    mRButtonT.signal_clicked().connect(sigc::mem_fun(*this,
-                    &MyGui::onRButtonClickT));
-    mRButtonP.signal_clicked().connect(sigc::mem_fun(*this,
-                    &MyGui::onRButtonClickP));
-
-    //show all
+    //show all widgets
     show_all_children();
 }
 
@@ -208,11 +137,11 @@ void MyGui::onButtonClickOpen() {
         case(Gtk::RESPONSE_OK): {
             // mArea.clear();
             // deleteCity();
-            std::cout << "Open clicked." << std::endl;
+            cout << "Open clicked." << endl;
 
             //Notice that this is a std::string, not a Glib::ustring.
-            std::string filename = dialog.get_filename();
-            std::cout << "File selected: " <<  filename << std::endl;
+            string filename = dialog.get_filename();
+            cout << "File selected: " <<  filename << endl;
             
             char* filenameChar = const_cast<char*>(filename.c_str());
             
@@ -224,12 +153,12 @@ void MyGui::onButtonClickOpen() {
         }
 
         case(Gtk::RESPONSE_CANCEL): {
-            std::cout << "Cancel clicked." << std::endl;
+            cout << "Cancel clicked." << endl;
             break;
         }
 
         default: {
-            std::cout << "Unexpected button clicked." << std::endl;
+            cout << "Unexpected button clicked." << endl;
             break;
         }
     }
@@ -249,22 +178,22 @@ void MyGui::onButtonClickSave() {
 
     switch(result) {
         case(Gtk::RESPONSE_OK): {
-            std::cout << "Save clicked." << std::endl;
+            cout << "Save clicked." << endl;
 
-            std::string filename = dialog.get_filename();
-            std::cout << "File selected for save: " <<  filename << std::endl;
+            string filename = dialog.get_filename();
+            cout << "File selected for save: " <<  filename << endl;
             
             Ville::getVilleInstance()->saveVille(filename);
             break;
         }
 
         case(Gtk::RESPONSE_CANCEL): {
-            std::cout << "Cancel clicked." << std::endl;
+            cout << "Cancel clicked." << endl;
             break;
         }
 
         default: {
-            std::cout << "Unexpected button clicked." << std::endl;
+            cout << "Unexpected button clicked." << endl;
             break;
         }
     }
@@ -361,3 +290,109 @@ void MyGui::refreshCriteres() {
             + to_string(Ville::getVilleInstance()->critereCI()) + string("\nMTA: ") 
                 + to_string(Ville::getVilleInstance()->critereMTA()));
 }
+
+//Private gui methods (to better organize gui constructor):
+void MyGui::setupGui() {
+    //Basic definitions
+    set_title("Archipelago");
+    set_border_width(5);
+
+    //Add main box
+    add(mBox);
+
+    //Fill main box
+    mBox.pack_start(mBoxLeft);
+    mBox.pack_start(mBoxRight);
+
+    //Start canvas
+    mArea.set_size_request(default_drawing_size, default_drawing_size);
+    mBoxRight.pack_start(mFrameCanvas, false, false);
+    mFrameCanvas.add(mArea); //if i remove this, Open button works...
+}
+
+void MyGui::initGeneral() {
+    //Add general frame to box
+    mBoxLeft.pack_start(mFrameGeneral, false, false);
+
+    //add a box here which will contain the buttonbox
+
+    //Add ButtonBox inside frame
+    mFrameGeneral.add(mBBGeneral);
+    mBBGeneral.set_spacing(5);
+
+    mBBGeneral.add(mButtonExit);
+    mBBGeneral.add(mButtonNew);
+    mBBGeneral.add(mButtonOpen);
+    mBBGeneral.add(mButtonSave);
+} //initialize general section of gui
+
+void MyGui::initDisplay() {
+    mBoxLeft.pack_start(mFrameDisplay, false, false);
+
+    //Add box inside (to be able to put multiple widgets)
+    mFrameDisplay.add(mBoxDisplay);
+
+    //Add ButtonBox
+    mBoxDisplay.pack_start(mBBDisplay, false, false);
+    mBBDisplay.set_spacing(5);
+    mBBDisplay.add(mTButtonShortest);
+    mBBDisplay.add(mButtonZoomIn);
+    mBBDisplay.add(mButtonZoomOut);
+    mBBDisplay.add(mButtonZoomR);
+
+    //Add zoom label
+    mBoxDisplay.pack_start(mLabelZoom);
+    mLabelZoom.set_text(string("zoom: ") + string("1.00x")); //temp nonfunctional zoom
+} //initialize dislay section of gui
+
+void MyGui:: initEditor() {
+    mBoxLeft.pack_start(mFrameEditor, false, false);
+    mFrameEditor.add(mBoxEditor);
+
+    mBoxEditor.pack_start(mTButtonEditLink, false, false);
+
+    mRButtonT.join_group(mRButtonH);
+    mRButtonP.join_group(mRButtonH); //RadioButtons work in "groups"
+    mBoxEditor.pack_start(mRButtonH);
+    mBoxEditor.pack_start(mRButtonT);
+    mBoxEditor.pack_start(mRButtonP);
+    mRButtonH.set_active();
+} //initialize editor section of gui
+
+void MyGui::initInformations() {
+    mBoxLeft.pack_start(mFrameInformations, false, false);
+    mFrameInformations.add(mLabelCriteres);
+    mLabelCriteres.set_text(string("ENJ: ") 
+        + to_string(Ville::getVilleInstance()->critereENJ()) + string("\nCI: ") 
+            + to_string(Ville::getVilleInstance()->critereCI()) + string("\nMTA: ") 
+                + to_string(Ville::getVilleInstance()->critereMTA()));
+} //initialize informations section of gui
+
+void MyGui::connectButtons() {
+    mButtonExit.signal_clicked().connect(sigc::mem_fun(*this,
+                    &MyGui::onButtonClickExit));
+    mButtonNew.signal_clicked().connect(sigc::mem_fun(*this,
+                    &MyGui::onButtonClickNew));
+    mButtonOpen.signal_clicked().connect(sigc::mem_fun(*this,
+                    &MyGui::onButtonClickOpen));
+    mButtonSave.signal_clicked().connect(sigc::mem_fun(*this,
+                    &MyGui::onButtonClickSave));
+    mButtonZoomIn.signal_clicked().connect(sigc::mem_fun(*this,
+                    &MyGui::onButtonClickZoomIn));
+    mButtonZoomOut.signal_clicked().connect(sigc::mem_fun(*this,
+                    &MyGui::onButtonClickZoomOut));
+    mButtonZoomR.signal_clicked().connect(sigc::mem_fun(*this,
+                    &MyGui::onButtonClickZoomR));
+
+    mTButtonShortest.signal_clicked().connect(sigc::mem_fun(*this,
+                    &MyGui::onTButtonClickShortest));
+    mTButtonEditLink.signal_clicked().connect(sigc::mem_fun(*this,
+                    &MyGui::onTButtonClickEditLink));
+    
+    mRButtonH.signal_clicked().connect(sigc::mem_fun(*this,
+                    &MyGui::onRButtonClickH));
+    mRButtonT.signal_clicked().connect(sigc::mem_fun(*this,
+                    &MyGui::onRButtonClickT));
+    mRButtonP.signal_clicked().connect(sigc::mem_fun(*this,
+                    &MyGui::onRButtonClickP));
+} //connect buttons to signal handlers
