@@ -19,6 +19,7 @@ private:
 
 public:
     Ville() {}
+    static Ville* getVilleInstance();
 
     bool createHousing(unsigned int uid, double x, double y, unsigned int size);
     bool createProduction(unsigned int uid, double x, double y, unsigned int size);
@@ -40,10 +41,14 @@ public:
     void drawLinks();
     void saveVille(std::string nomFichier);
     void resetVille();
-};
 
-void drawCity();
-void deleteCity();
-void saveCity(std::string nomFichier);
+    double getLinkDistance(unsigned int index);
+    double getLinkCapacity(unsigned int index);
+    double getLinkSpeed(unsigned int index);
+
+    double critereENJ();
+    double critereCI();
+    double critereMTA();
+};
 
 #endif

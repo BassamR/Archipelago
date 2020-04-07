@@ -130,7 +130,12 @@ static void outputNode(ofstream& str, vector<Noeud*> nodes) {
     str << "\n" << "\n";
 }
 
-//Ville functions:
+//To be able to call ville methods outside of an instance
+Ville* Ville::getVilleInstance() {
+    return &ville;
+}
+
+//Ville methods:
 bool Ville::createHousing(unsigned int uid, double x, double y, unsigned int size) {
     Housing* newHouse = new Housing(uid, x, y, size);
 
@@ -280,6 +285,7 @@ bool Ville::testMaxLink() {
     return false;
 } //after creating all links
 
+//Draw, save, reset methods:
 void Ville::drawNodes() {
     if(ensembleNoeuds.empty() == true) {
         cout << "cannot draw empty city" << endl;
@@ -335,6 +341,7 @@ void Ville::saveVille(string nomFichier) {
 
         fichier << nbL << " #nb links" << "\n";
         for(unsigned int i = 0; i < liens.size(); ++i) {
+            fichier << "\t";
             fichier << liens[i][0]->getUid() << " " << liens[i][1]->getUid() << "\n";
         }
     }
@@ -348,11 +355,14 @@ void Ville::resetVille() {
         return;
     }
 
-    for(unsigned int i = 0; i < liens.size(); ++i) {
-        liens[i].clear();
+    if(not liens.empty()){
+        for(unsigned int i = 0; i < liens.size(); ++i) {
+            liens[i].clear();
+        }
+        liens.clear();
+        cout << "deleted links" << endl;
     }
-    liens.clear();
-    cout << "deleted links" << endl;
+    cout << "no links to delete" << endl;
 
     for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
         delete ensembleNoeuds[i];
@@ -361,16 +371,62 @@ void Ville::resetVille() {
     cout << "deleted nodes" << endl;
 }
 
-//Functions used by gui:
-void drawCity() {
-    ville.drawLinks();
-    ville.drawNodes();
+//Link info methods:
+double Ville::getLinkDistance(unsigned int index) {    
+    Vecteur distance;
+    creeVecteur(liens[index][0]->getCoords(), liens[index][1]->getCoords(), distance);
+
+    return norme(distance);
 }
 
-void deleteCity() {
-    ville.resetVille();
+double Ville::getLinkCapacity(unsigned int index) {
+    int size1 = liens[index][0]->getSize();
+    int size2 = liens[index][1]->getSize();
+
+    if(size1 >= size2) return size2;
+    else return size1;
 }
 
-void saveCity(string nomFichier) {
-    ville.saveVille(nomFichier);
+double Ville::getLinkSpeed(unsigned int index) {
+    string type1 = liens[index][0]->getType();
+    string type2 = liens[index][1]->getType();
+
+    if(type1 == "transport" and type2 == "transport") return fast_speed;
+    
+    return default_speed;
+}
+
+//Ville criterias:
+double Ville::critereENJ() {
+    if(ensembleNoeuds.empty()) return 0;
+
+    double nbpH(0), nbpT(0), nbpP(0); //population de chaque type de quartier
+
+    for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
+        if(ensembleNoeuds[i]->getType() == "housing") {
+            nbpH += ensembleNoeuds[i]->getSize();
+        } else if(ensembleNoeuds[i]->getType() == "transport") {
+            nbpT += ensembleNoeuds[i]->getSize();
+        } else { 
+            nbpP += ensembleNoeuds[i]->getSize();
+        }
+    }
+
+    return (nbpH - (nbpT + nbpP)) / (nbpH + nbpT + nbpP); //return value of ENJ
+}
+
+double Ville::critereCI() {
+    if(liens.size() == 0) return 0;
+
+    double ci = 0;
+
+    for(unsigned int i = 0; i < liens.size(); ++i) {
+        ci += getLinkDistance(i)*getLinkCapacity(i)*getLinkSpeed(i);
+    }
+
+    return ci;
+}
+
+double Ville::critereMTA() {
+    return 0;
 }
