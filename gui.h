@@ -1,16 +1,15 @@
 #ifndef GUI_HEADER_H
 #define GUI_HEADER_H
 
-// #include <gtkmm/window.h>
-// #include <gtkmm/box.h>
-// #include <gtkmm/button.h>
-// #include <gtkmm/label.h>
-// #include <gtkmm/frame.h>
-// #include <gtkmm/buttonbox.h>
-// #include <gtkmm/togglebutton.h>
-// #include <gtkmm/radiobutton.h>
-// #include <gtkmm/drawingarea.h>
-#include <gtkmm.h>
+#include <gtkmm/window.h>
+#include <gtkmm/box.h>
+#include <gtkmm/button.h>
+#include <gtkmm/label.h>
+#include <gtkmm/frame.h>
+#include <gtkmm/buttonbox.h>
+#include <gtkmm/togglebutton.h>
+#include <gtkmm/radiobutton.h>
+#include <gtkmm/drawingarea.h>
 
 class MyArea: public Gtk::DrawingArea {
 private:
@@ -43,7 +42,7 @@ protected:
 
     Gtk::ToggleButton mTButtonShortest, mTButtonEditLink;
 
-    Gtk::Label mLabelENJ, mLabelCI, mLabelMTA, mLabelZoom;
+    Gtk::Label mLabelCriteres, mLabelZoom;
 
     Gtk::ButtonBox mBBGeneral, mBBDisplay, mBBEditor, mBBInformations;
 
@@ -80,6 +79,8 @@ protected:
 public:
     MyGui();
     virtual ~MyGui();
+
+    void refreshCriteres();
 };
 
 #endif

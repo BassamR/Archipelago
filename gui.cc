@@ -1,9 +1,8 @@
 #include <iostream>
 #include <string>
 #include <cairomm/context.h>
-// #include <gtkmm/filechooser.h>
-// #include <gtkmm/filechooserdialog.h>
-#include <gtkmm.h>
+#include <gtkmm/filechooser.h>
+#include <gtkmm/filechooserdialog.h>
 #include "gui.h"
 #include "ville.h"
 #include "tools.h"
@@ -47,10 +46,14 @@ bool MyArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
 
     if(not empty) {
         makeBgWhite();
-        drawCity(); //this function properly draws a city
+
+        Ville::getVilleInstance()->drawLinks();
+        Ville::getVilleInstance()->drawNodes(); //draws the city
+        //MyGui::refreshCriteres(); //find a way to refresh criteres 
+    
     } else {
         makeBgWhite();
-        deleteCity();
+        Ville::getVilleInstance()->resetVille();
         cout << "canvas cleared!" << endl;
     }
 
@@ -73,8 +76,6 @@ MyGui::MyGui():
 
     mTButtonShortest("shortest path"), mTButtonEditLink("edit link"),
 
-    mLabelENJ("ENJ: \nCI: \nMTA: "), mLabelZoom("zoom:"),
-
     mBBGeneral(Gtk::ORIENTATION_VERTICAL), mBBDisplay(Gtk::ORIENTATION_VERTICAL), 
     mBBEditor(Gtk::ORIENTATION_VERTICAL), mBBInformations(Gtk::ORIENTATION_VERTICAL),
 
@@ -91,12 +92,13 @@ MyGui::MyGui():
     mBox.pack_start(mBoxRight);
 
     //Start canvas
-    mArea.set_size_request(800, 800);
+    mArea.set_size_request(default_drawing_size, default_drawing_size);
     mBoxRight.pack_start(mFrameCanvas, false, false);
     mFrameCanvas.add(mArea); //if i remove this, Open button works...
 
     //Add general frame
     mBoxLeft.pack_start(mFrameGeneral, false, false);
+    //add a box here which will contain the buttonbox
     //Add ButtonBox inside frame
     mFrameGeneral.add(mBBGeneral);
     mBBGeneral.set_spacing(5);
@@ -118,6 +120,7 @@ MyGui::MyGui():
     mBBDisplay.add(mButtonZoomR);
     //Add zoom label
     mBoxDisplay.pack_start(mLabelZoom);
+    mLabelZoom.set_text(string("zoom: ") + string("1.00x")); //temp nonfunctional zoom
 
     //Add Editor Frame
     mBoxLeft.pack_start(mFrameEditor, false, false);
@@ -132,7 +135,11 @@ MyGui::MyGui():
 
     //Add Informations Frame
     mBoxLeft.pack_start(mFrameInformations, false, false);
-    mFrameInformations.add(mLabelENJ);
+    mFrameInformations.add(mLabelCriteres);
+    mLabelCriteres.set_text(string("ENJ: ") 
+        + to_string(Ville::getVilleInstance()->critereENJ()) + string("\nCI: ") 
+            + to_string(Ville::getVilleInstance()->critereCI()) + string("\nMTA: ") 
+                + to_string(Ville::getVilleInstance()->critereMTA()));
 
     //Connect buttons to signal handlers
     mButtonExit.signal_clicked().connect(sigc::mem_fun(*this,
@@ -175,7 +182,8 @@ void MyGui::onButtonClickExit() {
 }
 
 void MyGui::onButtonClickNew() {
-    deleteCity();
+    Ville::getVilleInstance()->resetVille();
+    refreshCriteres();
     cout << "new button clicked" << endl;
     mArea.clear();
 }
@@ -206,11 +214,12 @@ void MyGui::onButtonClickOpen() {
             std::string filename = dialog.get_filename();
             std::cout << "File selected: " <<  filename << std::endl;
             
-            char* fileChar = const_cast<char*>(filename.c_str());
+            char* filenameChar = const_cast<char*>(filename.c_str());
             
-            lecture(fileChar); //this does not work!
+            lecture(filenameChar);
+            refreshCriteres();
             mArea.draw();
-            //delete fileChar;
+            //delete filenameChar;
             break;
         }
 
@@ -218,7 +227,7 @@ void MyGui::onButtonClickOpen() {
             std::cout << "Cancel clicked." << std::endl;
             break;
         }
-        
+
         default: {
             std::cout << "Unexpected button clicked." << std::endl;
             break;
@@ -245,7 +254,7 @@ void MyGui::onButtonClickSave() {
             std::string filename = dialog.get_filename();
             std::cout << "File selected for save: " <<  filename << std::endl;
             
-            saveCity(filename);
+            Ville::getVilleInstance()->saveVille(filename);
             break;
         }
 
@@ -343,4 +352,12 @@ void MyGui::onRButtonPressP() {
 
 void MyGui::onRButtonReleaseP() {
     cout << "production radiobutton released" << endl;
+}
+
+//Misc MyGui methods:
+void MyGui::refreshCriteres() {
+    mLabelCriteres.set_text(string("ENJ: ") 
+        + to_string(Ville::getVilleInstance()->critereENJ()) + string("\nCI: ") 
+            + to_string(Ville::getVilleInstance()->critereCI()) + string("\nMTA: ") 
+                + to_string(Ville::getVilleInstance()->critereMTA()));
 }
