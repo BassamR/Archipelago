@@ -93,7 +93,10 @@ static void initVille(string line, bool& continueLecture) {
 
         case NBL:
             data >> total; i = 0;
-            if(total == 0) etat = END;
+            if(total == 0) {
+                etat = END;
+                cout << error::success() << endl;
+            }
             else etat = LINK;
             break;
 
