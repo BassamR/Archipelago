@@ -43,10 +43,11 @@ void drawCircleG(double a, double b, double c) {
     double r = changeCoordsR(c);
 
     (*ptcr)->set_line_width(2.0);
+    (*ptcr)->set_source_rgb(0.0, 0.0, 0.0);
 
     (*ptcr)->save();
     (*ptcr)->arc(x, y, r, 0.0, 2 * M_PI);
-    (*ptcr)->set_source_rgb(1, 1, 1);
+    (*ptcr)->set_source_rgb(1.0, 1.0, 1.0);
     (*ptcr)->fill_preserve();
 
     (*ptcr)->restore();
