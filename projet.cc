@@ -15,9 +15,9 @@ int main(int argc, char* argv[]) {
     int fakeArgc = 1; //tricks Gtk into thinking argc=1
     auto app = Gtk::Application::create(fakeArgc, argv, "org.gtkmm.example");
 
-    MyGui archipelagoGui;
-
     if(argc == 2) lecture(argv[1]);
+
+    MyGui archipelagoGui;
 
     return app->run(archipelagoGui);
 }
