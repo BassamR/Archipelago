@@ -306,6 +306,7 @@ void Ville::drawLinks() {
         return;
     }
 
+    setColor(BLACK);
     for(unsigned int i = 0; i < liens.size(); ++i) {
         drawSegment(liens[i][0]->getCoords(), liens[i][1]->getCoords());
     }
@@ -380,7 +381,7 @@ double Ville::getLinkDistance(unsigned int index) {
     creeVecteur(liens[index][0]->getCoords(), liens[index][1]->getCoords(), distance);
 
     return norme(distance);
-}
+} //surcharger cette fonction ? getLinkDistance(int uid1, int uid2);
 
 double Ville::getLinkCapacity(unsigned int index) {
     int size1 = liens[index][0]->getSize();

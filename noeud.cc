@@ -16,7 +16,7 @@
 #include "constantes.h"
 using namespace std;
 
-//Constructors:
+//Constructors & destructor:
 Noeud::Noeud(unsigned int uid, double x, double y, unsigned int size):
     uid(uid), size(size) {
     position.centre.x = x; position.centre.y = y; position.rayon = sqrt(size);
@@ -34,7 +34,12 @@ Production::Production(unsigned int uid, double x, double y, unsigned int size):
     Noeud(uid, x, y, size) {
 }
 
-Noeud::~Noeud() {}
+Noeud::~Noeud() {
+    //Ville: delete ensembleNoeuds[i]; (delete calls this destructor)
+    //Ville: then swap and pop_back to properly remove from main vector
+    //Destructor (for rendu 3):
+    //remove node from its neighbors' list of connections
+}
 
 //General methods:
 unsigned int Noeud::getUid() {
@@ -156,6 +161,8 @@ string Housing::getType() {
 
 void Housing::draw() {
     cout << "housing draw called" << endl;
+    setColor(BLACK);
+    
     drawCircle(position);
 }
 
@@ -172,6 +179,8 @@ string Transport::getType() {
 
 void Transport::draw() {
     cout << "transport draw called" << endl;
+    setColor(BLACK);
+
     drawCircle(position);
     double x = position.centre.x;
     double y = position.centre.y;
@@ -202,6 +211,8 @@ string Production::getType() {
 
 void Production::draw() {
     cout << "production draw called" << endl;
+    setColor(BLACK);
+
     drawCircle(position);
     double x = position.centre.x;
     double y = position.centre.y;
