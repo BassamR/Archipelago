@@ -67,6 +67,22 @@ bool intersectionCS(Cercle c, Cercle s, Cercle t, double safeDistance) {
     }
 }
 
+//draw functinons
+void setColor(Color couleur) {
+    switch(couleur) {
+        case BLACK:
+            setColorG(BLACK);
+            break;
+        case RED:
+            setColorG(RED);
+            break;
+        case GREEN:
+            setColorG(GREEN);
+            break;
+        default: break;
+    }
+}
+
 void drawCircle(Cercle c) {
     drawCircleG(c.centre.x, c.centre.y, c.rayon);
 }

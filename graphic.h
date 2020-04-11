@@ -6,6 +6,8 @@
 //uniquement les fonctions de dessin
 void makeBgWhite();
 
+void setColorG(int couleur);
+
 void drawCircleG(double x, double y, double r);
 void drawSegmentG(double x1, double y1, double x2, double y2);
 
