@@ -27,7 +27,7 @@ void lecture(char* nomFichier) {
     ville.resetVille();
     cout << "lecture called" << endl;
 
-    bool continueLecture = true;
+    bool continueLecture(true);
     string line;
     ifstream fichier(nomFichier);
     
@@ -93,8 +93,10 @@ static void initVille(string line, bool& continueLecture) {
 
         case NBL:
             data >> total; i = 0;
-            if(total == 0) {
-                etat = END;
+            if(total == 0) { //no links -> success because all nodes so far are ok
+                etat = NBH;
+                i = 0;
+                total = 0; //reset static stuff back to original
                 cout << error::success() << endl;
             }
             else etat = LINK;
@@ -106,16 +108,16 @@ static void initVille(string line, bool& continueLecture) {
             if(i == total) {
                 etat = NBH;
                 i = 0;
-                total = 0; //resets the static stuff back to original
+                total = 0; //reset static stuff back to original
                 if(ville.testMaxLink() == true) ville.resetVille();
                 else cout << error::success() << endl;
             }
             break;
 
-        case END: //when we want to finish with initializing
+        case END: //stops initVille because of an error in the file
             etat = NBH;
             i = 0;
-            total = 0; //resets static stuff back to original
+            total = 0; //reset static stuff back to original
             continueLecture = false; //stops lecture from calling initville
             break;
         
