@@ -434,5 +434,26 @@ double Ville::critereCI() {
 }
 
 double Ville::critereMTA() {
-    return 0;
+    double mta(0), mtaCount(0);
+    int nbH(0);
+
+    for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
+        if(ensembleNoeuds[i]->getType() == "housing") {
+            ++nbH;
+
+            ensembleNoeuds[i]->dijkstra(ensembleNoeuds, "production");
+            ensembleNoeuds[i]->dijkstra(ensembleNoeuds, "transport");
+
+            cout << "mtaHP for one node: " << ensembleNoeuds[i]->mtaHP() << endl;
+            cout << "mtaHT for one node: " << ensembleNoeuds[i]->mtaHT() << endl;
+
+            mtaCount += ensembleNoeuds[i]->mtaHP() + ensembleNoeuds[i]->mtaHT();
+        }
+    }
+
+    if(nbH == 0) return 0; //cannot make an average on 0 nodes
+
+    mta = mtaCount/nbH;
+
+    return mta;
 }
