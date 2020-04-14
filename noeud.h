@@ -18,6 +18,10 @@ protected:
     Cercle position; //contient les coords du centre + le rayon
     std::vector<Noeud*> liens; //liste des adresses des noeuds voisins
 
+    bool in;
+    unsigned int parent;
+    double access;
+
 public:
     Noeud(unsigned int uid, double x, double y, unsigned int size);
     virtual ~Noeud();
@@ -35,8 +39,19 @@ public:
     unsigned int getSize();
     void setSize(unsigned int x);
 
-    std::vector<Noeud*> getLiens();
+    std::vector<Noeud*> getLiens() const;
     void setLiens(Noeud* linkUid);
+
+    bool getIn();
+    void setIn(bool value);
+
+    unsigned int getParent();
+    void setParent(unsigned int value);
+
+    double getAccess();
+    void setAccess(double value);
+
+    void outputInfo(std::ofstream& str);
 
     bool testReservedUid();
     bool testCapacityProblem();
@@ -45,12 +60,21 @@ public:
     bool testNodeNodeSuperposition(const std::vector<Noeud*> ensemble);
     bool testNodeValidity(const std::vector<Noeud*> ensemble);
 
-    void outputInfo(std::ofstream& str);
-
     virtual void draw() = 0;
+
+    virtual void dijkstra(std::vector<Noeud*>& tn, std::string nodeType); //check conventions if i can keep it majuscule
+
+    virtual void updateShortestPath(std::vector<Noeud*> ensemble, unsigned int goal, std::string type);
+
+    virtual double mtaHP();
+    virtual double mtaHT();
 };
 
 class Housing: public Noeud {
+protected:
+    std::vector<Noeud*> shortestPathToProd;
+    std::vector<Noeud*> shortestPathToTrans;
+
 public:
     Housing(unsigned int uid, double x, double y, unsigned int size);
 
@@ -58,6 +82,13 @@ public:
     void draw();
 
     bool testMaxLink();
+
+    void dijkstra(std::vector<Noeud*>& tn, std::string nodeType); //check conventions if i can keep it majuscule
+
+    void updateShortestPath(const std::vector<Noeud*>& ensemble, unsigned int goal, std::string type);
+
+    double mtaHP();
+    double mtaHT();
 };
 
 class Transport: public Noeud {
