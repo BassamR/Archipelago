@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <cairomm/context.h>
 #include <gtkmm/filechooser.h>
 #include <gtkmm/filechooserdialog.h>
@@ -9,6 +10,9 @@
 #include "graphic_gui.h"
 #include "constantes.h"
 using namespace std;
+
+//Static functions
+static string convertCritereToString(const double& critere);
 
 //MyArea class definition:
 MyArea::MyArea(): empty(false) {}
@@ -123,7 +127,8 @@ void MyGui::onButtonClickOpen() {
 
     Gtk::FileChooserDialog dialog("Please choose a file",
             Gtk::FILE_CHOOSER_ACTION_OPEN);
-    //dialog.set_transient_for(*this); //if i remove this, Open works...
+    //dialog.set_transient_for(*this); 
+    //if i remove this, Open works on windows but not on VM
 
     //Add response buttons the the dialog:
     dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
@@ -285,10 +290,12 @@ void MyGui::onRButtonReleaseP() {
 
 //Misc MyGui methods:
 void MyGui::refreshCriteres() {
-    mLabelCriteres.set_text(string("ENJ: ") 
-        + to_string(Ville::getVilleInstance()->critereENJ()) + string("\nCI: ") 
-            + to_string(Ville::getVilleInstance()->critereCI()) + string("\nMTA: ") 
-                + to_string(Ville::getVilleInstance()->critereMTA()));
+    string enj = convertCritereToString(Ville::getVilleInstance()->critereENJ());
+    string ci = convertCritereToString(Ville::getVilleInstance()->critereCI());
+    string mta = convertCritereToString(Ville::getVilleInstance()->critereMTA());
+
+    mLabelCriteres.set_text(string("ENJ: ") + enj + string("\nCI: ") + ci 
+            + string("\nMTA: ") + mta);
 }
 
 //Private gui methods (to better organize gui constructor):
@@ -362,10 +369,13 @@ void MyGui:: initEditor() {
 void MyGui::initInformations() {
     mBoxLeft.pack_start(mFrameInformations, false, false);
     mFrameInformations.add(mLabelCriteres);
-    mLabelCriteres.set_text(string("ENJ: ") 
-        + to_string(Ville::getVilleInstance()->critereENJ()) + string("\nCI: ") 
-            + to_string(Ville::getVilleInstance()->critereCI()) + string("\nMTA: ") 
-                + to_string(Ville::getVilleInstance()->critereMTA()));
+
+    string enj = convertCritereToString(Ville::getVilleInstance()->critereENJ());
+    string ci = convertCritereToString(Ville::getVilleInstance()->critereCI());
+    string mta = convertCritereToString(Ville::getVilleInstance()->critereMTA());
+
+    mLabelCriteres.set_text(string("ENJ: ") + enj + string("\nCI: ") + ci 
+            + string("\nMTA: ") + mta);
 } //initialize informations section of gui
 
 void MyGui::connectButtons() {
@@ -396,3 +406,10 @@ void MyGui::connectButtons() {
     mRButtonP.signal_clicked().connect(sigc::mem_fun(*this,
                     &MyGui::onRButtonClickP));
 } //connect buttons to signal handlers
+
+//Static functions definition
+string convertCritereToString(const double& critere) {
+    stringstream temp;
+    temp << critere;
+    return temp.str();
+}
