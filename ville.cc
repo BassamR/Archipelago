@@ -25,7 +25,6 @@ static void outputNode(ofstream& str, vector<Noeud*> nodes);
 //Reading/Outputting functions:
 void lecture(char* nomFichier) {
     ville.resetVille();
-    cout << "lecture called" << endl;
 
     bool continueLecture(true);
     string line;
@@ -45,7 +44,6 @@ void lecture(char* nomFichier) {
 
 static void initVille(string line, bool& continueLecture) {
     istringstream data(line);
-    cout << "initville really called" << endl;
 
     enum EtatLecture {NBH, HOUSING, NBT, TRANSPORT, NBP, PRODUCTION, NBL, LINK, END};
     static int etat(NBH); //etat initial
@@ -149,7 +147,6 @@ bool Ville::createHousing(unsigned int uid, double x, double y, unsigned int siz
         return false;
     } else {
         ensembleNoeuds.push_back(newHouse);
-        cout << "pushback node" << endl;
         return true;
     }
 }
@@ -162,8 +159,6 @@ bool Ville::createProduction(unsigned int uid, double x, double y, unsigned int 
         return false;    
     } else {
         ensembleNoeuds.push_back(newProd);
-                cout << "pushback node" << endl;
-
         return true;
     }
 }
@@ -176,8 +171,6 @@ bool Ville::createTransport(unsigned int uid, double x, double y, unsigned int s
         return false;   
     } else {
         ensembleNoeuds.push_back(newTrans);
-                cout << "pushback node" << endl;
-
         return true;
     }
 }
@@ -187,16 +180,16 @@ bool Ville::createLien(unsigned int uid1, unsigned int uid2) {
         resetVille();
         return false;
      } else {
-                 cout << "pushback link" << endl;
-
         unsigned int index1 = findNoeudIndex(uid1);
         unsigned int index2 = findNoeudIndex(uid2);
         Noeud* noeud1 = ensembleNoeuds[index1];
         Noeud* noeud2 = ensembleNoeuds[index2];
 
         liens.push_back(vector<Noeud*>{noeud1, noeud2});
-        ensembleNoeuds[index1]->setLiens(ensembleNoeuds[index2]);
-        ensembleNoeuds[index2]->setLiens(ensembleNoeuds[index1]);
+        // ensembleNoeuds[index1]->setLiens(ensembleNoeuds[index2]);
+        // ensembleNoeuds[index2]->setLiens(ensembleNoeuds[index1]);
+        noeud1->setLiens(noeud2);
+        noeud2->setLiens(noeud1);
         return true;
     }
 }
@@ -296,6 +289,8 @@ void Ville::drawNodes() {
         cout << "cannot draw empty city" << endl;
         return;
     }
+
+    setColor(BLACK);
 
     for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
         ensembleNoeuds[i]->draw();
@@ -435,7 +430,7 @@ double Ville::critereCI() {
 
 double Ville::critereMTA() {
     double mta(0), mtaCount(0);
-    int nbH(0);
+    double nbH(0);
 
     for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
         if(ensembleNoeuds[i]->getType() == "housing") {
@@ -444,10 +439,11 @@ double Ville::critereMTA() {
             ensembleNoeuds[i]->dijkstra(ensembleNoeuds, "production");
             ensembleNoeuds[i]->dijkstra(ensembleNoeuds, "transport");
 
-            cout << "mtaHP for one node: " << ensembleNoeuds[i]->mtaHP() << endl;
-            cout << "mtaHT for one node: " << ensembleNoeuds[i]->mtaHT() << endl;
+            //cout << "mtaHP for one node: " << ensembleNoeuds[i]->mtaHP() << endl;
+            //cout << "mtaHT for one node: " << ensembleNoeuds[i]->mtaHT() << endl;
 
             mtaCount += ensembleNoeuds[i]->mtaHP() + ensembleNoeuds[i]->mtaHT();
+            cout << "mtacount so far: " << mtaCount << endl;
         }
     }
 
@@ -455,5 +451,68 @@ double Ville::critereMTA() {
 
     mta = mtaCount/nbH;
 
+    cout << "ville returning this for mta: " << mta << endl;
+
     return mta;
+}
+
+void Ville::tempDrawColor() {
+    unsigned int n = 0;
+    //vector<Noeud*> pathProd = ensembleNoeuds[n]->getShortestProd();
+    //vector<Noeud*> pathTrans = ensembleNoeuds[n]->getShortestTrans();
+
+    // cout << "prod parent path: ";
+    // for(unsigned int i = 0; i < pathProd.size(); ++i) {
+    //     cout << findNoeudIndex(pathProd[i]->getUid()) << " ";
+    // }
+    // cout << endl;
+
+    // cout << "trans parent path: ";
+    // for(unsigned int i = 0; i < pathTrans.size(); ++i) {
+    //     cout << findNoeudIndex(pathTrans[i]->getUid()) << " ";
+    // }
+    // cout << endl;
+
+    setColor(GREEN);
+    //drawSegment(pathTrans.back()->getCoords(), ensembleNoeuds[n]->getCoords());
+
+    if(ensembleNoeuds[n]->getShortestProd().empty()) {
+        cout << "pathprod empty" << endl;
+    } else {
+        vector<Noeud*> pathProd = ensembleNoeuds[n]->getShortestProd();
+        for(unsigned int i = 0; i < pathProd.size()-1; ++i) {
+            drawSegment(pathProd[i]->getCoords(), pathProd[i+1]->getCoords());
+        }
+    }
+
+    if(ensembleNoeuds[n]->getShortestTrans().empty()) {
+        cout << "pathprod empty" << endl;
+    } else {
+        vector<Noeud*> pathTrans = ensembleNoeuds[n]->getShortestTrans();
+        for(unsigned int i = 0; i < pathTrans.size()-1; ++i) {
+            drawSegment(pathTrans[i]->getCoords(), pathTrans[i+1]->getCoords());
+        }
+    }
+
+    if(ensembleNoeuds[n]->getShortestProd().empty()) {
+        cout << "pathprod empty" << endl;
+    } else {
+        vector<Noeud*> pathProd = ensembleNoeuds[n]->getShortestProd();
+        for(unsigned int i = 0; i < pathProd.size(); ++i) {
+            pathProd[i]->draw();
+        }
+    }
+
+    if(ensembleNoeuds[n]->getShortestTrans().empty()) {
+        cout << "pathprod empty" << endl;
+    } else {
+        vector<Noeud*> pathTrans = ensembleNoeuds[n]->getShortestTrans();
+        for(unsigned int i = 0; i < pathTrans.size(); ++i) {
+            pathTrans[i]->draw();
+        }
+    }
+
+    setColor(RED);
+    ensembleNoeuds[n]->draw();
+
 }

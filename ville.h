@@ -42,6 +42,8 @@ public:
     void saveVille(std::string nomFichier);
     void resetVille();
 
+    void tempDrawColor();
+
     double getLinkDistance(unsigned int index);
     double getLinkCapacity(unsigned int index);
     double getLinkSpeed(unsigned int index);
