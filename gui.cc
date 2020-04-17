@@ -53,6 +53,7 @@ bool MyArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
 
         Ville::getVilleInstance()->drawLinks();
         Ville::getVilleInstance()->drawNodes(); //draws the city
+        Ville::getVilleInstance()->tempDrawColor();
         //MyGui::refreshCriteres(); //find a way to refresh criteres 
     
     } else {
@@ -352,7 +353,7 @@ void MyGui::initDisplay() {
     mLabelZoom.set_text(string("zoom: ") + string("1.00x")); //temp nonfunctional zoom
 } //initialize dislay section of gui
 
-void MyGui:: initEditor() {
+void MyGui::initEditor() {
     mBoxLeft.pack_start(mFrameEditor, false, false);
     mFrameEditor.add(mBoxEditor);
 
