@@ -19,7 +19,7 @@ protected:
     std::vector<Noeud*> liens; //liste des adresses des noeuds voisins
 
     bool in;
-    unsigned int parent;
+    Noeud* parent;
     double access;
 
 public:
@@ -39,14 +39,14 @@ public:
     unsigned int getSize();
     void setSize(unsigned int x);
 
-    std::vector<Noeud*> getLiens() const;
+    std::vector<Noeud*> getLiens();
     void setLiens(Noeud* linkUid);
 
     bool getIn();
     void setIn(bool value);
 
-    unsigned int getParent();
-    void setParent(unsigned int value);
+    Noeud* getParent();
+    void setParent(Noeud* value);
 
     double getAccess();
     void setAccess(double value);
@@ -62,12 +62,16 @@ public:
 
     virtual void draw() = 0;
 
-    virtual void dijkstra(std::vector<Noeud*>& tn, std::string nodeType); //check conventions if i can keep it majuscule
+    virtual void dijkstra(std::vector<Noeud*>& tn, std::string nodeType);
 
-    virtual void updateShortestPath(std::vector<Noeud*> ensemble, unsigned int goal, std::string type);
+    virtual void updateShortestPathToProd(std::vector<Noeud*>& ensemble, Noeud* goal);
+    virtual void updateShortestPathToTrans(std::vector<Noeud*>& ensemble, Noeud* goal);
 
     virtual double mtaHP();
     virtual double mtaHT();
+
+    virtual std::vector<Noeud*> getShortestProd();
+    virtual std::vector<Noeud*> getShortestTrans();
 };
 
 class Housing: public Noeud {
@@ -83,9 +87,13 @@ public:
 
     bool testMaxLink();
 
+    std::vector<Noeud*> getShortestProd();
+    std::vector<Noeud*> getShortestTrans();
+
     void dijkstra(std::vector<Noeud*>& tn, std::string nodeType); //check conventions if i can keep it majuscule
 
-    void updateShortestPath(const std::vector<Noeud*>& ensemble, unsigned int goal, std::string type);
+    void updateShortestPathToProd(std::vector<Noeud*>& ensemble, Noeud* goal);
+    void updateShortestPathToTrans(std::vector<Noeud*>& ensemble, Noeud* goal);
 
     double mtaHP();
     double mtaHT();

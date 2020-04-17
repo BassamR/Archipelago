@@ -24,10 +24,9 @@ static bool tnEmpty(const vector<Noeud*>& tn);
 static unsigned int findMinAccess(const vector<unsigned int>& ta, const vector<Noeud*>& tn);
 static double linkValue(Noeud* noeud1, Noeud* noeud2);
 
-
 //Constructors & destructor:
 Noeud::Noeud(unsigned int uid, double x, double y, unsigned int size):
-    uid(uid), size(size), in(true), parent(no_link), access(infinite_time) {
+    uid(uid), size(size), in(true), parent(nullptr), access(infinite_time) {
     position.centre.x = x; position.centre.y = y; position.rayon = sqrt(size);
 }
 
@@ -81,7 +80,7 @@ void Noeud::setSize(unsigned int x) {
     size = x;
 }
 
-vector<Noeud*> Noeud::getLiens() const {
+vector<Noeud*> Noeud::getLiens() {
     return liens;
 }
 
@@ -97,11 +96,11 @@ void Noeud::setIn(bool value) {
     in = value;
 }
 
-unsigned int Noeud::getParent() {
+Noeud* Noeud::getParent() {
     return parent;
 }
 
-void Noeud::setParent(unsigned int value) {
+void Noeud::setParent(Noeud* value) {
     parent = value;
 }
 
@@ -128,12 +127,12 @@ bool Noeud::testReservedUid() {
 }
 
 bool Noeud::testCapacityProblem() {
-    if(getSize() < min_capacity) {
+    if(size < min_capacity) {
         cout << error::too_little_capacity(getSize()) << endl;
         return true;
     }
 
-    if(getSize() > max_capacity) {
+    if(size > max_capacity) {
         cout << error::too_much_capacity(getSize()) << endl;
         return true;
     }
@@ -187,12 +186,16 @@ bool Noeud::testNodeValidity(const vector<Noeud*> ensemble) {
     return true;
 } //runs before creating a node
 
-void Noeud::dijkstra(std::vector<Noeud*>& tn, std::string nodeType) {
+void Noeud::dijkstra(vector<Noeud*>& tn, string nodeType) {
     return;
 }
 
-void Noeud::updateShortestPath(vector<Noeud*> ensemble, unsigned int goal, string type) {
-    return;   
+void Noeud::updateShortestPathToProd(vector<Noeud*>& ensemble, Noeud* goal) {
+    return;
+}
+
+void Noeud::updateShortestPathToTrans(vector<Noeud*>& ensemble, Noeud* goal) {
+    return;
 }
 
 double Noeud::mtaHP() {
@@ -203,6 +206,16 @@ double Noeud::mtaHT() {
     return 0;
 }
 
+vector<Noeud*> Noeud::getShortestProd() {
+    vector<Noeud*> empty;
+    return empty;
+}
+
+vector<Noeud*> Noeud::getShortestTrans() {
+    vector<Noeud*> empty;
+    return empty;
+}
+
 //Housing methods:
 string Housing::getType() {
     return "housing";
@@ -210,7 +223,7 @@ string Housing::getType() {
 
 void Housing::draw() {
     cout << "housing draw called" << endl;
-    setColor(BLACK);
+    //setColor(BLACK);
     
     drawCircle(position);
 }
@@ -221,62 +234,56 @@ bool Housing::testMaxLink() {
     return false;
 }
 
+vector<Noeud*> Housing::getShortestProd() {
+    return shortestPathToProd;
+}
+
+vector<Noeud*> Housing::getShortestTrans() {
+    return shortestPathToTrans;
+}
+
 void Housing::dijkstra(vector<Noeud*>& tn, string nodeType) {
-    cout << "dijkstra called on a node" << endl;
     //initialize
     for(unsigned int i = 0; i < tn.size(); ++i) {
         tn[i]->setIn(true);
         tn[i]->setAccess(infinite_time);
-        tn[i]->setParent(no_link);
+        tn[i]->setParent(nullptr);
     }
     access = 0; //current node = beginning node
     vector<unsigned int> ta;
     initTA(ta, tn);
-    cout << "init ta to be sure: " << endl;
-    for(unsigned int i = 0; i < ta.size(); ++i) {
-        cout << ta[i] << " ";
-    }
-    cout << endl;
     sortTA(ta, tn);
-    cout << "sorted ta to be sure: " << endl;
-    for(unsigned int i = 0; i < ta.size(); ++i) {
-        cout << ta[i] << " ";
-    }
-    cout << endl;
 
     //main loop
     while(not tnEmpty(tn)) {
-        cout << "while loop called (ie findminaccess is set)" << endl;
         unsigned int n = findMinAccess(ta, tn);
-        cout << "i calculated this value for n: " << n << endl;
         if(tn[n]->getType() == nodeType) {
-            cout << "DIJKSTRA DONE, FINAL INDEX: " << n << endl;
-            if(nodeType == "transport") updateShortestPath(tn, n, "transport");
-            if(nodeType == "production") updateShortestPath(tn, n, "production");
+            if(nodeType == "transport") {
+                cout << "DIJKSTRA DONE, FINAL INDEX: " << n << " FOR TRANS, NODE N. " << uid << endl;
+                //shortestPathToTrans.push_back(tn[n]);
+                updateShortestPathToTrans(tn, tn[n]);
+                return;
+            }
+            if(nodeType == "production") {
+                cout << "DIJKSTRA DONE, FINAL INDEX: " << n << " FOR PROD, NODE N. " << uid << endl;
+                //shortestPathToProd.push_back(tn[n]);
+                updateShortestPathToProd(tn, tn[n]);
+                return;
+            }
             return;
         }
 
-        cout << "this node's in value: " << tn[n]->getIn() << endl;
-
         tn[n]->setIn(false); //we dealt with this node
-        cout << "this node's in value: " << tn[n]->getIn() << endl;
         //if we're checking a production, do nothing because not allowed to pass through production
         //ie a production "has no links"
-        if(not (tn[n]->getType() == "production")) {
-            cout << "link size: " << tn[n]->getLiens().size() << endl;
+        if(not (tn[n]->getType() == "production")) { //?
             for(unsigned int i = 0; i < tn[n]->getLiens().size(); ++i) {
-                cout << "we started to check links" << endl;
                 if(tn[n]->getLiens()[i]->getIn() == true) { //if node has not been checked
                     double alt = tn[n]->getAccess() + linkValue(tn[n]->getLiens()[i], tn[n]);
                     if(tn[n]->getLiens()[i]->getAccess() > alt) { //if new road > old road
                         tn[n]->getLiens()[i]->setAccess(alt);
-                        tn[n]->getLiens()[i]->setParent(n); //update old road
+                        tn[n]->getLiens()[i]->setParent(tn[n]); //update old road
                         sortTA(ta, tn);
-                        cout << "a step of dijkstra is done, here's the sorted ta" << endl;
-                        for(unsigned int i = 0; i < ta.size(); ++i) {
-                            cout << ta[i] << " ";
-                        }
-                        cout << endl;
                     }
                 }
 
@@ -289,44 +296,45 @@ void Housing::dijkstra(vector<Noeud*>& tn, string nodeType) {
     return;
 }
 
-void Housing::updateShortestPath(const std::vector<Noeud*>& ensemble, unsigned int goal, string type) {
-    cout << "im a recursive function being called" << endl;
+void Housing::updateShortestPathToProd(vector<Noeud*>& ensemble, Noeud* goal) {
+    //shortestPathToProd.push_back(goal);
+    Noeud* newParent = goal;
 
-    if(type == "production") {
-        cout << "type is production for recursive" << endl;
-        cout << "ensemble[goal]->getParent() is: " << ensemble[goal]->getParent() << endl;
-        if(ensemble[goal]->getParent() != no_link) {
-            shortestPathToProd.push_back(ensemble[goal]);
-            cout << "just pushed back" << endl;
-            updateShortestPath(ensemble, ensemble[goal]->getParent(), "production");
-            cout << "im a recursive function being called" << endl;
-        }
-    } else if(type == "transport") {
-        if(ensemble[goal]->getParent() != no_link) {
-            shortestPathToTrans.push_back(ensemble[goal]);
-            updateShortestPath(ensemble, ensemble[goal]->getParent(), "transport");
-        }
-    } else {
-        cout << "im a recursive function that does nothign" << endl;
-
-        return;
+    while(newParent != nullptr) {
+        shortestPathToProd.push_back(newParent);
+        newParent = newParent->getParent();
     }
+    // if(goal->getParent() != nullptr) {
+    //     shortestPathToProd.push_back(goal);
+    //     updateShortestPathToProd(ensemble, goal->getParent());
+    // }
+}
+
+void Housing::updateShortestPathToTrans(vector<Noeud*>& ensemble, Noeud* goal) {
+    Noeud* newParent = goal;
+
+    while(newParent != nullptr) {
+        shortestPathToTrans.push_back(newParent);
+        newParent = newParent->getParent();
+    }
+    // if(goal->getParent() != nullptr) {
+    //     shortestPathToTrans.push_back(goal);
+    //     updateShortestPathToTrans(ensemble, goal->getParent());
+    // }
 }
 
 double Housing::mtaHP() {
-    for(unsigned int i = 0; i < shortestPathToProd.size(); ++i) {
-        cout << shortestPathToProd[i] << endl;
-    }
-
     if(shortestPathToProd.empty()) return infinite_time;
     double mtaHP(0);
     
-    for(unsigned int i = 1; i < shortestPathToProd.size(); ++i) {
-        mtaHP += linkValue(shortestPathToProd[i-1], shortestPathToProd[i]);
+    for(unsigned int i = 0; i < shortestPathToProd.size()-1; ++i) {
+        mtaHP += linkValue(shortestPathToProd[i], shortestPathToProd[i+1]);
     }
 
-    //take into account original node
-    mtaHP += linkValue(shortestPathToProd.back(), this);
+    //take into account original node (no real need now)
+    //mtaHP += linkValue(shortestPathToProd.back(), this); //prolly a pb here?
+    //cout << "original node mta value prod: " << linkValue(shortestPathToProd.back(), this) << endl;
+    cout << "full mta value prod: " << mtaHP << endl;
 
     return mtaHP;
 }
@@ -335,12 +343,14 @@ double Housing::mtaHT() {
     if(shortestPathToTrans.empty()) return infinite_time;
     double mtaHT(0);
     
-    for(unsigned int i = 1; i < shortestPathToTrans.size(); ++i) {
-        mtaHT += linkValue(shortestPathToTrans[i-1], shortestPathToTrans[i]);
+    for(unsigned int i = 0; i < shortestPathToTrans.size()-1; ++i) {
+        mtaHT += linkValue(shortestPathToTrans[i], shortestPathToTrans[i+1]);
     }
 
     //take into account original node
-    mtaHT += linkValue(shortestPathToTrans.back(), this);
+    //mtaHT += linkValue(shortestPathToTrans.back(), this);
+    //cout << "original node mta value trans: " << linkValue(shortestPathToTrans.back(), this) << endl;
+    cout << "full mta value trans: " << mtaHT << endl;
 
     return mtaHT;
 }
@@ -352,7 +362,7 @@ string Transport::getType() {
 
 void Transport::draw() {
     cout << "transport draw called" << endl;
-    setColor(BLACK);
+    //setColor(BLACK);
 
     drawCircle(position);
     double x = position.centre.x;
@@ -384,7 +394,7 @@ string Production::getType() {
 
 void Production::draw() {
     cout << "production draw called" << endl;
-    setColor(BLACK);
+    //setColor(BLACK);
 
     drawCircle(position);
     double x = position.centre.x;
@@ -423,22 +433,26 @@ void sortTA(vector<unsigned int>& ta, const vector<Noeud*>& tn) {
         temp.push_back(tn[i]->getAccess());
     } //setup a temporary vector which will contain the access values
 
+    vector<unsigned int> tempTA;
+    initTA(tempTA, tn); //since we are doing a full sort, we need a new TA vector
+
     for(unsigned int i = 1; i < temp.size(); ++i) {  
         double key = temp[i]; 
-        int key2 = ta[i];
+        int key2 = tempTA[i];
         int j = i - 1;  
 
-        while((j >= 0) and (key < temp[j])) {  //maybe key <= temp[j]?
+        while((j >= 0) and (key <= temp[j])) {
             temp[j + 1] = temp[j];   
-            ta[j + 1] = ta[j]; //sneakily sort ta at the same time as tmp
+            tempTA[j + 1] = tempTA[j]; //sneakily sort ta at the same time as tmp
             --j;  
         }
 
         temp[j + 1] = key;  
-        ta[j + 1] = key2;
+        tempTA[j + 1] = key2;
     }
+
+    ta = tempTA;
 } //insertion sort but adapted to this project
-//problem is in this sort
 
 bool tnEmpty(const vector<Noeud*>& tn) {
     for(unsigned int i = 0; i < tn.size(); ++i) {
@@ -451,7 +465,6 @@ bool tnEmpty(const vector<Noeud*>& tn) {
 unsigned int findMinAccess(const vector<unsigned int>& ta, const vector<Noeud*>& tn) {
     for(unsigned int i = 0; i < ta.size(); ++i) {
         if(tn[ta[i]]->getIn() == true) {
-            cout << i << " is my findminaccess" << endl;
             return ta[i];
         }
         //first element of TA that has in = true
@@ -459,9 +472,6 @@ unsigned int findMinAccess(const vector<unsigned int>& ta, const vector<Noeud*>&
     cout << "if i can see this message it means i fucked up, findMinAccess() doesn't work" << endl;
     return 0;
 } //its ok to not have a return here, this function is only called while AT LEAST ONE in = true
-//this function counts on the fact that TA is sorted, it won't actually find a minimum
-//so fix the fucking sort then !!!
-
 
 double linkValue(Noeud* noeud1, Noeud* noeud2) {
     double distance, speed;
@@ -476,5 +486,8 @@ double linkValue(Noeud* noeud1, Noeud* noeud2) {
         speed = default_speed;
     }
 
+    cout << "this is my link value: " << distance/speed << endl;
+
     return distance/speed;
 }
+
