@@ -257,16 +257,14 @@ void Housing::dijkstra(vector<Noeud*>& tn, string nodeType) {
     //main loop
     while(not tnEmpty(tn)) {
         unsigned int n = findMinAccess(ta, tn);
-        if(tn[n]->getType() == nodeType) {
+        if(tn[n]->getType() == nodeType and tn[n]->getParent() != nullptr) {
             if(nodeType == "transport") {
                 cout << "DIJKSTRA DONE, FINAL INDEX: " << n << " FOR TRANS, NODE N. " << uid << endl;
-                //shortestPathToTrans.push_back(tn[n]);
                 updateShortestPathToTrans(tn, tn[n]);
                 return;
             }
             if(nodeType == "production") {
                 cout << "DIJKSTRA DONE, FINAL INDEX: " << n << " FOR PROD, NODE N. " << uid << endl;
-                //shortestPathToProd.push_back(tn[n]);
                 updateShortestPathToProd(tn, tn[n]);
                 return;
             }
@@ -274,9 +272,8 @@ void Housing::dijkstra(vector<Noeud*>& tn, string nodeType) {
         }
 
         tn[n]->setIn(false); //we dealt with this node
-        //if we're checking a production, do nothing because not allowed to pass through production
-        //ie a production "has no links"
-        if(not (tn[n]->getType() == "production")) { //?
+        //not allowed to pass through production, ie a production "has no links"
+        if(not (tn[n]->getType() == "production")) {
             for(unsigned int i = 0; i < tn[n]->getLiens().size(); ++i) {
                 if(tn[n]->getLiens()[i]->getIn() == true) { //if node has not been checked
                     double alt = tn[n]->getAccess() + linkValue(tn[n]->getLiens()[i], tn[n]);
@@ -443,7 +440,7 @@ void sortTA(vector<unsigned int>& ta, const vector<Noeud*>& tn) {
 
         while((j >= 0) and (key <= temp[j])) {
             temp[j + 1] = temp[j];   
-            tempTA[j + 1] = tempTA[j]; //sneakily sort ta at the same time as tmp
+            tempTA[j + 1] = tempTA[j]; //sneakily sort ta at the same time as temp
             --j;  
         }
 
@@ -457,7 +454,7 @@ void sortTA(vector<unsigned int>& ta, const vector<Noeud*>& tn) {
 bool tnEmpty(const vector<Noeud*>& tn) {
     for(unsigned int i = 0; i < tn.size(); ++i) {
         if(tn[i]->getIn()) return false; //there exists an in that is true
-        //=> TN is not "empty"
+        //ie TN is not "empty"
     }
     return true;
 }
@@ -490,4 +487,3 @@ double linkValue(Noeud* noeud1, Noeud* noeud2) {
 
     return distance/speed;
 }
-
