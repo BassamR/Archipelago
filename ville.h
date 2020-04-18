@@ -44,9 +44,9 @@ public:
 
     void tempDrawColor();
 
-    double getLinkDistance(unsigned int index);
-    double getLinkCapacity(unsigned int index);
-    double getLinkSpeed(unsigned int index);
+    double linkDistance(unsigned int index);
+    double linkCapacity(unsigned int index);
+    double linkSpeed(unsigned int index);
 
     double critereENJ();
     double critereCI();

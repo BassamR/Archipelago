@@ -373,14 +373,14 @@ void Ville::resetVille() {
 }
 
 //Link info methods:
-double Ville::getLinkDistance(unsigned int index) {    
+double Ville::linkDistance(unsigned int index) {    
     Vecteur distance;
     creeVecteur(liens[index][0]->getCoords(), liens[index][1]->getCoords(), distance);
 
     return norme(distance);
 } //surcharger cette fonction ? getLinkDistance(int uid1, int uid2);
 
-double Ville::getLinkCapacity(unsigned int index) {
+double Ville::linkCapacity(unsigned int index) {
     int size1 = liens[index][0]->getSize();
     int size2 = liens[index][1]->getSize();
 
@@ -388,7 +388,7 @@ double Ville::getLinkCapacity(unsigned int index) {
     else return size1;
 }
 
-double Ville::getLinkSpeed(unsigned int index) {
+double Ville::linkSpeed(unsigned int index) {
     string type1 = liens[index][0]->getType();
     string type2 = liens[index][1]->getType();
 
@@ -422,7 +422,7 @@ double Ville::critereCI() {
     double ci = 0;
 
     for(unsigned int i = 0; i < liens.size(); ++i) {
-        ci += getLinkDistance(i)*getLinkCapacity(i)*getLinkSpeed(i);
+        ci += linkDistance(i)*linkCapacity(i)*linkSpeed(i);
     }
 
     return ci;
@@ -457,7 +457,7 @@ double Ville::critereMTA() {
 }
 
 void Ville::tempDrawColor() {
-    unsigned int n = 0;
+    unsigned int n = 2;
     //vector<Noeud*> pathProd = ensembleNoeuds[n]->getShortestProd();
     //vector<Noeud*> pathTrans = ensembleNoeuds[n]->getShortestTrans();
 
