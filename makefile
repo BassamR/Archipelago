@@ -9,13 +9,13 @@ OFILES = projet.o gui.o ville.o noeud.o tools.o error.o graphic.o
 # Dependances
 all: $(OUT)
 
-graphic.o: graphic.cc graphic_gui.h graphic.h
+graphic.o: graphic.cc graphic_gui.h graphic.h constantes.h
 	$(CXX) $(CXXFLAGS) $(LINKING) -c $< -o $@ $(LINKING)
 
 error.o: error.cc error.h constantes.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-tools.o: tools.cc tools.h constantes.h graphic.h
+tools.o: tools.cc tools.h graphic.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 noeud.o: noeud.cc noeud.h error.h tools.h constantes.h
@@ -24,7 +24,7 @@ noeud.o: noeud.cc noeud.h error.h tools.h constantes.h
 ville.o: ville.cc ville.h noeud.h tools.h error.h constantes.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-gui.o: gui.cc gui.h graphic_gui.h
+gui.o: gui.cc gui.h graphic_gui.h constantes.h
 	$(CXX) $(CXXFLAGS) $(LINKING) -c $< -o $@ $(LINKING)
 
 projet.o: projet.cc ville.h gui.h
