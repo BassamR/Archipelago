@@ -15,18 +15,13 @@ using namespace std;
 static string convertCritereToString(const double& critere);
 
 //MyArea class definition:
-MyArea::MyArea(): empty(false) {}
+MyArea::MyArea(): empty(false) {
+    add_events(Gdk::BUTTON_PRESS_MASK);
+    add_events(Gdk::BUTTON_RELEASE_MASK);
+    add_events(Gdk::BUTTON_MOTION_MASK);
+}
+
 MyArea::~MyArea() {}
-
-void MyArea::clear() {
-    empty = true;
-    refresh();
-}
-
-void MyArea::draw() {
-    empty = false;
-    refresh();
-}
 
 void MyArea::refresh() {
     auto win = get_window();
@@ -53,7 +48,7 @@ bool MyArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
 
         Ville::getVilleInstance()->drawLinks();
         Ville::getVilleInstance()->drawNodes(); //draws the city
-        Ville::getVilleInstance()->tempDrawColor();
+        //Ville::getVilleInstance()->tempDrawColor();
         //MyGui::refreshCriteres(); //find a way to refresh criteres 
     
     } else {
@@ -67,6 +62,91 @@ bool MyArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     return true;
 }
 
+bool MyArea::on_button_press_event(GdkEventButton* event) {
+    if((gint)event->type == Gdk::BUTTON_PRESS and event->button == 1) {
+        cout << "left mouse clicked" << " " << event->x << " " << event->y << endl;
+        return true;
+    }
+
+    if((gint)event->type == Gdk::BUTTON_PRESS and event->button == 3) {
+        cout << "right mouse clicked" << " " << event->x << " " << event->y << endl;
+        return true;
+    }
+
+    return true;
+}
+
+bool MyArea::on_button_release_event(GdkEventButton* event) {
+    if((gint)event->type == Gdk::BUTTON_RELEASE and event->button == 1) {
+        cout << "left mouse released" << " " << event->x << " " << event->y << endl;
+        return true;
+    }
+
+    if((gint)event->type == Gdk::BUTTON_RELEASE and event->button == 3) {
+        cout << "right mouse released" << " " << event->x << " " << event->y << endl;
+        return true;
+    }
+
+    return true;
+}
+
+bool MyArea::on_motion_notify_event(GdkEventMotion* event) {
+    if((gint)event->type == Gdk::MOTION_NOTIFY) {
+        cout << "im holding" << endl;
+        return true;
+    }
+
+    return true;
+}
+
+// bool MyArea::on_event(GdkEvent* event) {
+//     static bool isHeld(false);
+//     GdkEventButton* bEvent;
+//     GdkEventMotion* mEvent;
+
+//     switch((gint)event->type) {
+//         case Gdk::BUTTON_PRESS: {
+//             bEvent = (GdkEventButton *) event;
+//            // if(event->button == 1) {
+//                 isHeld = true;
+//                 cout << "left button clicked" << endl;
+//                 cout << bEvent->x << " " << bEvent->y << endl;
+//                 break;
+//             //}
+//         }
+
+//         case Gdk::BUTTON_RELEASE: {
+//             bEvent = (GdkEventButton *) event;
+//             isHeld = false;
+//             cout << "left button released" << endl;
+//             cout << bEvent->x << " " << bEvent->y << endl;
+//             break;
+//         }
+
+//         case Gdk::MOTION_NOTIFY: {
+//             mEvent = (GdkEventMotion *) event;
+//             if(isHeld) {
+//                 cout << "im holding" << endl;
+//             }
+//         }
+
+//         default: break;
+//     }
+
+//     // Check if the event is a left(1) button click (right click is 3)
+//     return true;
+// }
+
+void MyArea::clear() {
+    empty = true;
+    refresh();
+}
+
+void MyArea::draw() {
+    empty = false;
+    refresh();
+}
+
 //Gui class definition:
 MyGui::MyGui():
     mBox(Gtk::ORIENTATION_HORIZONTAL, 10), mBoxLeft(Gtk::ORIENTATION_VERTICAL, 10), 
@@ -77,7 +157,8 @@ MyGui::MyGui():
     mFrameInformations("Informations"), 
 
     mButtonExit("exit"), mButtonNew("new"), mButtonOpen("open"), mButtonSave("save"), 
-    mButtonZoomIn("zoom in"), mButtonZoomOut("zoom out"), mButtonZoomR("zoom reset"),
+    mButtonZoomIn("zoom in (i)"), mButtonZoomOut("zoom out (o)"), 
+    mButtonZoomR("zoom reset (r)"),
 
     mTButtonShortest("shortest path"), mTButtonEditLink("edit link"),
 
@@ -304,6 +385,8 @@ void MyGui::setupGui() {
     //Basic definitions
     set_title("Archipelago");
     set_border_width(5);
+    set_position(Gtk::WIN_POS_CENTER);
+    //set_default_size(default_drawing_size, default_drawing_size);
 
     //Add main box
     add(mBox);
@@ -406,6 +489,8 @@ void MyGui::connectButtons() {
                     &MyGui::onRButtonClickT));
     mRButtonP.signal_clicked().connect(sigc::mem_fun(*this,
                     &MyGui::onRButtonClickP));
+
+    
 } //connect buttons to signal handlers
 
 //Static functions definition

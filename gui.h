@@ -17,7 +17,15 @@ private:
     void refresh();
 
 protected:
+    // Override default signal handler:
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
+
+    //Override mouse events
+    bool on_button_press_event(GdkEventButton* event);
+    bool on_button_release_event(GdkEventButton* event);
+    bool on_motion_notify_event(GdkEventMotion* event);
+
+    //bool on_event(GdkEvent* event) override;
 
 public:
     MyArea();
@@ -36,8 +44,11 @@ private:
     void initInformations();
     void connectButtons();
 
+    void refreshCriteres();
+
 protected:
     Gtk::Box mBox, mBoxLeft, mBoxRight, mBoxDisplay, mBoxEditor;
+
     MyArea mArea;
 
     Gtk::Frame mFrameCanvas, mFrameGeneral, mFrameDisplay, mFrameEditor, mFrameInformations;
@@ -85,7 +96,6 @@ public:
     MyGui();
     virtual ~MyGui();
 
-    void refreshCriteres();
 };
 
 #endif
