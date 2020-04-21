@@ -17,9 +17,16 @@ private:
     std::vector<Noeud*> ensembleNoeuds;
     std::vector<std::vector<Noeud*>> liens;
 
+    int activeNode; //-1 when no active nodes
+    bool editLink;
+
 public:
-    Ville() {}
+    Ville();
+    virtual ~Ville();
+
     static Ville* getVilleInstance();
+
+    int getActiveNode();
 
     bool createHousing(unsigned int uid, double x, double y, unsigned int size);
     bool createProduction(unsigned int uid, double x, double y, unsigned int size);
@@ -51,6 +58,8 @@ public:
     double critereENJ();
     double critereCI();
     double critereMTA();
+
+    void setActiveNode(Coords clickLocation);
 };
 
 #endif

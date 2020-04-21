@@ -22,6 +22,18 @@ static Ville ville;
 static void initVille(string line, bool& continueLecture);
 static void outputNode(ofstream& str, vector<Noeud*> nodes);
 
+//Constructor, destructor, static methods, getters/setters
+Ville::Ville(): activeNode(-1), editLink(false) {}
+Ville::~Ville() {}
+
+Ville* Ville::getVilleInstance() {
+    return &ville;
+}
+
+int Ville::getActiveNode() {
+    return activeNode;
+}
+
 //Reading/Outputting functions:
 void lecture(char* nomFichier) {
     ville.resetVille();
@@ -113,6 +125,7 @@ static void initVille(string line, bool& continueLecture) {
             break;
 
         case END: //stops initVille because of an error in the file
+            ville.resetVille();
             etat = NBH;
             i = 0;
             total = 0; //reset static stuff back to original
@@ -133,17 +146,12 @@ static void outputNode(ofstream& str, vector<Noeud*> nodes) {
     str << "\n" << "\n";
 }
 
-//To be able to call ville methods outside of an instance
-Ville* Ville::getVilleInstance() {
-    return &ville;
-}
-
 //Ville methods:
 bool Ville::createHousing(unsigned int uid, double x, double y, unsigned int size) {
     Housing* newHouse = new Housing(uid, x, y, size);
 
     if(newHouse->testNodeValidity(ensembleNoeuds) == false) {
-        resetVille();
+        //resetVille();
         return false;
     } else {
         ensembleNoeuds.push_back(newHouse);
@@ -155,7 +163,7 @@ bool Ville::createProduction(unsigned int uid, double x, double y, unsigned int 
     Production* newProd = new Production(uid, x, y, size);
 
     if(newProd->testNodeValidity(ensembleNoeuds) == false) {
-        resetVille();
+        //resetVille();
         return false;    
     } else {
         ensembleNoeuds.push_back(newProd);
@@ -167,7 +175,7 @@ bool Ville::createTransport(unsigned int uid, double x, double y, unsigned int s
     Transport* newTrans = new Transport(uid, x, y, size);
 
     if(newTrans->testNodeValidity(ensembleNoeuds) == false) {
-        resetVille();
+        //resetVille();
         return false;   
     } else {
         ensembleNoeuds.push_back(newTrans);
@@ -177,7 +185,7 @@ bool Ville::createTransport(unsigned int uid, double x, double y, unsigned int s
 
 bool Ville::createLien(unsigned int uid1, unsigned int uid2) {
      if(testLinkValidity(uid1, uid2) == false) {
-        resetVille();
+        //resetVille();
         return false;
      } else {
         unsigned int index1 = findNoeudIndex(uid1);
@@ -291,10 +299,15 @@ void Ville::drawNodes() {
     }
 
     setColor(BLACK);
-
     for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
         ensembleNoeuds[i]->draw();
     }
+
+    if(activeNode >= 0) {
+        setColor(RED);
+        ensembleNoeuds[activeNode]->draw();
+    }
+
 }
 
 void Ville::drawLinks() {
@@ -456,8 +469,23 @@ double Ville::critereMTA() {
     return mta;
 }
 
+//color stuff
+void Ville::setActiveNode(Coords clickLocation) {
+    for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
+        if(appartientCercle(ensembleNoeuds[i]->getPosition(), clickLocation)) {
+            activeNode = i;
+            cout << "i clicked on node n. " << ensembleNoeuds[i]->getUid() << endl;
+            return;
+        }
+    }
+
+    activeNode = -1;
+    return;
+}
+
+
 void Ville::tempDrawColor() {
-    unsigned int n = 2;
+    unsigned int n = 0;
     //vector<Noeud*> pathProd = ensembleNoeuds[n]->getShortestProd();
     //vector<Noeud*> pathTrans = ensembleNoeuds[n]->getShortestTrans();
 
