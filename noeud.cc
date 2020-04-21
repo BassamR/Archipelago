@@ -222,7 +222,6 @@ string Housing::getType() {
 }
 
 void Housing::draw() {
-    cout << "housing draw called" << endl;    
     drawCircle(position);
 }
 
@@ -356,8 +355,6 @@ string Transport::getType() {
 }
 
 void Transport::draw() {
-    cout << "transport draw called" << endl;
-
     drawCircle(position);
     double x = position.centre.x;
     double y = position.centre.y;
@@ -387,8 +384,6 @@ string Production::getType() {
 }
 
 void Production::draw() {
-    cout << "production draw called" << endl;
-
     drawCircle(position);
     double x = position.centre.x;
     double y = position.centre.y;
