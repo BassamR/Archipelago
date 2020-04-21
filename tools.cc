@@ -11,7 +11,6 @@
 #include "graphic.h"
 using namespace std;
 
-
 void creeVecteur(Coords p1, Coords p2, Vecteur& v) {
      v.a = p2.x - p1.x;
      v.b = p2.y - p1.y;
@@ -67,7 +66,18 @@ bool intersectionCS(Cercle c, Cercle s, Cercle t, double safeDistance) {
     }
 }
 
-//draw functinons
+bool appartientCercle(Cercle cercle, Coords coords) {
+    double xc = cercle.centre.x;
+    double yc = cercle.centre.y;
+    double r = cercle.rayon;
+    double x = coords.x;
+    double y = coords.y;
+
+    if(pow(x-xc, 2) + pow(y-yc, 2) <= pow(r, 2)) return true;
+    else return false;
+}
+
+//Draw functinons
 void setColor(Color couleur) {
     switch(couleur) {
         case BLACK:

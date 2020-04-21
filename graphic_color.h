@@ -1,0 +1,6 @@
+#ifndef GRAPHIC_COLOR_HEADER_H
+#define GRAPHIC_COLOR_HEADER_H
+
+enum Color {BLACK, RED, GREEN};
+
+#endif

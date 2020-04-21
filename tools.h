@@ -8,7 +8,7 @@
 #ifndef TOOLS_HEADER_H
 #define TOOLS_HEADER_H
 
-enum Color {BLACK, RED, GREEN};
+#include "graphic_color.h"
 
 struct Coords {
      double x;
@@ -35,6 +35,8 @@ double norme(Vecteur v);
 bool intersectionCC(Cercle c1, Cercle c2, double safeDistance = 0);
 bool intersectionCS(Cercle c, Cercle s, Cercle t, double safeDistance = 0);
 //safedistance=0 pour la lecture, =dist_min pour l'ajout d'un noeud manuellement
+
+bool appartientCercle(Cercle cercle, Coords coords);
 
 void setColor(Color couleur);
 

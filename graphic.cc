@@ -1,10 +1,8 @@
 #include <iostream>
 #include <cmath>
 #include "graphic_gui.h"
-#include "constantes.h"
+#include "constantes.h" //gotta remove this include
 using namespace std;
-
-enum Color {BLACK, RED, GREEN};
 
 static const Cairo::RefPtr<Cairo::Context>* ptcr(nullptr);
 static double changeCoordsX(double x); //not used elsewhere
@@ -41,7 +39,7 @@ static double changeCoordsR(double r) {
 }
 
 //Draw functions definition
-void setColorG(int couleur) {
+void setColorG(Color couleur) {
     switch(couleur) {
         case BLACK:
             (*ptcr)->set_source_rgb(0.0, 0.0, 0.0);

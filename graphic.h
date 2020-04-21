@@ -3,10 +3,12 @@
 #ifndef GRAPHIC_HEADER_H
 #define GRAPHIC_HEADER_H
 
+#include "graphic_color.h"
+
 //uniquement les fonctions de dessin
 void makeBgWhite();
 
-void setColorG(int couleur);
+void setColorG(Color couleur);
 
 void drawCircleG(double x, double y, double r);
 void drawSegmentG(double x1, double y1, double x2, double y2);
