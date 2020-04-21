@@ -19,7 +19,7 @@ using namespace std;
 
 //Static methods used for Dijkstra
 static void initTA(vector<unsigned int>& ta, const vector<Noeud*>& tn);
-static void sortTA(vector<unsigned int>& ta, const vector<Noeud*>& tn);
+static void sortTA(vector<unsigned int>& ta, const vector<Noeud*>& tn, Noeud* index);
 static bool tnEmpty(const vector<Noeud*>& tn);
 static unsigned int findMinAccess(const vector<unsigned int>& ta, const vector<Noeud*>& tn);
 static double linkValue(Noeud* noeud1, Noeud* noeud2);
@@ -249,7 +249,7 @@ void Housing::dijkstra(vector<Noeud*>& tn, string nodeType) {
     access = 0; //current node = beginning node
     vector<unsigned int> ta;
     initTA(ta, tn);
-    sortTA(ta, tn);
+    sortTA(ta, tn, this);
 
     //main loop
     while(not tnEmpty(tn)) {
@@ -268,6 +268,8 @@ void Housing::dijkstra(vector<Noeud*>& tn, string nodeType) {
             return;
         }
 
+        if(tn[n] != this and tn[n]->getParent() == nullptr) return;
+
         tn[n]->setIn(false); //we dealt with this node
         //not allowed to pass through production, ie a production "has no links"
         if(not (tn[n]->getType() == "production")) {
@@ -277,7 +279,7 @@ void Housing::dijkstra(vector<Noeud*>& tn, string nodeType) {
                     if(tn[n]->getLiens()[i]->getAccess() > alt) { //if new road > old road
                         tn[n]->getLiens()[i]->setAccess(alt);
                         tn[n]->getLiens()[i]->setParent(tn[n]); //update old road
-                        sortTA(ta, tn);
+                        sortTA(ta, tn, tn[n]->getLiens()[i]);
                     }
                 }
 
@@ -318,6 +320,7 @@ void Housing::updateShortestPathToTrans(vector<Noeud*>& ensemble, Noeud* goal) {
 }
 
 double Housing::mtaHP() {
+    cout << "mtaHP called" << endl;
     if(shortestPathToProd.empty()) return infinite_time;
     double mtaHP(0);
     
@@ -334,6 +337,7 @@ double Housing::mtaHP() {
 }
 
 double Housing::mtaHT() {
+    cout << "mtaHT called" << endl;
     if(shortestPathToTrans.empty()) return infinite_time;
     double mtaHT(0);
     
@@ -418,33 +422,53 @@ void initTA(vector<unsigned int>& ta, const vector<Noeud*>& tn) {
     }
 }
 
-void sortTA(vector<unsigned int>& ta, const vector<Noeud*>& tn) {
-    //we want to sort ta, using tn[i]->getAccess() values
-    vector<double> temp;
-    for(unsigned int i = 0; i < tn.size(); ++i) {
-        temp.push_back(tn[i]->getAccess());
-    } //setup a temporary vector which will contain the access values
+void sortTA(vector<unsigned int>& ta, const vector<Noeud*>& tn, Noeud* index) {
+    unsigned int indexInTA;
+    bool keepGoing = true;
 
-    vector<unsigned int> tempTA;
-    initTA(tempTA, tn); //since we are doing a full sort, we need a new TA vector
-
-    for(unsigned int i = 1; i < temp.size(); ++i) {  
-        double key = temp[i]; 
-        int key2 = tempTA[i];
-        int j = i - 1;  
-
-        while((j >= 0) and (key <= temp[j])) {
-            temp[j + 1] = temp[j];   
-            tempTA[j + 1] = tempTA[j]; //sneakily sort ta at the same time as temp
-            --j;  
+    for(unsigned int i = 0; i < tn.size() and keepGoing; ++i) {
+        if(tn[ta[i]] == index) {
+            indexInTA = i;
+            keepGoing = false;
         }
-
-        temp[j + 1] = key;  
-        tempTA[j + 1] = key2;
     }
 
-    ta = tempTA;
-} //insertion sort but adapted to this project
+    while(indexInTA > 0 and tn[ta[indexInTA]]->getAccess() < tn[ta[indexInTA-1]]->getAccess()) {
+        //unsigned int exchange = ta[indexInTA];
+        //ta[indexInTA] = ta[indexInTA-1];
+        //ta[indexInTA-1] = exchange;
+        swap(ta[indexInTA], ta[indexInTA-1]);
+        --indexInTA;
+    }
+}
+
+// void sortTA(vector<unsigned int>& ta, const vector<Noeud*>& tn) {
+//     //we want to sort ta, using tn[i]->getAccess() values
+//     vector<double> temp;
+//     for(unsigned int i = 0; i < tn.size(); ++i) {
+//         temp.push_back(tn[i]->getAccess());
+//     } //setup a temporary vector which will contain the access values
+
+//     vector<unsigned int> tempTA;
+//     initTA(tempTA, tn); //since we are doing a full sort, we need a new TA vector
+
+//     for(unsigned int i = 1; i < temp.size(); ++i) {  
+//         double key = temp[i]; 
+//         int key2 = tempTA[i];
+//         int j = i - 1;  
+
+//         while((j >= 0) and (key <= temp[j])) {
+//             temp[j + 1] = temp[j];   
+//             tempTA[j + 1] = tempTA[j]; //sneakily sort ta at the same time as temp
+//             --j;  
+//         }
+
+//         temp[j + 1] = key;  
+//         tempTA[j + 1] = key2;
+//     }
+
+//     ta = tempTA;
+// } //insertion sort but adapted to this project
 
 bool tnEmpty(const vector<Noeud*>& tn) {
     for(unsigned int i = 0; i < tn.size(); ++i) {
