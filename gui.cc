@@ -13,7 +13,7 @@ using namespace std;
 
 //Static functions and variables
 static Gui* guiObject(nullptr);
-static int uidCounter(0);
+static int uidCounter(1000);
 static string convertCritereToString(const double& critere);
 
 //Canvas constructor/destructor:
@@ -62,7 +62,7 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
 
     graphicSetContext(cr);
 
-    guiObject->refreshCriteres();
+    //guiObject->refreshCriteres();
 
     if(not empty) {
         makeBgWhite();
@@ -147,21 +147,24 @@ void Canvas::convertCoordsToModele(Coords& clickLocation) {
 //Canvas event handling methods:
 void Canvas::handleLeftClick(Coords clickLocation) {
     if(Ville::getVilleInstance()->getActiveNode() == -1) {
-        Ville::getVilleInstance()->createHousing(uidCounter, clickLocation.x, clickLocation.y, min_capacity);
+        if(Ville::getVilleInstance()->createHousing(uidCounter, clickLocation.x, clickLocation.y, min_capacity)) {
+            guiObject->refreshCriteres();
+            ++uidCounter;
+        }
     }
 
     Ville::getVilleInstance()->setActiveNode(clickLocation);
 
-    ++uidCounter;
-    refresh();
+    draw();
 }
 
 void Canvas::handleRightClick(Coords clickLocation) {
     int activeNode = Ville::getVilleInstance()->getActiveNode();
     if(activeNode != -1) {
         Ville::getVilleInstance()->getNode(activeNode)->setCoords(clickLocation.x, clickLocation.y);
+        guiObject->refreshCriteres();
     }
-    refresh();
+    draw();
 }
 
 //Gui constructor/destructor:
