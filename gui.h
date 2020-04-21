@@ -10,11 +10,20 @@
 #include <gtkmm/togglebutton.h>
 #include <gtkmm/radiobutton.h>
 #include <gtkmm/drawingarea.h>
+#include "tools.h"
 
 class MyArea: public Gtk::DrawingArea {
 private:
     bool empty;
     void refresh();
+
+    int width;
+    int height; //dimensions of canvas
+
+    double xMin;
+    double xMax;
+    double yMin;
+    double yMax;
 
 protected:
     // Override default signal handler:
@@ -23,9 +32,12 @@ protected:
     //Override mouse events
     bool on_button_press_event(GdkEventButton* event);
     bool on_button_release_event(GdkEventButton* event);
-    bool on_motion_notify_event(GdkEventMotion* event);
+    //bool on_motion_notify_event(GdkEventMotion* event);
 
-    //bool on_event(GdkEvent* event) override;
+    void convertCoordsToModele(Coords& clickLocation);
+
+    void handleLeftClick(Coords clickLocation);
+    void handleRightClick(Coords clickLocation);
 
 public:
     MyArea();

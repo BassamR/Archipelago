@@ -7,6 +7,6 @@
 #include "graphic.h"
 #include "graphic_color.h"
 
-void graphic_set_context(const Cairo::RefPtr<Cairo::Context>& cr);
+void graphicSetContext(const Cairo::RefPtr<Cairo::Context>& cr);
 
 #endif

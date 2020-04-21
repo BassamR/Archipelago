@@ -11,18 +11,20 @@
 #include "constantes.h"
 using namespace std;
 
-//Static functions
+//Static functions and variables
+static int uidCounter(0);
 static string convertCritereToString(const double& critere);
 
-//MyArea class definition:
-MyArea::MyArea(): empty(false) {
+//MyArea constructor/destructor:
+MyArea::MyArea(): empty(false), xMin(-dim_max), xMax(dim_max), yMin(-dim_max), yMax(dim_max) {
     add_events(Gdk::BUTTON_PRESS_MASK);
     add_events(Gdk::BUTTON_RELEASE_MASK);
-    add_events(Gdk::BUTTON_MOTION_MASK);
+    //add_events(Gdk::BUTTON_MOTION_MASK);
 }
 
 MyArea::~MyArea() {}
 
+//MyArea canvas methods:
 void MyArea::refresh() {
     auto win = get_window();
     if(win) {
@@ -32,16 +34,32 @@ void MyArea::refresh() {
     }
 }
 
-bool MyArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
-    // Gtk::Allocation allocation = get_allocation();
-    // const int width = allocation.get_width();
-    // const int height = allocation.get_height();
+void MyArea::clear() {
+    empty = true;
+    refresh();
+}
 
-    // coordinates for the center of the GTKmm window
-    // int xc, yc;
-    // xc = width / 2;
-    // yc = height / 2;
-    graphic_set_context(cr);
+void MyArea::draw() {
+    empty = false;
+    refresh();
+}
+
+//MyArea event override methods:
+bool MyArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
+    Gtk::Allocation allocation = get_allocation();
+    width = allocation.get_width();
+    height = allocation.get_height();
+
+    int xc, yc; //center of the gtk window
+    xc = width/2;
+    yc = height/2;
+
+    //cr->set_identity_matrix();
+    cr->translate(xc, yc);
+    cr->scale(width/(xMax - xMin), -height/(yMax - yMin));
+	cr->translate(-(xMin + xMax)/2, -(yMin + yMax)/2);
+
+    graphicSetContext(cr);
 
     if(not empty) {
         makeBgWhite();
@@ -64,12 +82,30 @@ bool MyArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
 
 bool MyArea::on_button_press_event(GdkEventButton* event) {
     if((gint)event->type == Gdk::BUTTON_PRESS and event->button == 1) {
-        cout << "left mouse clicked" << " " << event->x << " " << event->y << endl;
+        double x = event->x;
+        double y = event->y;
+
+        Coords leftClickLocation{x, y};
+
+        convertCoordsToModele(leftClickLocation);
+        cout << "left mouse clicked (modele)" << " " << leftClickLocation.x << " " << leftClickLocation.y << endl;
+        handleLeftClick(leftClickLocation);
+
+        //Ville::getVilleInstance()->setActiveNode(leftClickLocation);
+        // Ville::getVilleInstance()->createHousing(uidCounter, x, y, min_capacity);
+        //refresh();
+
+        //++uidCounter;
         return true;
     }
 
     if((gint)event->type == Gdk::BUTTON_PRESS and event->button == 3) {
-        cout << "right mouse clicked" << " " << event->x << " " << event->y << endl;
+        double x1 = event->x;
+        double y1 = event->y;
+        Coords rightClickLocation{x1, y1};
+        convertCoordsToModele(rightClickLocation);
+        cout << "right mouse clicked (modele)" << " " << rightClickLocation.x << " " << rightClickLocation.y << endl;
+        handleRightClick(rightClickLocation);
         return true;
     }
 
@@ -90,64 +126,35 @@ bool MyArea::on_button_release_event(GdkEventButton* event) {
     return true;
 }
 
-bool MyArea::on_motion_notify_event(GdkEventMotion* event) {
-    if((gint)event->type == Gdk::MOTION_NOTIFY) {
-        cout << "im holding" << endl;
-        return true;
-    }
-
-    return true;
-}
-
-// bool MyArea::on_event(GdkEvent* event) {
-//     static bool isHeld(false);
-//     GdkEventButton* bEvent;
-//     GdkEventMotion* mEvent;
-
-//     switch((gint)event->type) {
-//         case Gdk::BUTTON_PRESS: {
-//             bEvent = (GdkEventButton *) event;
-//            // if(event->button == 1) {
-//                 isHeld = true;
-//                 cout << "left button clicked" << endl;
-//                 cout << bEvent->x << " " << bEvent->y << endl;
-//                 break;
-//             //}
-//         }
-
-//         case Gdk::BUTTON_RELEASE: {
-//             bEvent = (GdkEventButton *) event;
-//             isHeld = false;
-//             cout << "left button released" << endl;
-//             cout << bEvent->x << " " << bEvent->y << endl;
-//             break;
-//         }
-
-//         case Gdk::MOTION_NOTIFY: {
-//             mEvent = (GdkEventMotion *) event;
-//             if(isHeld) {
-//                 cout << "im holding" << endl;
-//             }
-//         }
-
-//         default: break;
+// bool MyArea::on_motion_notify_event(GdkEventMotion* event) {
+//     if((gint)event->type == Gdk::MOTION_NOTIFY) {
+//         cout << "im holding" << endl;
+//         return true;
 //     }
 
-//     // Check if the event is a left(1) button click (right click is 3)
 //     return true;
 // }
 
-void MyArea::clear() {
-    empty = true;
+//MyArea utility methods:
+void MyArea::convertCoordsToModele(Coords& clickLocation) {
+    double newX = (clickLocation.x/width) * (xMax-xMin) + xMin;
+    double newY = yMax - (clickLocation.y/height) * (yMax-yMin);
+
+    clickLocation.x = newX;
+    clickLocation.y = newY;
+}
+
+//MyArea event handling methods:
+void MyArea::handleLeftClick(Coords clickLocation) {
+    Ville::getVilleInstance()->setActiveNode(clickLocation);
     refresh();
 }
 
-void MyArea::draw() {
-    empty = false;
+void MyArea::handleRightClick(Coords clickLocation) {
     refresh();
 }
 
-//Gui class definition:
+//Gui constructor/destructor:
 MyGui::MyGui():
     mBox(Gtk::ORIENTATION_HORIZONTAL, 10), mBoxLeft(Gtk::ORIENTATION_VERTICAL, 10), 
     mBoxRight(Gtk::ORIENTATION_HORIZONTAL, 10), 
@@ -190,7 +197,7 @@ MyGui::MyGui():
 
 MyGui::~MyGui() {}
 
-//Click buttons
+//Gui clickable buttons:
 void MyGui::onButtonClickExit() {
     cout << "exit button clicked" << endl;
     hide(); //exits the app
@@ -313,7 +320,7 @@ void MyGui::onTButtonReleaseShortest() {
     cout << "shortest path button released" << endl;
 }
 
-//Edit link togglebutton
+//Gui edit link togglebutton
 void MyGui::onTButtonClickEditLink() {
     if(mTButtonEditLink.get_active()) onTButtonPressEditLink();
     else onTButtonReleaseEditLink();
@@ -327,7 +334,7 @@ void MyGui::onTButtonReleaseEditLink() {
     cout << "edit link button released" << endl;
 }
 
-//Housing radiobutton
+//Gui housing radiobutton
 void MyGui::onRButtonClickH() {
     if(mRButtonH.get_active()) onRButtonPressH();
     else onRButtonReleaseH();
@@ -341,7 +348,7 @@ void MyGui::onRButtonReleaseH() {
     cout << "housing radiobutton released" << endl;
 }
 
-//Transport radiobutton
+//Gui transport radiobutton
 void MyGui::onRButtonClickT() {
     if(mRButtonT.get_active()) onRButtonPressT();
     else onRButtonReleaseT();
@@ -355,7 +362,7 @@ void MyGui::onRButtonReleaseT() {
     cout << "transport radiobutton released" << endl;
 }
 
-//Production radiobutton 
+//Gui production radiobutton 
 void MyGui::onRButtonClickP() {
     if(mRButtonP.get_active()) onRButtonPressP();
     else onRButtonReleaseP();
