@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
 
     if(argc == 2) lecture(argv[1]);
 
-    MyGui archipelagoGui;
+    Gui archipelagoGui;
 
     return app->run(archipelagoGui);
 }

@@ -27,6 +27,7 @@ public:
     static Ville* getVilleInstance();
 
     int getActiveNode();
+    Noeud* getNode(unsigned int index);
 
     bool createHousing(unsigned int uid, double x, double y, unsigned int size);
     bool createProduction(unsigned int uid, double x, double y, unsigned int size);

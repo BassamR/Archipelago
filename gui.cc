@@ -12,20 +12,21 @@
 using namespace std;
 
 //Static functions and variables
+static Gui* guiObject(nullptr);
 static int uidCounter(0);
 static string convertCritereToString(const double& critere);
 
-//MyArea constructor/destructor:
-MyArea::MyArea(): empty(false), xMin(-dim_max), xMax(dim_max), yMin(-dim_max), yMax(dim_max) {
+//Canvas constructor/destructor:
+Canvas::Canvas(): empty(false), xMin(-dim_max), xMax(dim_max), yMin(-dim_max), yMax(dim_max) {
     add_events(Gdk::BUTTON_PRESS_MASK);
     add_events(Gdk::BUTTON_RELEASE_MASK);
     //add_events(Gdk::BUTTON_MOTION_MASK);
 }
 
-MyArea::~MyArea() {}
+Canvas::~Canvas() {}
 
-//MyArea canvas methods:
-void MyArea::refresh() {
+//Canvas canvas methods:
+void Canvas::refresh() {
     auto win = get_window();
     if(win) {
         Gdk::Rectangle r(0,0, get_allocation().get_width(), 
@@ -34,18 +35,18 @@ void MyArea::refresh() {
     }
 }
 
-void MyArea::clear() {
+void Canvas::clear() {
     empty = true;
     refresh();
 }
 
-void MyArea::draw() {
+void Canvas::draw() {
     empty = false;
     refresh();
 }
 
-//MyArea event override methods:
-bool MyArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
+//Canvas event override methods:
+bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     Gtk::Allocation allocation = get_allocation();
     width = allocation.get_width();
     height = allocation.get_height();
@@ -61,14 +62,13 @@ bool MyArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
 
     graphicSetContext(cr);
 
+    guiObject->refreshCriteres();
+
     if(not empty) {
         makeBgWhite();
-
         Ville::getVilleInstance()->drawLinks();
         Ville::getVilleInstance()->drawNodes(); //draws the city
-        //Ville::getVilleInstance()->tempDrawColor();
-        //MyGui::refreshCriteres(); //find a way to refresh criteres 
-    
+        //Ville::getVilleInstance()->tempDrawColor();    
     } else {
         makeBgWhite();
         Ville::getVilleInstance()->resetVille();
@@ -80,7 +80,7 @@ bool MyArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     return true;
 }
 
-bool MyArea::on_button_press_event(GdkEventButton* event) {
+bool Canvas::on_button_press_event(GdkEventButton* event) {
     if((gint)event->type == Gdk::BUTTON_PRESS and event->button == 1) {
         double x = event->x;
         double y = event->y;
@@ -112,7 +112,7 @@ bool MyArea::on_button_press_event(GdkEventButton* event) {
     return true;
 }
 
-bool MyArea::on_button_release_event(GdkEventButton* event) {
+bool Canvas::on_button_release_event(GdkEventButton* event) {
     if((gint)event->type == Gdk::BUTTON_RELEASE and event->button == 1) {
         cout << "left mouse released" << " " << event->x << " " << event->y << endl;
         return true;
@@ -126,7 +126,7 @@ bool MyArea::on_button_release_event(GdkEventButton* event) {
     return true;
 }
 
-// bool MyArea::on_motion_notify_event(GdkEventMotion* event) {
+// bool Canvas::on_motion_notify_event(GdkEventMotion* event) {
 //     if((gint)event->type == Gdk::MOTION_NOTIFY) {
 //         cout << "im holding" << endl;
 //         return true;
@@ -135,8 +135,8 @@ bool MyArea::on_button_release_event(GdkEventButton* event) {
 //     return true;
 // }
 
-//MyArea utility methods:
-void MyArea::convertCoordsToModele(Coords& clickLocation) {
+//Canvas utility methods:
+void Canvas::convertCoordsToModele(Coords& clickLocation) {
     double newX = (clickLocation.x/width) * (xMax-xMin) + xMin;
     double newY = yMax - (clickLocation.y/height) * (yMax-yMin);
 
@@ -144,18 +144,28 @@ void MyArea::convertCoordsToModele(Coords& clickLocation) {
     clickLocation.y = newY;
 }
 
-//MyArea event handling methods:
-void MyArea::handleLeftClick(Coords clickLocation) {
+//Canvas event handling methods:
+void Canvas::handleLeftClick(Coords clickLocation) {
+    if(Ville::getVilleInstance()->getActiveNode() == -1) {
+        Ville::getVilleInstance()->createHousing(uidCounter, clickLocation.x, clickLocation.y, min_capacity);
+    }
+
     Ville::getVilleInstance()->setActiveNode(clickLocation);
+
+    ++uidCounter;
     refresh();
 }
 
-void MyArea::handleRightClick(Coords clickLocation) {
+void Canvas::handleRightClick(Coords clickLocation) {
+    int activeNode = Ville::getVilleInstance()->getActiveNode();
+    if(activeNode != -1) {
+        Ville::getVilleInstance()->getNode(activeNode)->setCoords(clickLocation.x, clickLocation.y);
+    }
     refresh();
 }
 
 //Gui constructor/destructor:
-MyGui::MyGui():
+Gui::Gui():
     mBox(Gtk::ORIENTATION_HORIZONTAL, 10), mBoxLeft(Gtk::ORIENTATION_VERTICAL, 10), 
     mBoxRight(Gtk::ORIENTATION_HORIZONTAL, 10), 
     mBoxDisplay(Gtk::ORIENTATION_VERTICAL, 4), mBoxEditor(Gtk::ORIENTATION_VERTICAL),
@@ -174,6 +184,7 @@ MyGui::MyGui():
 
     mRButtonH("housing"), mRButtonT("transport"), mRButtonP("production") {
     //General setup
+    guiObject = this;
     setupGui();
 
     //Add general frame
@@ -195,22 +206,21 @@ MyGui::MyGui():
     show_all_children();
 }
 
-MyGui::~MyGui() {}
+Gui::~Gui() {}
 
 //Gui clickable buttons:
-void MyGui::onButtonClickExit() {
+void Gui::onButtonClickExit() {
     cout << "exit button clicked" << endl;
     hide(); //exits the app
 }
 
-void MyGui::onButtonClickNew() {
+void Gui::onButtonClickNew() {
     Ville::getVilleInstance()->resetVille();
-    refreshCriteres();
     cout << "new button clicked" << endl;
     mArea.clear();
 }
 
-void MyGui::onButtonClickOpen() {
+void Gui::onButtonClickOpen() {
     cout << "open button clicked" << endl;
     //mArea.clear();
 
@@ -229,18 +239,14 @@ void MyGui::onButtonClickOpen() {
     //Handle the response:
     switch(result) {
         case(Gtk::RESPONSE_OK): {
-            // mArea.clear();
-            // deleteCity();
             cout << "Open clicked." << endl;
 
-            //Notice that this is a std::string, not a Glib::ustring.
             string filename = dialog.get_filename();
             cout << "File selected: " <<  filename << endl;
             
             char* filenameChar = const_cast<char*>(filename.c_str());
             
             lecture(filenameChar);
-            refreshCriteres();
             mArea.draw();
             //delete filenameChar;
             break;
@@ -258,7 +264,7 @@ void MyGui::onButtonClickOpen() {
     }
 }
 
-void MyGui::onButtonClickSave() {
+void Gui::onButtonClickSave() {
     cout << "save button clicked" << endl;
 
     Gtk::FileChooserDialog dialog("Please choose a file",
@@ -294,91 +300,91 @@ void MyGui::onButtonClickSave() {
 
 }
 
-void MyGui::onButtonClickZoomIn() {
+void Gui::onButtonClickZoomIn() {
     cout << "zoomIn button clicked" << endl;
 }
 
-void MyGui::onButtonClickZoomOut() {
+void Gui::onButtonClickZoomOut() {
     cout << "zoomOut button clicked" << endl;
 }
 
-void MyGui::onButtonClickZoomR() {
+void Gui::onButtonClickZoomR() {
     cout << "zoomReset button clicked" << endl;
 }
 
 //Shortest path togglebutton
-void MyGui::onTButtonClickShortest() {
+void Gui::onTButtonClickShortest() {
     if(mTButtonShortest.get_active()) onTButtonPressShortest();
     else onTButtonReleaseShortest();
 }
 
-void MyGui::onTButtonPressShortest() {
+void Gui::onTButtonPressShortest() {
     cout << "shortest path button pressed" << endl;
 }
 
-void MyGui::onTButtonReleaseShortest() {
+void Gui::onTButtonReleaseShortest() {
     cout << "shortest path button released" << endl;
 }
 
 //Gui edit link togglebutton
-void MyGui::onTButtonClickEditLink() {
+void Gui::onTButtonClickEditLink() {
     if(mTButtonEditLink.get_active()) onTButtonPressEditLink();
     else onTButtonReleaseEditLink();
 }
 
-void MyGui::onTButtonPressEditLink() {
+void Gui::onTButtonPressEditLink() {
     cout << "edit link button pressed" << endl;
 }
 
-void MyGui::onTButtonReleaseEditLink() {
+void Gui::onTButtonReleaseEditLink() {
     cout << "edit link button released" << endl;
 }
 
 //Gui housing radiobutton
-void MyGui::onRButtonClickH() {
+void Gui::onRButtonClickH() {
     if(mRButtonH.get_active()) onRButtonPressH();
     else onRButtonReleaseH();
 }
 
-void MyGui::onRButtonPressH() {
+void Gui::onRButtonPressH() {
     cout << "housing radiobutton pressed" << endl;
 }
 
-void MyGui::onRButtonReleaseH() {
+void Gui::onRButtonReleaseH() {
     cout << "housing radiobutton released" << endl;
 }
 
 //Gui transport radiobutton
-void MyGui::onRButtonClickT() {
+void Gui::onRButtonClickT() {
     if(mRButtonT.get_active()) onRButtonPressT();
     else onRButtonReleaseT();
 }
 
-void MyGui::onRButtonPressT() {
+void Gui::onRButtonPressT() {
     cout << "transport radiobutton pressed" << endl;
 }
 
-void MyGui::onRButtonReleaseT() {
+void Gui::onRButtonReleaseT() {
     cout << "transport radiobutton released" << endl;
 }
 
 //Gui production radiobutton 
-void MyGui::onRButtonClickP() {
+void Gui::onRButtonClickP() {
     if(mRButtonP.get_active()) onRButtonPressP();
     else onRButtonReleaseP();
 }
 
-void MyGui::onRButtonPressP() {
+void Gui::onRButtonPressP() {
     cout << "production radiobutton pressed" << endl;
 
 }
 
-void MyGui::onRButtonReleaseP() {
+void Gui::onRButtonReleaseP() {
     cout << "production radiobutton released" << endl;
 }
 
 //Misc MyGui methods:
-void MyGui::refreshCriteres() {
+void Gui::refreshCriteres() {
     string enj = convertCritereToString(Ville::getVilleInstance()->critereENJ());
     string ci = convertCritereToString(Ville::getVilleInstance()->critereCI());
     string mta = convertCritereToString(Ville::getVilleInstance()->critereMTA());
@@ -388,7 +394,7 @@ void MyGui::refreshCriteres() {
 }
 
 //Private gui methods (to better organize gui constructor):
-void MyGui::setupGui() {
+void Gui::setupGui() {
     //Basic definitions
     set_title("Archipelago");
     set_border_width(5);
@@ -408,7 +414,7 @@ void MyGui::setupGui() {
     mFrameCanvas.add(mArea); //if i remove this, Open button works...
 }
 
-void MyGui::initGeneral() {
+void Gui::initGeneral() {
     //Add general frame to box
     mBoxLeft.pack_start(mFrameGeneral, false, false);
 
@@ -424,7 +430,7 @@ void MyGui::initGeneral() {
     mBBGeneral.add(mButtonSave);
 } //initialize general section of gui
 
-void MyGui::initDisplay() {
+void Gui::initDisplay() {
     mBoxLeft.pack_start(mFrameDisplay, false, false);
 
     //Add box inside (to be able to put multiple widgets)
@@ -443,7 +449,7 @@ void MyGui::initDisplay() {
     mLabelZoom.set_text(string("zoom: ") + string("1.00x")); //temp nonfunctional zoom
 } //initialize dislay section of gui
 
-void MyGui::initEditor() {
+void Gui::initEditor() {
     mBoxLeft.pack_start(mFrameEditor, false, false);
     mFrameEditor.add(mBoxEditor);
 
@@ -457,7 +463,7 @@ void MyGui::initEditor() {
     mRButtonH.set_active();
 } //initialize editor section of gui
 
-void MyGui::initInformations() {
+void Gui::initInformations() {
     mBoxLeft.pack_start(mFrameInformations, false, false);
     mFrameInformations.add(mLabelCriteres);
 
@@ -469,33 +475,33 @@ void MyGui::initInformations() {
             + string("\nMTA: ") + mta);
 } //initialize informations section of gui
 
-void MyGui::connectButtons() {
+void Gui::connectButtons() {
     mButtonExit.signal_clicked().connect(sigc::mem_fun(*this,
-                    &MyGui::onButtonClickExit));
+                    &Gui::onButtonClickExit));
     mButtonNew.signal_clicked().connect(sigc::mem_fun(*this,
-                    &MyGui::onButtonClickNew));
+                    &Gui::onButtonClickNew));
     mButtonOpen.signal_clicked().connect(sigc::mem_fun(*this,
-                    &MyGui::onButtonClickOpen));
+                    &Gui::onButtonClickOpen));
     mButtonSave.signal_clicked().connect(sigc::mem_fun(*this,
-                    &MyGui::onButtonClickSave));
+                    &Gui::onButtonClickSave));
     mButtonZoomIn.signal_clicked().connect(sigc::mem_fun(*this,
-                    &MyGui::onButtonClickZoomIn));
+                    &Gui::onButtonClickZoomIn));
     mButtonZoomOut.signal_clicked().connect(sigc::mem_fun(*this,
-                    &MyGui::onButtonClickZoomOut));
+                    &Gui::onButtonClickZoomOut));
     mButtonZoomR.signal_clicked().connect(sigc::mem_fun(*this,
-                    &MyGui::onButtonClickZoomR));
+                    &Gui::onButtonClickZoomR));
 
     mTButtonShortest.signal_clicked().connect(sigc::mem_fun(*this,
-                    &MyGui::onTButtonClickShortest));
+                    &Gui::onTButtonClickShortest));
     mTButtonEditLink.signal_clicked().connect(sigc::mem_fun(*this,
-                    &MyGui::onTButtonClickEditLink));
+                    &Gui::onTButtonClickEditLink));
     
     mRButtonH.signal_clicked().connect(sigc::mem_fun(*this,
-                    &MyGui::onRButtonClickH));
+                    &Gui::onRButtonClickH));
     mRButtonT.signal_clicked().connect(sigc::mem_fun(*this,
-                    &MyGui::onRButtonClickT));
+                    &Gui::onRButtonClickT));
     mRButtonP.signal_clicked().connect(sigc::mem_fun(*this,
-                    &MyGui::onRButtonClickP));
+                    &Gui::onRButtonClickP));
 
     
 } //connect buttons to signal handlers

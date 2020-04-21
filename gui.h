@@ -12,7 +12,7 @@
 #include <gtkmm/drawingarea.h>
 #include "tools.h"
 
-class MyArea: public Gtk::DrawingArea {
+class Canvas: public Gtk::DrawingArea {
 private:
     bool empty;
     void refresh();
@@ -30,8 +30,8 @@ protected:
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
     //Override mouse events
-    bool on_button_press_event(GdkEventButton* event);
-    bool on_button_release_event(GdkEventButton* event);
+    bool on_button_press_event(GdkEventButton* event) override;
+    bool on_button_release_event(GdkEventButton* event) override;
     //bool on_motion_notify_event(GdkEventMotion* event);
 
     void convertCoordsToModele(Coords& clickLocation);
@@ -40,14 +40,14 @@ protected:
     void handleRightClick(Coords clickLocation);
 
 public:
-    MyArea();
-    virtual ~MyArea();
+    Canvas();
+    virtual ~Canvas();
 
     void clear(); //equivalent de New sur l'interface
     void draw(); //equivalent de Open sur l'interface
 };
 
-class MyGui: public Gtk::Window {
+class Gui: public Gtk::Window {
 private:
     void setupGui();
     void initGeneral();
@@ -56,12 +56,10 @@ private:
     void initInformations();
     void connectButtons();
 
-    void refreshCriteres();
-
 protected:
     Gtk::Box mBox, mBoxLeft, mBoxRight, mBoxDisplay, mBoxEditor;
 
-    MyArea mArea;
+    Canvas mArea;
 
     Gtk::Frame mFrameCanvas, mFrameGeneral, mFrameDisplay, mFrameEditor, mFrameInformations;
 
@@ -105,9 +103,10 @@ protected:
     void onRButtonReleaseP();
 
 public:
-    MyGui();
-    virtual ~MyGui();
+    Gui();
+    virtual ~Gui();
 
+    void refreshCriteres();
 };
 
 #endif

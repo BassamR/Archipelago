@@ -34,6 +34,10 @@ int Ville::getActiveNode() {
     return activeNode;
 }
 
+Noeud* Ville::getNode(unsigned int index) {
+    return ensembleNoeuds[index];
+}
+
 //Reading/Outputting functions:
 void lecture(char* nomFichier) {
     ville.resetVille();
