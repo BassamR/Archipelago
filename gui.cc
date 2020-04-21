@@ -221,6 +221,7 @@ void Gui::onButtonClickNew() {
     Ville::getVilleInstance()->resetVille();
     cout << "new button clicked" << endl;
     mArea.clear();
+    refreshCriteres();
 }
 
 void Gui::onButtonClickOpen() {
@@ -251,6 +252,7 @@ void Gui::onButtonClickOpen() {
             
             lecture(filenameChar);
             mArea.draw();
+            refreshCriteres();
             //delete filenameChar;
             break;
         }
