@@ -12,27 +12,32 @@
 #include <gtkmm/drawingarea.h>
 #include "tools.h"
 
-class Canvas: public Gtk::DrawingArea {
-private:
-    bool empty;
-    void refresh();
-
+struct Frame {
     int width;
     int height; //dimensions of canvas
 
     double xMin;
     double xMax;
     double yMin;
-    double yMax;
+    double yMax; //dimensions of model space
+};
 
-protected:
+class Canvas: public Gtk::DrawingArea {
+private:
+    bool empty;
+    void refresh();
+
+    Frame frame;
+
+    bool shortestPathPressed;
+    bool editLinkPressed;
+
     // Override default signal handler:
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
     //Override mouse events
     bool on_button_press_event(GdkEventButton* event) override;
     bool on_button_release_event(GdkEventButton* event) override;
-    //bool on_motion_notify_event(GdkEventMotion* event);
 
     void convertCoordsToModele(Coords& clickLocation);
 
@@ -43,20 +48,15 @@ public:
     Canvas();
     virtual ~Canvas();
 
-    void clear(); //equivalent de New sur l'interface
-    void draw(); //equivalent de Open sur l'interface
+    void clear();
+    void draw();
+
+    void setShortestPathPressed(bool value);
+    void setEditLinkPressed(bool value);
 };
 
 class Gui: public Gtk::Window {
 private:
-    void setupGui();
-    void initGeneral();
-    void initDisplay();
-    void initEditor();
-    void initInformations();
-    void connectButtons();
-
-protected:
     Gtk::Box mBox, mBoxLeft, mBoxRight, mBoxDisplay, mBoxEditor;
 
     Canvas mArea;
@@ -101,6 +101,13 @@ protected:
     void onRButtonClickP();
     void onRButtonPressP();
     void onRButtonReleaseP();
+
+    void setupGui();
+    void initGeneral();
+    void initDisplay();
+    void initEditor();
+    void initInformations();
+    void connectButtons();
 
 public:
     Gui();

@@ -6,21 +6,29 @@
 #include <gtkmm/filechooserdialog.h>
 #include "gui.h"
 #include "ville.h"
-#include "tools.h"
+//#include "tools.h" //already included in gui.h
 #include "graphic_gui.h"
 #include "constantes.h"
 using namespace std;
 
 //Static functions and variables
+//static Gui archipelagoGui; //because not allowed to declare Gui object in main
 static Gui* guiObject(nullptr);
 static int uidCounter(1000);
 static string convertCritereToString(const double& critere);
 
 //Canvas constructor/destructor:
-Canvas::Canvas(): empty(false), xMin(-dim_max), xMax(dim_max), yMin(-dim_max), yMax(dim_max) {
+Canvas::Canvas(): empty(false), shortestPathPressed(false), editLinkPressed(false) {
     add_events(Gdk::BUTTON_PRESS_MASK);
     add_events(Gdk::BUTTON_RELEASE_MASK);
     //add_events(Gdk::BUTTON_MOTION_MASK);
+    
+    frame.width = 0;
+    frame.height = 0;
+    frame.xMin = -dim_max;
+    frame.xMax = dim_max;
+    frame.yMin = -dim_max;
+    frame.yMax = dim_max;
 }
 
 Canvas::~Canvas() {}
@@ -48,17 +56,17 @@ void Canvas::draw() {
 //Canvas event override methods:
 bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     Gtk::Allocation allocation = get_allocation();
-    width = allocation.get_width();
-    height = allocation.get_height();
+    frame.width = allocation.get_width();
+    frame.height = allocation.get_height();
 
     int xc, yc; //center of the gtk window
-    xc = width/2;
-    yc = height/2;
+    xc = frame.width/2;
+    yc = frame.height/2;
 
     //cr->set_identity_matrix();
     cr->translate(xc, yc);
-    cr->scale(width/(xMax - xMin), -height/(yMax - yMin));
-	cr->translate(-(xMin + xMax)/2, -(yMin + yMax)/2);
+    cr->scale(frame.width/(frame.xMax - frame.xMin), -frame.height/(frame.yMax - frame.yMin));
+	cr->translate(-(frame.xMin + frame.xMax)/2, -(frame.yMin + frame.yMax)/2);
 
     graphicSetContext(cr);
 
@@ -126,22 +134,21 @@ bool Canvas::on_button_release_event(GdkEventButton* event) {
     return true;
 }
 
-// bool Canvas::on_motion_notify_event(GdkEventMotion* event) {
-//     if((gint)event->type == Gdk::MOTION_NOTIFY) {
-//         cout << "im holding" << endl;
-//         return true;
-//     }
-
-//     return true;
-// }
-
 //Canvas utility methods:
 void Canvas::convertCoordsToModele(Coords& clickLocation) {
-    double newX = (clickLocation.x/width) * (xMax-xMin) + xMin;
-    double newY = yMax - (clickLocation.y/height) * (yMax-yMin);
+    double newX = (clickLocation.x/frame.width) * (frame.xMax-frame.xMin) + frame.xMin;
+    double newY = frame.yMax - (clickLocation.y/frame.height) * (frame.yMax-frame.yMin);
 
     clickLocation.x = newX;
     clickLocation.y = newY;
+}
+
+void Canvas::setShortestPathPressed(bool value) {
+    shortestPathPressed = value;
+}
+
+void Canvas::setEditLinkPressed(bool value) {
+    editLinkPressed = value;
 }
 
 //Canvas event handling methods:
@@ -151,6 +158,8 @@ void Canvas::handleLeftClick(Coords clickLocation) {
             guiObject->refreshCriteres();
             ++uidCounter;
         }
+    } else { //if an active link is present
+
     }
 
     Ville::getVilleInstance()->setActiveNode(clickLocation);
@@ -339,10 +348,12 @@ void Gui::onTButtonClickEditLink() {
 
 void Gui::onTButtonPressEditLink() {
     cout << "edit link button pressed" << endl;
+    mArea.setEditLinkPressed(true);
 }
 
 void Gui::onTButtonReleaseEditLink() {
     cout << "edit link button released" << endl;
+    mArea.setEditLinkPressed(false);
 }
 
 //Gui housing radiobutton
