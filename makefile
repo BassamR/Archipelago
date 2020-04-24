@@ -9,7 +9,7 @@ OFILES = projet.o gui.o ville.o noeud.o tools.o error.o graphic.o
 # Dependances
 all: $(OUT)
 
-graphic.o: graphic.cc graphic_gui.h graphic.h graphic_color.h constantes.h
+graphic.o: graphic.cc graphic_gui.h graphic.h graphic_color.h
 	$(CXX) $(CXXFLAGS) $(LINKING) -c $< -o $@ $(LINKING)
 
 error.o: error.cc error.h constantes.h
