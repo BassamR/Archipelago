@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <gtkmm/application.h>
 #include <cairomm/context.h>
 #include <gtkmm/filechooser.h>
 #include <gtkmm/filechooserdialog.h>
@@ -11,8 +12,8 @@
 #include "constantes.h"
 using namespace std;
 
+
 //Static functions and variables
-//static Gui archipelagoGui; //because not allowed to declare Gui object in main
 static Gui* guiObject(nullptr);
 static int uidCounter(1000);
 static string convertCritereToString(const double& critere);
@@ -69,8 +70,6 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
 	cr->translate(-(frame.xMin + frame.xMax)/2, -(frame.yMin + frame.yMax)/2);
 
     graphicSetContext(cr);
-
-    //guiObject->refreshCriteres();
 
     if(not empty) {
         makeBgWhite();
@@ -153,7 +152,7 @@ void Canvas::setEditLinkPressed(bool value) {
 
 //Canvas event handling methods:
 void Canvas::handleLeftClick(Coords clickLocation) {
-    if(Ville::getVilleInstance()->getActiveNode() == -1) {
+    if(Ville::getVilleInstance()->getActiveNode() == noActiveNode) {
         if(Ville::getVilleInstance()->createHousing(uidCounter, clickLocation.x, clickLocation.y, min_capacity)) {
             guiObject->refreshCriteres();
             ++uidCounter;
@@ -169,7 +168,7 @@ void Canvas::handleLeftClick(Coords clickLocation) {
 
 void Canvas::handleRightClick(Coords clickLocation) {
     int activeNode = Ville::getVilleInstance()->getActiveNode();
-    if(activeNode != -1) {
+    if(activeNode != noActiveNode) {
         Ville::getVilleInstance()->getNode(activeNode)->setCoords(clickLocation.x, clickLocation.y);
         guiObject->refreshCriteres();
     }
@@ -526,5 +525,6 @@ void Gui::connectButtons() {
 string convertCritereToString(const double& critere) {
     stringstream temp;
     temp << critere;
-    return temp.str();
+    string convertedCritere = temp.str();
+    return convertedCritere;
 }
