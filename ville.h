@@ -17,8 +17,7 @@ private:
     std::vector<Noeud*> ensembleNoeuds;
     std::vector<std::vector<Noeud*>> liens;
 
-    int activeNode; //-1 when no active nodes
-    bool editLink;
+    int activeNode; //=noActiveNode when no node selected
 
 public:
     Ville();
@@ -34,6 +33,9 @@ public:
     bool createTransport(unsigned int uid, double x, double y, unsigned int size);
 
     bool createLien(unsigned int uid1, unsigned int uid2);
+
+    void deleteNode();
+    void deleteLink();
 
     unsigned int findNoeudIndex(unsigned int uid);
     

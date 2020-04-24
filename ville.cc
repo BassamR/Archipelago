@@ -22,8 +22,8 @@ static Ville ville;
 static void initVille(string line, bool& continueLecture);
 static void outputNode(ofstream& str, vector<Noeud*> nodes);
 
-//Constructor, destructor, static methods, getters/setters
-Ville::Ville(): activeNode(-1), editLink(false) {}
+//Constructor, destructor, getters/setters:
+Ville::Ville(): activeNode(noActiveNode) {}
 Ville::~Ville() {}
 
 Ville* Ville::getVilleInstance() {
@@ -206,6 +206,14 @@ bool Ville::createLien(unsigned int uid1, unsigned int uid2) {
     }
 }
 
+void Ville::deleteNode() {
+    cout << "ive deleted a node" << endl;
+}
+
+void Ville::deleteLink() {
+    cout << "ive deleted a link" << endl;
+}
+
 unsigned int Ville::findNoeudIndex(unsigned int uid) {
     for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
         if(uid == ensembleNoeuds[i]->getUid()) {
@@ -307,7 +315,7 @@ void Ville::drawNodes() {
         ensembleNoeuds[i]->draw();
     }
 
-    if(activeNode >= 0) {
+    if(activeNode != noActiveNode) {
         setColor(RED);
         ensembleNoeuds[activeNode]->draw();
     }
@@ -387,6 +395,8 @@ void Ville::resetVille() {
     }
     ensembleNoeuds.clear();
     cout << "deleted nodes" << endl;
+
+    activeNode = noActiveNode;
 }
 
 //Link info methods:
@@ -446,8 +456,7 @@ double Ville::critereCI() {
 }
 
 double Ville::critereMTA() {
-    double mta(0), mtaCount(0);
-    double nbH(0);
+    double mta(0), mtaCount(0), nbH(0);
 
     for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
         if(ensembleNoeuds[i]->getType() == "housing") {
@@ -456,11 +465,7 @@ double Ville::critereMTA() {
             ensembleNoeuds[i]->dijkstra(ensembleNoeuds, "production");
             ensembleNoeuds[i]->dijkstra(ensembleNoeuds, "transport");
 
-            //cout << "mtaHP for one node: " << ensembleNoeuds[i]->mtaHP() << endl;
-            //cout << "mtaHT for one node: " << ensembleNoeuds[i]->mtaHT() << endl;
-
             mtaCount += ensembleNoeuds[i]->mtaHP() + ensembleNoeuds[i]->mtaHT();
-            cout << "mtacount so far: " << mtaCount << endl;
         }
     }
 
@@ -483,7 +488,7 @@ void Ville::setActiveNode(Coords clickLocation) {
         }
     }
 
-    activeNode = -1;
+    activeNode = noActiveNode;
     return;
 }
 
