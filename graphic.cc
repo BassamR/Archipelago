@@ -4,7 +4,7 @@
 using namespace std;
 
 static const Cairo::RefPtr<Cairo::Context>* ptcr(nullptr);
-static const double lineWidth = 5.0;
+static const double lineWidth = 6.0;
 
 void graphicSetContext(const Cairo::RefPtr<Cairo::Context>& cr) {
     static bool init(false);
