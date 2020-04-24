@@ -23,6 +23,7 @@ constexpr double delta_zoom(0.2);
 constexpr double max_zoom(3.0);
 constexpr double min_zoom(0.2);
 
+constexpr int noActiveNode(-1);
 
 // perso
 #define DEBUG
