@@ -256,18 +256,17 @@ void Housing::dijkstra(vector<Noeud*>& tn, string nodeType) {
         unsigned int n = findMinAccess(ta, tn);
         if(tn[n]->getType() == nodeType and tn[n]->getParent() != nullptr) {
             if(nodeType == "transport") {
-                cout << "DIJKSTRA DONE, FINAL INDEX: " << n << " FOR TRANS, NODE N. " << uid << endl;
                 updateShortestPathToTrans(tn, tn[n]);
                 return;
             }
             if(nodeType == "production") {
-                cout << "DIJKSTRA DONE, FINAL INDEX: " << n << " FOR PROD, NODE N. " << uid << endl;
                 updateShortestPathToProd(tn, tn[n]);
                 return;
             }
             return;
         }
 
+        //stop dijkstra if it goes rogue
         if(tn[n] != this and tn[n]->getParent() == nullptr) return;
 
         tn[n]->setIn(false); //we dealt with this node
@@ -282,45 +281,33 @@ void Housing::dijkstra(vector<Noeud*>& tn, string nodeType) {
                         sortTA(ta, tn, tn[n]->getLiens()[i]);
                     }
                 }
-
             } //end of for loop for TN[n]'s links
-
         } //end of big if (for production)
-
     } //end of while
-
     return;
 }
 
 void Housing::updateShortestPathToProd(vector<Noeud*>& ensemble, Noeud* goal) {
-    //shortestPathToProd.push_back(goal);
+    if(not shortestPathToProd.empty()) shortestPathToProd.clear();
     Noeud* newParent = goal;
 
     while(newParent != nullptr) {
         shortestPathToProd.push_back(newParent);
         newParent = newParent->getParent();
     }
-    // if(goal->getParent() != nullptr) {
-    //     shortestPathToProd.push_back(goal);
-    //     updateShortestPathToProd(ensemble, goal->getParent());
-    // }
 }
 
 void Housing::updateShortestPathToTrans(vector<Noeud*>& ensemble, Noeud* goal) {
+    if(not shortestPathToTrans.empty()) shortestPathToTrans.clear();
     Noeud* newParent = goal;
 
     while(newParent != nullptr) {
         shortestPathToTrans.push_back(newParent);
         newParent = newParent->getParent();
     }
-    // if(goal->getParent() != nullptr) {
-    //     shortestPathToTrans.push_back(goal);
-    //     updateShortestPathToTrans(ensemble, goal->getParent());
-    // }
 }
 
 double Housing::mtaHP() {
-    cout << "mtaHP called" << endl;
     if(shortestPathToProd.empty()) return infinite_time;
     double mtaHP(0);
     
@@ -328,27 +315,16 @@ double Housing::mtaHP() {
         mtaHP += linkValue(shortestPathToProd[i], shortestPathToProd[i+1]);
     }
 
-    //take into account original node (no real need now)
-    //mtaHP += linkValue(shortestPathToProd.back(), this); //prolly a pb here?
-    //cout << "original node mta value prod: " << linkValue(shortestPathToProd.back(), this) << endl;
-    cout << "full mta value prod: " << mtaHP << endl;
-
     return mtaHP;
 }
 
 double Housing::mtaHT() {
-    cout << "mtaHT called" << endl;
     if(shortestPathToTrans.empty()) return infinite_time;
     double mtaHT(0);
     
     for(unsigned int i = 0; i < shortestPathToTrans.size()-1; ++i) {
         mtaHT += linkValue(shortestPathToTrans[i], shortestPathToTrans[i+1]);
     }
-
-    //take into account original node
-    //mtaHT += linkValue(shortestPathToTrans.back(), this);
-    //cout << "original node mta value trans: " << linkValue(shortestPathToTrans.back(), this) << endl;
-    cout << "full mta value trans: " << mtaHT << endl;
 
     return mtaHT;
 }
@@ -434,41 +410,10 @@ void sortTA(vector<unsigned int>& ta, const vector<Noeud*>& tn, Noeud* index) {
     }
 
     while(indexInTA > 0 and tn[ta[indexInTA]]->getAccess() < tn[ta[indexInTA-1]]->getAccess()) {
-        //unsigned int exchange = ta[indexInTA];
-        //ta[indexInTA] = ta[indexInTA-1];
-        //ta[indexInTA-1] = exchange;
         swap(ta[indexInTA], ta[indexInTA-1]);
         --indexInTA;
     }
 }
-
-// void sortTA(vector<unsigned int>& ta, const vector<Noeud*>& tn) {
-//     //we want to sort ta, using tn[i]->getAccess() values
-//     vector<double> temp;
-//     for(unsigned int i = 0; i < tn.size(); ++i) {
-//         temp.push_back(tn[i]->getAccess());
-//     } //setup a temporary vector which will contain the access values
-
-//     vector<unsigned int> tempTA;
-//     initTA(tempTA, tn); //since we are doing a full sort, we need a new TA vector
-
-//     for(unsigned int i = 1; i < temp.size(); ++i) {  
-//         double key = temp[i]; 
-//         int key2 = tempTA[i];
-//         int j = i - 1;  
-
-//         while((j >= 0) and (key <= temp[j])) {
-//             temp[j + 1] = temp[j];   
-//             tempTA[j + 1] = tempTA[j]; //sneakily sort ta at the same time as temp
-//             --j;  
-//         }
-
-//         temp[j + 1] = key;  
-//         tempTA[j + 1] = key2;
-//     }
-
-//     ta = tempTA;
-// } //insertion sort but adapted to this project
 
 bool tnEmpty(const vector<Noeud*>& tn) {
     for(unsigned int i = 0; i < tn.size(); ++i) {
@@ -501,8 +446,6 @@ double linkValue(Noeud* noeud1, Noeud* noeud2) {
     } else {
         speed = default_speed;
     }
-
-    cout << "this is my link value: " << distance/speed << endl;
 
     return distance/speed;
 }
