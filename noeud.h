@@ -90,13 +90,13 @@ public:
     std::vector<Noeud*> getShortestProd();
     std::vector<Noeud*> getShortestTrans();
 
-    void dijkstra(std::vector<Noeud*>& tn, std::string nodeType); //check conventions if i can keep it majuscule
+    void dijkstra(std::vector<Noeud*>& tn, std::string nodeType) override;
 
-    void updateShortestPathToProd(std::vector<Noeud*>& ensemble, Noeud* goal);
-    void updateShortestPathToTrans(std::vector<Noeud*>& ensemble, Noeud* goal);
+    void updateShortestPathToProd(std::vector<Noeud*>& ensemble, Noeud* goal) override;
+    void updateShortestPathToTrans(std::vector<Noeud*>& ensemble, Noeud* goal) override;
 
-    double mtaHP();
-    double mtaHT();
+    double mtaHP() override;
+    double mtaHT() override;
 };
 
 class Transport: public Noeud {
