@@ -1,8 +1,8 @@
 /**
 * \name tools.h
 * \author Hugo Masson, Bassam El Rawas (Sciper 314886, 310635)
-* \date Mars 2020
-* \version 1.0
+* \date May 2020
+* \version 2.0
 */
 
 #ifndef TOOLS_HEADER_H
@@ -25,11 +25,6 @@ struct Cercle {
      double rayon;
 };
 
-struct Segment {
-     Coords p;
-     Vecteur v;
-};
-
 void creeVecteur(Coords p1, Coords p2, Vecteur& v);
 double norme(Vecteur v);
 bool intersectionCC(Cercle c1, Cercle c2, double safeDistance = 0);
@@ -42,5 +37,6 @@ void setColor(Color couleur);
 
 void drawCircle(Cercle c);
 void drawSegment(Coords v1, Coords v2);
+void drawRectangle(Coords point, double width, double height);
 
 #endif

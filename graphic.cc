@@ -1,7 +1,12 @@
-#include <iostream>
+/**
+* \name graphic.cc
+* \author Hugo Masson, Bassam El Rawas (Sciper 314886, 310635)
+* \date May 2020
+* \version 1.0
+*/
+
 #include <cmath>
 #include "graphic_gui.h"
-using namespace std;
 
 static const Cairo::RefPtr<Cairo::Context>* ptcr(nullptr);
 static const double lineWidth = 6.0;
@@ -20,7 +25,7 @@ void makeBgWhite() {
 }
 
 //Draw functions definition
-void setColorG(Color couleur) {
+void setColorGraphic(Color couleur) {
     switch(couleur) {
         case BLACK:
             (*ptcr)->set_source_rgb(0.0, 0.0, 0.0);
@@ -35,7 +40,7 @@ void setColorG(Color couleur) {
     }
 }
 
-void drawCircleG(double x, double y, double r) {
+void drawCircleGraphic(double x, double y, double r) {
     (*ptcr)->set_line_width(lineWidth);
 
     (*ptcr)->save();
@@ -47,12 +52,22 @@ void drawCircleG(double x, double y, double r) {
     (*ptcr)->stroke();
 }
 
-void drawSegmentG(double x1, double y1, double x2, double y2) {
+void drawSegmentGraphic(double x1, double y1, double x2, double y2) {
     (*ptcr)->set_line_width(lineWidth);
 
     (*ptcr)->save();
     (*ptcr)->move_to(x1, y1);
     (*ptcr)->line_to(x2, y2);
+
+    (*ptcr)->restore();
+    (*ptcr)->stroke();
+}
+
+void drawRectangleGraphic(double x, double y, double width, double height) {
+    (*ptcr)->set_line_width(lineWidth);
+
+    (*ptcr)->save();
+    (*ptcr)->rectangle(x, y, width, height);
 
     (*ptcr)->restore();
     (*ptcr)->stroke();

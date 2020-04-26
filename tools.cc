@@ -1,8 +1,8 @@
 /**
 * \name tools.cc
 * \author Hugo Masson, Bassam El Rawas (Sciper 314886, 310635)
-* \date Mars 2020
-* \version 1.0
+* \date May 2020
+* \version 2.0
 */
 
 #include <iostream>
@@ -81,22 +81,26 @@ bool appartientCercle(Cercle cercle, Coords coords) {
 void setColor(Color couleur) {
     switch(couleur) {
         case BLACK:
-            setColorG(BLACK);
+            setColorGraphic(BLACK);
             break;
         case RED:
-            setColorG(RED);
+            setColorGraphic(RED);
             break;
         case GREEN:
-            setColorG(GREEN);
+            setColorGraphic(GREEN);
             break;
         default: break;
     }
 }
 
 void drawCircle(Cercle c) {
-    drawCircleG(c.centre.x, c.centre.y, c.rayon);
+    drawCircleGraphic(c.centre.x, c.centre.y, c.rayon);
 }
 
 void drawSegment(Coords v1, Coords v2) {
-    drawSegmentG(v1.x, v1.y, v2.x, v2.y);
+    drawSegmentGraphic(v1.x, v1.y, v2.x, v2.y);
+}
+
+void drawRectangle(Coords point, double width, double height) {
+    drawRectangleGraphic(point.x, point.y, width, height);
 }
