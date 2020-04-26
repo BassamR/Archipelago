@@ -1,8 +1,8 @@
 /**
 * \name projet.cc
 * \author Hugo Masson, Bassam El Rawas (Sciper 314886, 310635)
-* \date Mars 2020
-* \version 1.0
+* \date May 2020
+* \version 2.0
 */
 
 #include <gtkmm/application.h>

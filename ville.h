@@ -1,8 +1,8 @@
 /**
 * \name ville.h
 * \author Hugo Masson, Bassam El Rawas (Sciper 314886, 310635)
-* \date Mars 2020
-* \version 1.0
+* \date May 2020
+* \version 2.0
 */
 
 #ifndef VILLE_HEADER_H
@@ -51,8 +51,6 @@ public:
     void drawLinks();
     void saveVille(std::string nomFichier);
     void resetVille();
-
-    void tempDrawColor();
 
     double linkDistance(unsigned int index);
     double linkCapacity(unsigned int index);

@@ -1,8 +1,8 @@
 /**
 * \name ville.cc
 * \author Hugo Masson, Bassam El Rawas (Sciper 314886, 310635)
-* \date Mars 2020
-* \version 1.0
+* \date May 2020
+* \version 2.0
 */
 
 #include <iostream>
@@ -155,7 +155,6 @@ bool Ville::createHousing(unsigned int uid, double x, double y, unsigned int siz
     Housing* newHouse = new Housing(uid, x, y, size);
 
     if(newHouse->testNodeValidity(ensembleNoeuds) == false) {
-        //resetVille();
         return false;
     } else {
         ensembleNoeuds.push_back(newHouse);
@@ -163,11 +162,10 @@ bool Ville::createHousing(unsigned int uid, double x, double y, unsigned int siz
     }
 }
 
-bool Ville::createProduction(unsigned int uid, double x, double y, unsigned int size) {
+bool Ville::createProduction(unsigned int uid, double x, double y, unsigned int size){
     Production* newProd = new Production(uid, x, y, size);
 
     if(newProd->testNodeValidity(ensembleNoeuds) == false) {
-        //resetVille();
         return false;    
     } else {
         ensembleNoeuds.push_back(newProd);
@@ -179,7 +177,6 @@ bool Ville::createTransport(unsigned int uid, double x, double y, unsigned int s
     Transport* newTrans = new Transport(uid, x, y, size);
 
     if(newTrans->testNodeValidity(ensembleNoeuds) == false) {
-        //resetVille();
         return false;   
     } else {
         ensembleNoeuds.push_back(newTrans);
@@ -189,7 +186,6 @@ bool Ville::createTransport(unsigned int uid, double x, double y, unsigned int s
 
 bool Ville::createLien(unsigned int uid1, unsigned int uid2) {
      if(testLinkValidity(uid1, uid2) == false) {
-        //resetVille();
         return false;
      } else {
         unsigned int index1 = findNoeudIndex(uid1);
@@ -198,8 +194,6 @@ bool Ville::createLien(unsigned int uid1, unsigned int uid2) {
         Noeud* noeud2 = ensembleNoeuds[index2];
 
         liens.push_back(vector<Noeud*>{noeud1, noeud2});
-        // ensembleNoeuds[index1]->setLiens(ensembleNoeuds[index2]);
-        // ensembleNoeuds[index2]->setLiens(ensembleNoeuds[index1]);
         noeud1->setLiens(noeud2);
         noeud2->setLiens(noeud1);
         return true;
@@ -207,11 +201,11 @@ bool Ville::createLien(unsigned int uid1, unsigned int uid2) {
 }
 
 void Ville::deleteNode() {
-    cout << "ive deleted a node" << endl;
+    return; //stub for rendu 3
 }
 
 void Ville::deleteLink() {
-    cout << "ive deleted a link" << endl;
+    return; //stub for rendu 3
 }
 
 unsigned int Ville::findNoeudIndex(unsigned int uid) {
@@ -305,10 +299,7 @@ bool Ville::testMaxLink() {
 
 //Draw, save, reset methods:
 void Ville::drawNodes() {
-    if(ensembleNoeuds.empty() == true) {
-        cout << "cannot draw empty city" << endl;
-        return;
-    }
+    if(ensembleNoeuds.empty()) return;
 
     setColor(BLACK);
     for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
@@ -323,10 +314,7 @@ void Ville::drawNodes() {
 }
 
 void Ville::drawLinks() {
-    if(liens.empty() == true) {
-        cout << "cannot draw empty links" << endl;
-        return;
-    }
+    if(liens.empty()) return;
 
     setColor(BLACK);
     for(unsigned int i = 0; i < liens.size(); ++i) {
@@ -376,25 +364,19 @@ void Ville::saveVille(string nomFichier) {
 }
 
 void Ville::resetVille() {
-    if(ensembleNoeuds.empty()) {
-        cout << "cannot delete empty city" << endl;
-        return;
-    }
+    if(ensembleNoeuds.empty()) return;
 
     if(not liens.empty()){
         for(unsigned int i = 0; i < liens.size(); ++i) {
             liens[i].clear();
         }
         liens.clear();
-        cout << "deleted links" << endl;
     }
-    cout << "no links to delete" << endl;
 
     for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
-        delete ensembleNoeuds[i];
+        delete ensembleNoeuds[i]; //also calls Noeud's destructor
     }
     ensembleNoeuds.clear();
-    cout << "deleted nodes" << endl;
 
     activeNode = noActiveNode;
 }
@@ -405,7 +387,7 @@ double Ville::linkDistance(unsigned int index) {
     creeVecteur(liens[index][0]->getCoords(), liens[index][1]->getCoords(), distance);
 
     return norme(distance);
-} //surcharger cette fonction ? getLinkDistance(int uid1, int uid2);
+}
 
 double Ville::linkCapacity(unsigned int index) {
     int size1 = liens[index][0]->getSize();
@@ -473,83 +455,18 @@ double Ville::critereMTA() {
 
     mta = mtaCount/nbH;
 
-    cout << "ville returning this for mta: " << mta << endl;
-
     return mta;
 }
 
-//color stuff
+//Handling of user events
 void Ville::setActiveNode(Coords clickLocation) {
     for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
         if(appartientCercle(ensembleNoeuds[i]->getPosition(), clickLocation)) {
             activeNode = i;
-            cout << "i clicked on node n. " << ensembleNoeuds[i]->getUid() << endl;
             return;
         }
     }
 
     activeNode = noActiveNode;
     return;
-}
-
-
-void Ville::tempDrawColor() {
-    unsigned int n = 0;
-    //vector<Noeud*> pathProd = ensembleNoeuds[n]->getShortestProd();
-    //vector<Noeud*> pathTrans = ensembleNoeuds[n]->getShortestTrans();
-
-    // cout << "prod parent path: ";
-    // for(unsigned int i = 0; i < pathProd.size(); ++i) {
-    //     cout << findNoeudIndex(pathProd[i]->getUid()) << " ";
-    // }
-    // cout << endl;
-
-    // cout << "trans parent path: ";
-    // for(unsigned int i = 0; i < pathTrans.size(); ++i) {
-    //     cout << findNoeudIndex(pathTrans[i]->getUid()) << " ";
-    // }
-    // cout << endl;
-
-    setColor(GREEN);
-    //drawSegment(pathTrans.back()->getCoords(), ensembleNoeuds[n]->getCoords());
-
-    if(ensembleNoeuds[n]->getShortestProd().empty()) {
-        cout << "pathprod empty" << endl;
-    } else {
-        vector<Noeud*> pathProd = ensembleNoeuds[n]->getShortestProd();
-        for(unsigned int i = 0; i < pathProd.size()-1; ++i) {
-            drawSegment(pathProd[i]->getCoords(), pathProd[i+1]->getCoords());
-        }
-    }
-
-    if(ensembleNoeuds[n]->getShortestTrans().empty()) {
-        cout << "pathprod empty" << endl;
-    } else {
-        vector<Noeud*> pathTrans = ensembleNoeuds[n]->getShortestTrans();
-        for(unsigned int i = 0; i < pathTrans.size()-1; ++i) {
-            drawSegment(pathTrans[i]->getCoords(), pathTrans[i+1]->getCoords());
-        }
-    }
-
-    if(ensembleNoeuds[n]->getShortestProd().empty()) {
-        cout << "pathprod empty" << endl;
-    } else {
-        vector<Noeud*> pathProd = ensembleNoeuds[n]->getShortestProd();
-        for(unsigned int i = 0; i < pathProd.size(); ++i) {
-            pathProd[i]->draw();
-        }
-    }
-
-    if(ensembleNoeuds[n]->getShortestTrans().empty()) {
-        cout << "pathprod empty" << endl;
-    } else {
-        vector<Noeud*> pathTrans = ensembleNoeuds[n]->getShortestTrans();
-        for(unsigned int i = 0; i < pathTrans.size(); ++i) {
-            pathTrans[i]->draw();
-        }
-    }
-
-    setColor(RED);
-    ensembleNoeuds[n]->draw();
-
 }

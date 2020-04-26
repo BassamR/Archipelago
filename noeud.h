@@ -1,8 +1,8 @@
 /**
 * \name noeud.h
 * \author Hugo Masson, Bassam El Rawas (Sciper 314886, 310635)
-* \date Mars 2020
-* \version 1.0
+* \date May 2020
+* \version 2.0
 */
 
 #ifndef NOEUD_HEADER_H
@@ -26,10 +26,10 @@ public:
     Noeud(unsigned int uid, double x, double y, unsigned int size);
     virtual ~Noeud();
 
+    virtual std::string getType() = 0;
+
     unsigned int getUid();
     void setUid(unsigned int x);
-
-    virtual std::string getType() = 0;
 
     Cercle getPosition();
 
@@ -65,7 +65,8 @@ public:
     virtual void dijkstra(std::vector<Noeud*>& tn, std::string nodeType);
 
     virtual void updateShortestPathToProd(std::vector<Noeud*>& ensemble, Noeud* goal);
-    virtual void updateShortestPathToTrans(std::vector<Noeud*>& ensemble, Noeud* goal);
+    virtual void updateShortestPathToTrans(std::vector<Noeud*>& ensemble, 
+        Noeud* goal);
 
     virtual double mtaHP();
     virtual double mtaHT();
@@ -92,8 +93,10 @@ public:
 
     void dijkstra(std::vector<Noeud*>& tn, std::string nodeType) override;
 
-    void updateShortestPathToProd(std::vector<Noeud*>& ensemble, Noeud* goal) override;
-    void updateShortestPathToTrans(std::vector<Noeud*>& ensemble, Noeud* goal) override;
+    void updateShortestPathToProd(std::vector<Noeud*>& ensemble, 
+        Noeud* goal) override;
+    void updateShortestPathToTrans(std::vector<Noeud*>& ensemble, 
+        Noeud* goal) override;
 
     double mtaHP() override;
     double mtaHT() override;

@@ -1,3 +1,10 @@
+/**
+* \name gui.h
+* \author Hugo Masson, Bassam El Rawas (Sciper 314886, 310635)
+* \date May 2020
+* \version 1.0
+*/
+
 #ifndef GUI_HEADER_H
 #define GUI_HEADER_H
 
@@ -61,7 +68,8 @@ private:
 
     Canvas mArea;
 
-    Gtk::Frame mFrameCanvas, mFrameGeneral, mFrameDisplay, mFrameEditor, mFrameInformations;
+    Gtk::Frame mFrameCanvas, mFrameGeneral, mFrameDisplay, 
+            mFrameEditor, mFrameInformations;
 
     Gtk::Button mButtonExit, mButtonNew, mButtonOpen, mButtonSave, mButtonZoomIn, 
             mButtonZoomOut, mButtonZoomR;
@@ -84,7 +92,7 @@ private:
 
     void onTButtonClickShortest();
     void onTButtonPressShortest();
-    void onTButtonReleaseShortest(); //maybe make these 2 static?
+    void onTButtonReleaseShortest();
 
     void onTButtonClickEditLink();
     void onTButtonPressEditLink();

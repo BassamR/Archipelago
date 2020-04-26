@@ -1,3 +1,10 @@
+/**
+* \name gui.cc
+* \author Hugo Masson, Bassam El Rawas (Sciper 314886, 310635)
+* \date May 2020
+* \version 1.0
+*/
+
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -7,11 +14,9 @@
 #include <gtkmm/filechooserdialog.h>
 #include "gui.h"
 #include "ville.h"
-//#include "tools.h" //already included in gui.h
 #include "graphic_gui.h"
 #include "constantes.h"
 using namespace std;
-
 
 //Static functions and variables
 static Gui* guiObject(nullptr);
@@ -22,7 +27,6 @@ static string convertCritereToString(const double& critere);
 Canvas::Canvas(): empty(false), shortestPathPressed(false), editLinkPressed(false) {
     add_events(Gdk::BUTTON_PRESS_MASK);
     add_events(Gdk::BUTTON_RELEASE_MASK);
-    //add_events(Gdk::BUTTON_MOTION_MASK);
     
     frame.width = 0;
     frame.height = 0;
@@ -34,7 +38,7 @@ Canvas::Canvas(): empty(false), shortestPathPressed(false), editLinkPressed(fals
 
 Canvas::~Canvas() {}
 
-//Canvas canvas methods:
+//Canvas methods:
 void Canvas::refresh() {
     auto win = get_window();
     if(win) {
@@ -66,7 +70,8 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
 
     //cr->set_identity_matrix();
     cr->translate(xc, yc);
-    cr->scale(frame.width/(frame.xMax - frame.xMin), -frame.height/(frame.yMax - frame.yMin));
+    cr->scale(frame.width/(frame.xMax - frame.xMin), 
+        -frame.height/(frame.yMax - frame.yMin));
 	cr->translate(-(frame.xMin + frame.xMax)/2, -(frame.yMin + frame.yMax)/2);
 
     graphicSetContext(cr);
@@ -75,44 +80,35 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
         makeBgWhite();
         Ville::getVilleInstance()->drawLinks();
         Ville::getVilleInstance()->drawNodes(); //draws the city
-        //Ville::getVilleInstance()->tempDrawColor();    
     } else {
         makeBgWhite();
         Ville::getVilleInstance()->resetVille();
-        cout << "canvas cleared!" << endl;
     }
-
-    cout << "ondraw called" << endl;
 
     return true;
 }
 
 bool Canvas::on_button_press_event(GdkEventButton* event) {
+    //Left click = 1, right click = 3
     if((gint)event->type == Gdk::BUTTON_PRESS and event->button == 1) {
         double x = event->x;
         double y = event->y;
 
         Coords leftClickLocation{x, y};
-
         convertCoordsToModele(leftClickLocation);
-        cout << "left mouse clicked (modele)" << " " << leftClickLocation.x << " " << leftClickLocation.y << endl;
         handleLeftClick(leftClickLocation);
 
-        //Ville::getVilleInstance()->setActiveNode(leftClickLocation);
-        // Ville::getVilleInstance()->createHousing(uidCounter, x, y, min_capacity);
-        //refresh();
-
-        //++uidCounter;
         return true;
     }
 
     if((gint)event->type == Gdk::BUTTON_PRESS and event->button == 3) {
         double x1 = event->x;
         double y1 = event->y;
+
         Coords rightClickLocation{x1, y1};
         convertCoordsToModele(rightClickLocation);
-        cout << "right mouse clicked (modele)" << " " << rightClickLocation.x << " " << rightClickLocation.y << endl;
         handleRightClick(rightClickLocation);
+
         return true;
     }
 
@@ -121,22 +117,22 @@ bool Canvas::on_button_press_event(GdkEventButton* event) {
 
 bool Canvas::on_button_release_event(GdkEventButton* event) {
     if((gint)event->type == Gdk::BUTTON_RELEASE and event->button == 1) {
-        cout << "left mouse released" << " " << event->x << " " << event->y << endl;
         return true;
     }
 
     if((gint)event->type == Gdk::BUTTON_RELEASE and event->button == 3) {
-        cout << "right mouse released" << " " << event->x << " " << event->y << endl;
         return true;
     }
 
     return true;
-}
+} //mouse event stub for rendu 3
 
 //Canvas utility methods:
 void Canvas::convertCoordsToModele(Coords& clickLocation) {
-    double newX = (clickLocation.x/frame.width) * (frame.xMax-frame.xMin) + frame.xMin;
-    double newY = frame.yMax - (clickLocation.y/frame.height) * (frame.yMax-frame.yMin);
+    double newX = (clickLocation.x/frame.width) 
+        * (frame.xMax-frame.xMin) + frame.xMin;
+    double newY = frame.yMax - (clickLocation.y/frame.height) 
+        * (frame.yMax-frame.yMin);
 
     clickLocation.x = newX;
     clickLocation.y = newY;
@@ -153,12 +149,13 @@ void Canvas::setEditLinkPressed(bool value) {
 //Canvas event handling methods:
 void Canvas::handleLeftClick(Coords clickLocation) {
     if(Ville::getVilleInstance()->getActiveNode() == noActiveNode) {
-        if(Ville::getVilleInstance()->createHousing(uidCounter, clickLocation.x, clickLocation.y, min_capacity)) {
+        if(Ville::getVilleInstance()->createHousing(uidCounter, 
+            clickLocation.x, clickLocation.y, min_capacity)) {
             guiObject->refreshCriteres();
             ++uidCounter;
         }
     } else { //if an active link is present
-
+        //stub for rendu 3
     }
 
     Ville::getVilleInstance()->setActiveNode(clickLocation);
@@ -169,7 +166,8 @@ void Canvas::handleLeftClick(Coords clickLocation) {
 void Canvas::handleRightClick(Coords clickLocation) {
     int activeNode = Ville::getVilleInstance()->getActiveNode();
     if(activeNode != noActiveNode) {
-        Ville::getVilleInstance()->getNode(activeNode)->setCoords(clickLocation.x, clickLocation.y);
+        Ville::getVilleInstance()->getNode(activeNode)->setCoords(clickLocation.x, 
+            clickLocation.y);
         guiObject->refreshCriteres();
     }
     draw();
@@ -177,11 +175,11 @@ void Canvas::handleRightClick(Coords clickLocation) {
 
 //Gui constructor/destructor:
 Gui::Gui():
-    mBox(Gtk::ORIENTATION_HORIZONTAL, 10), mBoxLeft(Gtk::ORIENTATION_VERTICAL, 10), 
+    mBox(Gtk::ORIENTATION_HORIZONTAL, 10), mBoxLeft(Gtk::ORIENTATION_VERTICAL, 10),
     mBoxRight(Gtk::ORIENTATION_HORIZONTAL, 10), 
     mBoxDisplay(Gtk::ORIENTATION_VERTICAL, 4), mBoxEditor(Gtk::ORIENTATION_VERTICAL),
 
-    mFrameGeneral("General"), mFrameDisplay("Display"), mFrameEditor("Editor"), 
+    mFrameGeneral("General"), mFrameDisplay("Display"), mFrameEditor("Editor"),
     mFrameInformations("Informations"), 
 
     mButtonExit("exit"), mButtonNew("new"), mButtonOpen("open"), mButtonSave("save"), 
@@ -226,20 +224,19 @@ void Gui::onButtonClickExit() {
 }
 
 void Gui::onButtonClickNew() {
-    Ville::getVilleInstance()->resetVille();
     cout << "new button clicked" << endl;
+    Ville::getVilleInstance()->resetVille();
     mArea.clear();
     refreshCriteres();
 }
 
 void Gui::onButtonClickOpen() {
     cout << "open button clicked" << endl;
-    //mArea.clear();
 
     Gtk::FileChooserDialog dialog("Please choose a file",
             Gtk::FILE_CHOOSER_ACTION_OPEN);
     //dialog.set_transient_for(*this); 
-    //if i remove this, Open works on windows but not on VM
+    //if i add this, Open works on VM but not on windows...
 
     //Add response buttons the the dialog:
     dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
@@ -251,22 +248,17 @@ void Gui::onButtonClickOpen() {
     //Handle the response:
     switch(result) {
         case(Gtk::RESPONSE_OK): {
-            cout << "Open clicked." << endl;
-
             string filename = dialog.get_filename();
-            cout << "File selected: " <<  filename << endl;
             
             char* filenameChar = const_cast<char*>(filename.c_str());
-            
             lecture(filenameChar);
+            
             mArea.draw();
             refreshCriteres();
-            //delete filenameChar;
             break;
         }
 
         case(Gtk::RESPONSE_CANCEL): {
-            cout << "Cancel clicked." << endl;
             break;
         }
 
@@ -282,7 +274,8 @@ void Gui::onButtonClickSave() {
 
     Gtk::FileChooserDialog dialog("Please choose a file",
             Gtk::FILE_CHOOSER_ACTION_SAVE);
-    //dialog.set_transient_for(*this); //if i remove this, Open works...
+    //dialog.set_transient_for(*this);
+    //if i add this, Save works on VM but not on windows...
 
     dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
     dialog.add_button("_Save", Gtk::RESPONSE_OK);
@@ -291,17 +284,13 @@ void Gui::onButtonClickSave() {
 
     switch(result) {
         case(Gtk::RESPONSE_OK): {
-            cout << "Save clicked." << endl;
-
             string filename = dialog.get_filename();
-            cout << "File selected for save: " <<  filename << endl;
             
             Ville::getVilleInstance()->saveVille(filename);
             break;
         }
 
         case(Gtk::RESPONSE_CANCEL): {
-            cout << "Cancel clicked." << endl;
             break;
         }
 
@@ -391,7 +380,6 @@ void Gui::onRButtonClickP() {
 
 void Gui::onRButtonPressP() {
     cout << "production radiobutton pressed" << endl;
-
 }
 
 void Gui::onRButtonReleaseP() {
@@ -408,13 +396,12 @@ void Gui::refreshCriteres() {
             + string("\nMTA: ") + mta);
 }
 
-//Private gui methods (to better organize gui constructor):
+//Gui methods to better organize gui constructor:
 void Gui::setupGui() {
     //Basic definitions
     set_title("Archipelago");
     set_border_width(5);
     set_position(Gtk::WIN_POS_CENTER);
-    //set_default_size(default_drawing_size, default_drawing_size);
 
     //Add main box
     add(mBox);
@@ -426,14 +413,12 @@ void Gui::setupGui() {
     //Start canvas
     mArea.set_size_request(default_drawing_size, default_drawing_size);
     mBoxRight.pack_start(mFrameCanvas, false, false);
-    mFrameCanvas.add(mArea); //if i remove this, Open button works...
+    mFrameCanvas.add(mArea);
 }
 
 void Gui::initGeneral() {
     //Add general frame to box
     mBoxLeft.pack_start(mFrameGeneral, false, false);
-
-    //add a box here which will contain the buttonbox
 
     //Add ButtonBox inside frame
     mFrameGeneral.add(mBBGeneral);
@@ -516,9 +501,7 @@ void Gui::connectButtons() {
     mRButtonT.signal_clicked().connect(sigc::mem_fun(*this,
                     &Gui::onRButtonClickT));
     mRButtonP.signal_clicked().connect(sigc::mem_fun(*this,
-                    &Gui::onRButtonClickP));
-
-    
+                    &Gui::onRButtonClickP)); 
 } //connect buttons to signal handlers
 
 //Static functions definition

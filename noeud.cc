@@ -1,8 +1,8 @@
 /**
 * \name noeud.cc
 * \author Hugo Masson, Bassam El Rawas (Sciper 314886, 310635)
-* \date Mars 2020
-* \version 1.0
+* \date May 2020
+* \version 2.0
 */
 
 #include <iostream>
@@ -21,7 +21,8 @@ using namespace std;
 static void initTA(vector<unsigned int>& ta, const vector<Noeud*>& tn);
 static void sortTA(vector<unsigned int>& ta, const vector<Noeud*>& tn, Noeud* index);
 static bool tnEmpty(const vector<Noeud*>& tn);
-static unsigned int findMinAccess(const vector<unsigned int>& ta, const vector<Noeud*>& tn);
+static unsigned int findMinAccess(const vector<unsigned int>& ta, 
+        const vector<Noeud*>& tn);
 static double linkValue(Noeud* noeud1, Noeud* noeud2);
 
 //Constructors & destructor:
@@ -44,7 +45,8 @@ Production::Production(unsigned int uid, double x, double y, unsigned int size):
 
 Noeud::~Noeud() {
     //Ville: delete ensembleNoeuds[i]; (delete calls this destructor)
-    //Ville: then swap and pop_back to properly remove from main vector
+    //then swap and pop_back to properly remove from main vector
+    //then update link matrix
     //Destructor (for rendu 3):
     //remove node from its neighbors' list of connections
 }
@@ -273,17 +275,20 @@ void Housing::dijkstra(vector<Noeud*>& tn, string nodeType) {
         //not allowed to pass through production, ie a production "has no links"
         if(not (tn[n]->getType() == "production")) {
             for(unsigned int i = 0; i < tn[n]->getLiens().size(); ++i) {
-                if(tn[n]->getLiens()[i]->getIn() == true) { //if node has not been checked
-                    double alt = tn[n]->getAccess() + linkValue(tn[n]->getLiens()[i], tn[n]);
-                    if(tn[n]->getLiens()[i]->getAccess() > alt) { //if new road > old road
+                //if node has not been checked
+                if(tn[n]->getLiens()[i]->getIn() == true) {
+                    double alt = tn[n]->getAccess() 
+                        + linkValue(tn[n]->getLiens()[i], tn[n]);
+                    //if new path > old path
+                    if(tn[n]->getLiens()[i]->getAccess() > alt) {
                         tn[n]->getLiens()[i]->setAccess(alt);
-                        tn[n]->getLiens()[i]->setParent(tn[n]); //update old road
-                        sortTA(ta, tn, tn[n]->getLiens()[i]);
+                        tn[n]->getLiens()[i]->setParent(tn[n]); //update old path
+                        sortTA(ta, tn, tn[n]->getLiens()[i]); //update TA
                     }
                 }
-            } //end of for loop for TN[n]'s links
-        } //end of big if (for production)
-    } //end of while
+            }
+        }
+    }
     return;
 }
 
@@ -373,22 +378,8 @@ void Production::draw() {
     const double rectLength = 0.75;
     const double rectHeight = 0.125;
 
-    //Dessin des traits (points de dessin pour le rectangle du noeud production)
-    Coords p1{x - d*rectLength/2, y - d*rectHeight/2};
-    Coords p2{x + d*rectLength/2, y - d*rectHeight/2};
-    drawSegment(p1, p2);
-
-    Coords p3{x - d*rectLength/2, y + d*rectHeight/2};
-    Coords p4{x + d*rectLength/2, y + d*rectHeight/2};
-    drawSegment(p3, p4);
-
-    Coords p5{x - d*rectLength/2, y - d*rectHeight/2};
-    Coords p6{x - d*rectLength/2, y + d*rectHeight/2};
-    drawSegment(p5, p6);
-
-    Coords p8{x + d*rectLength/2, y - d*rectHeight/2};
-    Coords p7{x + d*rectLength/2, y + d*rectHeight/2};
-    drawSegment(p7, p8);
+    Coords point{x - d*rectLength/2, y - d*rectHeight/2};
+    drawRectangle(point, d*rectLength, d*rectHeight);
 }
 
 //Static Dijkstra methods definition
@@ -409,7 +400,8 @@ void sortTA(vector<unsigned int>& ta, const vector<Noeud*>& tn, Noeud* index) {
         }
     }
 
-    while(indexInTA > 0 and tn[ta[indexInTA]]->getAccess() < tn[ta[indexInTA-1]]->getAccess()) {
+    while(indexInTA > 0 
+            and tn[ta[indexInTA]]->getAccess() < tn[ta[indexInTA-1]]->getAccess()) {
         swap(ta[indexInTA], ta[indexInTA-1]);
         --indexInTA;
     }
@@ -430,9 +422,8 @@ unsigned int findMinAccess(const vector<unsigned int>& ta, const vector<Noeud*>&
         }
         //first element of TA that has in = true
     }
-    cout << "if i can see this message it means i fucked up, findMinAccess() doesn't work" << endl;
     return 0;
-} //its ok to not have a return here, this function is only called while AT LEAST ONE in = true
+}
 
 double linkValue(Noeud* noeud1, Noeud* noeud2) {
     double distance, speed;
