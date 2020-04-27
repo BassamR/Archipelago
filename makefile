@@ -15,13 +15,13 @@ graphic.o: graphic.cc graphic_gui.h graphic.h graphic_color.h
 error.o: error.cc error.h constantes.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-tools.o: tools.cc tools.h graphic.h
+tools.o: tools.cc tools.h graphic.h graphic_color.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-noeud.o: noeud.cc noeud.h error.h tools.h constantes.h
+noeud.o: noeud.cc noeud.h error.h tools.h constantes.h graphic_color.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-ville.o: ville.cc ville.h noeud.h tools.h error.h constantes.h
+ville.o: ville.cc ville.h noeud.h tools.h error.h constantes.h graphic_color.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 gui.o: gui.cc gui.h graphic_gui.h constantes.h
