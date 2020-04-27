@@ -5,6 +5,8 @@
 * \version 2.0
 */
 
+//Architecture: Fig 11 b1
+
 #ifndef TOOLS_HEADER_H
 #define TOOLS_HEADER_H
 

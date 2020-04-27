@@ -5,6 +5,8 @@
 * \version 1.0
 */
 
+//Architecture: Fig 11 b1
+
 #include <cmath>
 #include "graphic_gui.h"
 

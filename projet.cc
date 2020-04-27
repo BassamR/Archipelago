@@ -5,6 +5,8 @@
 * \version 2.0
 */
 
+//Architecture: Fig 11 b1
+
 #include <gtkmm/application.h>
 #include "ville.h"
 #include "gui.h"

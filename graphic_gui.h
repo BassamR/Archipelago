@@ -5,6 +5,8 @@
 * \version 1.0
 */
 
+//Architecture: Fig 11 b1
+
 #ifndef GRAPHIC_GUI_HEADER_H
 #define GRAPHIC_GUI_HEADER_H
 

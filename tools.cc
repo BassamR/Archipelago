@@ -5,6 +5,8 @@
 * \version 2.0
 */
 
+//Architecture: Fig 11 b1
+
 #include <iostream>
 #include <cmath>
 #include "tools.h"
