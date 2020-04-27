@@ -5,6 +5,8 @@
 * \version 1.0
 */
 
+//Architecture: Fig 11 b1
+
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -20,6 +22,7 @@ using namespace std;
 
 //Static functions and variables
 static Gui* guiObject(nullptr);
+static Ville* villeObject(Ville::getVilleInstance());
 static int uidCounter(1000);
 static string convertCritereToString(const double& critere);
 
@@ -96,8 +99,7 @@ bool Canvas::on_button_press_event(GdkEventButton* event) {
 
         Coords leftClickLocation{x, y};
         convertCoordsToModele(leftClickLocation);
-        handleLeftClick(leftClickLocation);
-
+        pressPoint = leftClickLocation;
         return true;
     }
 
@@ -117,6 +119,13 @@ bool Canvas::on_button_press_event(GdkEventButton* event) {
 
 bool Canvas::on_button_release_event(GdkEventButton* event) {
     if((gint)event->type == Gdk::BUTTON_RELEASE and event->button == 1) {
+        double x = event->x;
+        double y = event->y;
+
+        Coords leftClickLocation{x, y};
+        convertCoordsToModele(leftClickLocation);
+        releasePoint = leftClickLocation;
+        handleLeftClick();
         return true;
     }
 
@@ -146,19 +155,71 @@ void Canvas::setEditLinkPressed(bool value) {
     editLinkPressed = value;
 }
 
+void Canvas::setHousingButtonPressed(bool value) {
+    housingPressed = value;
+}
+
+void Canvas::setTransportButtonPressed(bool value) {
+    transportPressed = value;
+}
+
+void Canvas::setProductionButtonPressed(bool value) {
+    productionPressed = value;
+}
+
 //Canvas event handling methods:
-void Canvas::handleLeftClick(Coords clickLocation) {
-    if(Ville::getVilleInstance()->getActiveNode() == noActiveNode) {
-        if(Ville::getVilleInstance()->createHousing(uidCounter, 
-            clickLocation.x, clickLocation.y, min_capacity)) {
-            guiObject->refreshCriteres();
-            ++uidCounter;
+void Canvas::handleLeftClick() {
+    if(pressPoint.x != releasePoint.x or pressPoint.y != releasePoint.y) {
+        if(villeObject->getActiveNode() != noActiveNode) {
+            //change size
+            cout << "im changing a size of a node" << endl;
+        } else {
+            return;
         }
-    } else { //if an active link is present
-        //stub for rendu 3
+        return;
     }
 
-    Ville::getVilleInstance()->setActiveNode(clickLocation);
+    if(editLinkPressed) {
+        if(villeObject->getActiveNode() == noActiveNode) {
+            cout << "need an activeNode to create links" << endl;
+            return;
+        } else {
+            if(villeObject->clickOnNode(pressPoint)) {
+                villeObject->createLien(pressPoint);
+                guiObject->refreshCriteres();
+            } else {
+                cout << "cannot create a link with nothingness" << endl;
+            }
+            draw();
+            return;
+        }
+        return;
+    }
+
+    if(villeObject->getActiveNode() == noActiveNode) {
+        if(villeObject->clickOnNode(pressPoint)) {
+            villeObject->setActiveNode(pressPoint);
+        } else {
+            createNode();
+            guiObject->refreshCriteres();
+            villeObject->setActiveNode(pressPoint);
+        }
+        draw();
+        return;
+    }
+
+    if(villeObject->getActiveNode() != noActiveNode) {
+        if(villeObject->clickOnNode(pressPoint)) {
+            if(not villeObject->clickOnActiveNode(pressPoint)) {
+                villeObject->setActiveNode(pressPoint);
+            } else {
+                villeObject->deleteNode(pressPoint);
+                //guiObject->refreshCriteres();
+            }
+        } else {
+            villeObject->resetActiveNode();
+        }
+    }
 
     draw();
 }
@@ -171,6 +232,24 @@ void Canvas::handleRightClick(Coords clickLocation) {
         guiObject->refreshCriteres();
     }
     draw();
+}
+
+void Canvas::createNode() {
+    if(housingPressed) {
+        villeObject->createHousing(uidCounter, pressPoint.x, pressPoint.y, min_capacity);
+        ++uidCounter;
+        return;
+    }
+    if(transportPressed) {
+        villeObject->createTransport(uidCounter, pressPoint.x, pressPoint.y, min_capacity);
+        ++uidCounter;
+        return;
+    }
+    if(productionPressed) {
+        villeObject->createProduction(uidCounter, pressPoint.x, pressPoint.y, min_capacity);
+        ++uidCounter;
+        return;
+    }
 }
 
 //Gui constructor/destructor:
@@ -352,10 +431,12 @@ void Gui::onRButtonClickH() {
 
 void Gui::onRButtonPressH() {
     cout << "housing radiobutton pressed" << endl;
+    mArea.setHousingButtonPressed(true);
 }
 
 void Gui::onRButtonReleaseH() {
     cout << "housing radiobutton released" << endl;
+    mArea.setHousingButtonPressed(false);
 }
 
 //Gui transport radiobutton
@@ -366,10 +447,12 @@ void Gui::onRButtonClickT() {
 
 void Gui::onRButtonPressT() {
     cout << "transport radiobutton pressed" << endl;
+    mArea.setTransportButtonPressed(true);
 }
 
 void Gui::onRButtonReleaseT() {
     cout << "transport radiobutton released" << endl;
+    mArea.setTransportButtonPressed(false);
 }
 
 //Gui production radiobutton 
@@ -380,10 +463,12 @@ void Gui::onRButtonClickP() {
 
 void Gui::onRButtonPressP() {
     cout << "production radiobutton pressed" << endl;
+    mArea.setProductionButtonPressed(true);
 }
 
 void Gui::onRButtonReleaseP() {
     cout << "production radiobutton released" << endl;
+    mArea.setProductionButtonPressed(false);
 }
 
 //Misc MyGui methods:

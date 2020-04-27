@@ -5,6 +5,8 @@
 * \version 1.0
 */
 
+//Architecture: Fig 11 b1
+
 #ifndef GUI_HEADER_H
 #define GUI_HEADER_H
 
@@ -38,6 +40,12 @@ private:
 
     bool shortestPathPressed;
     bool editLinkPressed;
+    bool housingPressed;
+    bool transportPressed;
+    bool productionPressed;
+
+    Coords pressPoint;
+    Coords releasePoint;
 
     // Override default signal handler:
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
@@ -48,8 +56,10 @@ private:
 
     void convertCoordsToModele(Coords& clickLocation);
 
-    void handleLeftClick(Coords clickLocation);
+    void handleLeftClick();
     void handleRightClick(Coords clickLocation);
+
+    void createNode();
 
 public:
     Canvas();
@@ -60,6 +70,10 @@ public:
 
     void setShortestPathPressed(bool value);
     void setEditLinkPressed(bool value);
+
+    void setHousingButtonPressed(bool value);
+    void setTransportButtonPressed(bool value);
+    void setProductionButtonPressed(bool value);
 };
 
 class Gui: public Gtk::Window {
