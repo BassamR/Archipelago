@@ -5,6 +5,8 @@
 * \version 2.0
 */
 
+//Architecture: Fig 11 b1
+
 #ifndef VILLE_HEADER_H
 #define VILLE_HEADER_H
 
@@ -33,11 +35,13 @@ public:
     bool createTransport(unsigned int uid, double x, double y, unsigned int size);
 
     bool createLien(unsigned int uid1, unsigned int uid2);
+    bool createLien(Coords coords);
 
-    void deleteNode();
+    void deleteNode(Coords coord);
     void deleteLink();
 
     unsigned int findNoeudIndex(unsigned int uid);
+    unsigned int findNoeudIndex(Coords coords);
     
     bool testLinkVacuum(unsigned int uid1, unsigned int uid2);
     bool testMultipleSameLink(unsigned int uid1, unsigned int uid2);
@@ -61,6 +65,10 @@ public:
     double critereMTA();
 
     void setActiveNode(Coords clickLocation);
+    void resetActiveNode();
+
+    bool clickOnNode(Coords clickLocation);
+    bool clickOnActiveNode(Coords clickLocation);
 };
 
 #endif

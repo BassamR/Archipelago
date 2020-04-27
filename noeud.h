@@ -5,6 +5,8 @@
 * \version 2.0
 */
 
+//Architecture: Fig 11 b1
+
 #ifndef NOEUD_HEADER_H
 #define NOEUD_HEADER_H
 
@@ -41,6 +43,7 @@ public:
 
     std::vector<Noeud*> getLiens();
     void setLiens(Noeud* linkUid);
+    void removeLien(unsigned int index);
 
     bool getIn();
     void setIn(bool value);

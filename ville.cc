@@ -5,6 +5,8 @@
 * \version 2.0
 */
 
+//Architecture: Fig 11 b1
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -200,7 +202,59 @@ bool Ville::createLien(unsigned int uid1, unsigned int uid2) {
     }
 }
 
-void Ville::deleteNode() {
+bool Ville::createLien(Coords coords) {
+    if(activeNode == noActiveNode) return false;
+    unsigned int nodeIndex = findNoeudIndex(coords);
+
+    unsigned int uid1 = ensembleNoeuds[activeNode]->getUid();
+    unsigned int uid2 = ensembleNoeuds[nodeIndex]->getUid();
+
+    if(testLinkValidity(uid1, uid2) == false) {
+        return false;
+     } else {
+        Noeud* noeud1 = ensembleNoeuds[activeNode];
+        Noeud* noeud2 = ensembleNoeuds[nodeIndex];
+
+        liens.push_back(vector<Noeud*>{noeud1, noeud2});
+        noeud1->setLiens(noeud2);
+        noeud2->setLiens(noeud1);
+        return true;
+    }
+}
+
+void Ville::deleteNode(Coords coord) {
+    if(activeNode == noActiveNode) return;
+    
+    cout << "ville deleting a node" << endl;
+
+    // if(appartientCercle(ensembleNoeuds[activeNode]->getPosition(), coord)) {
+    //     for(unsigned int i = 0; i < liens.size(); ++i) {
+    //         if(liens[i][0] == ensembleNoeuds[activeNode]) {
+    //             // swap(liens[i], liens.back());
+    //             // liens.pop_back();
+    //             liens.erase(liens.begin() + i);
+    //             --i;
+    //         }
+    //         if(liens[i][1] == ensembleNoeuds[activeNode]) {
+    //             // std::swap(liens[i], liens.back());
+    //             // liens.pop_back();
+    //             liens.erase(liens.begin() + i);
+    //             --i;
+    //         }
+    //     }
+
+    
+
+
+    //     swap(ensembleNoeuds[activeNode], ensembleNoeuds.back());
+    //     delete ensembleNoeuds.back();
+    //     ensembleNoeuds.back() = nullptr;
+    //     ensembleNoeuds.pop_back();
+    //     activeNode = noActiveNode;
+    //     return;
+    // }
+
+    // activeNode = noActiveNode;
     return; //stub for rendu 3
 }
 
@@ -214,9 +268,19 @@ unsigned int Ville::findNoeudIndex(unsigned int uid) {
             return i;
         }
     }
-    cout << "No uid found" << endl;
+    cout << "No uid found from findNoeudIndex uid" << endl;
     return 0;
 } //given a uid, find the node's index in vector ensembleNoeud
+
+unsigned int Ville::findNoeudIndex(Coords coords) {
+    for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
+        if(appartientCercle(ensembleNoeuds[i]->getPosition(), coords)) {
+            return i;
+        }
+    }
+    cout << "No uid found from findNoeudIndex coords" << endl;
+    return 0;
+}
 
 //Error functions (links):
 bool Ville::testLinkVacuum(unsigned int uid1, unsigned int uid2) {
@@ -469,4 +533,27 @@ void Ville::setActiveNode(Coords clickLocation) {
 
     activeNode = noActiveNode;
     return;
+}
+
+void Ville::resetActiveNode() {
+    activeNode = noActiveNode;
+}
+
+
+bool Ville::clickOnNode(Coords clickLocation) {
+    for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
+        if(appartientCercle(ensembleNoeuds[i]->getPosition(), clickLocation)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Ville::clickOnActiveNode(Coords clickLocation) {
+    if(activeNode == noActiveNode) return false;
+
+    if(appartientCercle(ensembleNoeuds[activeNode]->getPosition(), clickLocation)) {
+        return true;
+    }
+    return false;
 }

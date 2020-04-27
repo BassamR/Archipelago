@@ -5,6 +5,8 @@
 * \version 2.0
 */
 
+//Architecture: Fig 11 b1
+
 #include <iostream>
 #include <cmath>
 #include <string>
@@ -47,8 +49,20 @@ Noeud::~Noeud() {
     //Ville: delete ensembleNoeuds[i]; (delete calls this destructor)
     //then swap and pop_back to properly remove from main vector
     //then update link matrix
-    //Destructor (for rendu 3):
     //remove node from its neighbors' list of connections
+    // bool keepGoing = true;
+
+    // for(unsigned int i = 0; i < liens.size(); ++i) {
+    //     keepGoing = true;
+    //     for(unsigned int j = 0; keepGoing and j < liens[i]->getLiens().size(); ++j) {
+    //         if(liens[i]->getLiens()[j] == this) {
+    //             liens[i]->getLiens()[j]->removeLien(j);
+    //             keepGoing = false;
+    //         }
+    //     }
+    // }
+
+    cout << "node number " << uid << " being destructed" << endl;
 }
 
 //General methods:
@@ -88,6 +102,11 @@ vector<Noeud*> Noeud::getLiens() {
 
 void Noeud::setLiens(Noeud* linkUid) {
     liens.push_back(linkUid);
+}
+
+void Noeud::removeLien(unsigned int index) {
+    swap(liens[index], liens.back());
+    liens.pop_back();
 }
 
 bool Noeud::getIn() {
