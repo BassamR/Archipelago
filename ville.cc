@@ -209,7 +209,16 @@ bool Ville::createLien(Coords coords) {
     unsigned int uid1 = ensembleNoeuds[activeNode]->getUid();
     unsigned int uid2 = ensembleNoeuds[nodeIndex]->getUid();
 
-    if(testLinkValidity(uid1, uid2) == false) {
+    bool maxLink(false);
+
+    if(ensembleNoeuds[activeNode]->getType() == "housing") {
+        if(ensembleNoeuds[activeNode]->getLiens().size() == max_link) maxLink = true;
+    }
+
+    if((not testLinkValidity(uid1, uid2)) or maxLink) {
+        if(maxLink) {
+            cout << error::max_link(ensembleNoeuds[activeNode]->getUid()) << endl;
+        }
         return false;
      } else {
         Noeud* noeud1 = ensembleNoeuds[activeNode];
