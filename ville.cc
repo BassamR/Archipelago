@@ -153,10 +153,11 @@ Noeud* Ville::getNode(unsigned int index) {
 }
 
 //Ville methods:
-bool Ville::createHousing(unsigned int uid, double x, double y, unsigned int size) {
+bool Ville::createHousing(unsigned int uid, double x, double y, unsigned int size,
+    double safeDistance) {
     Housing* newHouse = new Housing(uid, x, y, size);
 
-    if(newHouse->testNodeValidity(ensembleNoeuds) == false) {
+    if(newHouse->testNodeValidity(ensembleNoeuds, safeDistance) == false) {
         return false;
     } else {
         ensembleNoeuds.push_back(newHouse);
@@ -164,10 +165,11 @@ bool Ville::createHousing(unsigned int uid, double x, double y, unsigned int siz
     }
 }
 
-bool Ville::createProduction(unsigned int uid, double x, double y, unsigned int size){
+bool Ville::createProduction(unsigned int uid, double x, double y, unsigned int size,
+    double safeDistance){
     Production* newProd = new Production(uid, x, y, size);
 
-    if(newProd->testNodeValidity(ensembleNoeuds) == false) {
+    if(newProd->testNodeValidity(ensembleNoeuds, safeDistance) == false) {
         return false;    
     } else {
         ensembleNoeuds.push_back(newProd);
@@ -175,10 +177,11 @@ bool Ville::createProduction(unsigned int uid, double x, double y, unsigned int 
     }
 }
 
-bool Ville::createTransport(unsigned int uid, double x, double y, unsigned int size) {
+bool Ville::createTransport(unsigned int uid, double x, double y, unsigned int size,
+    double safeDistance) {
     Transport* newTrans = new Transport(uid, x, y, size);
 
-    if(newTrans->testNodeValidity(ensembleNoeuds) == false) {
+    if(newTrans->testNodeValidity(ensembleNoeuds, safeDistance) == false) {
         return false;   
     } else {
         ensembleNoeuds.push_back(newTrans);
@@ -186,8 +189,9 @@ bool Ville::createTransport(unsigned int uid, double x, double y, unsigned int s
     }
 }
 
-bool Ville::createLien(unsigned int uid1, unsigned int uid2) {
-     if(testLinkValidity(uid1, uid2) == false) {
+bool Ville::createLien(unsigned int uid1, unsigned int uid2, 
+    double safeDistance) {
+     if(testLinkValidity(uid1, uid2, safeDistance) == false) {
         return false;
      } else {
         unsigned int index1 = findNoeudIndex(uid1);
@@ -202,7 +206,7 @@ bool Ville::createLien(unsigned int uid1, unsigned int uid2) {
     }
 }
 
-bool Ville::createLien(Coords coords) {
+bool Ville::createLien(Coords coords, double safeDistance) {
     if(activeNode == noActiveNode) return false;
     unsigned int nodeIndex = findNoeudIndex(coords);
 
@@ -215,7 +219,7 @@ bool Ville::createLien(Coords coords) {
         if(ensembleNoeuds[activeNode]->getLiens().size() == max_link) maxLink = true;
     }
 
-    if((not testLinkValidity(uid1, uid2)) or maxLink) {
+    if((not testLinkValidity(uid1, uid2, safeDistance)) or maxLink) {
         if(maxLink) {
             cout << error::max_link(ensembleNoeuds[activeNode]->getUid()) << endl;
         }
@@ -308,12 +312,14 @@ bool Ville::testSelfLinkNode(unsigned int uid1, unsigned int uid2) {
     return false;
 }
 
-bool Ville::testNodeLinkSuperposition(unsigned int uid1, unsigned int uid2) {
+bool Ville::testNodeLinkSuperposition(unsigned int uid1, unsigned int uid2,
+    double safeDistance) {
     Cercle posNoeud1 = ensembleNoeuds[findNoeudIndex(uid1)]->getPosition();
     Cercle posNoeud2 = ensembleNoeuds[findNoeudIndex(uid2)]->getPosition();
 
     for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
-        if(intersectionCS(posNoeud1, posNoeud2, ensembleNoeuds[i]->getPosition())) {
+        if(intersectionCS(posNoeud1, posNoeud2, ensembleNoeuds[i]->getPosition(), 
+            safeDistance)) {
             unsigned int badUid = ensembleNoeuds[i]->getUid();
             cout << error::node_link_superposition(badUid) << endl;
             return true;
@@ -323,9 +329,11 @@ bool Ville::testNodeLinkSuperposition(unsigned int uid1, unsigned int uid2) {
     return false;
 }
 
-bool Ville::testLinkValidity(unsigned int uid1, unsigned int uid2) {
+bool Ville::testLinkValidity(unsigned int uid1, unsigned int uid2, 
+    double safeDistance) {
     bool notValid = testLinkVacuum(uid1, uid2) or testMultipleSameLink(uid1, uid2)
-        or testSelfLinkNode(uid1, uid2) or testNodeLinkSuperposition(uid1, uid2);
+        or testSelfLinkNode(uid1, uid2) 
+            or testNodeLinkSuperposition(uid1, uid2, safeDistance);
     if(notValid == true) {
         return false; //link is NOT valid
     }

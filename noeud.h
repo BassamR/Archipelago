@@ -60,8 +60,10 @@ public:
     bool testCapacityProblem();
     virtual bool testMaxLink();
     bool testIdenticalUid(const std::vector<Noeud*> ensemble);
-    bool testNodeNodeSuperposition(const std::vector<Noeud*> ensemble);
-    bool testNodeValidity(const std::vector<Noeud*> ensemble);
+    bool testNodeNodeSuperposition(const std::vector<Noeud*> ensemble, 
+        double safeDistance = 0);
+    bool testNodeValidity(const std::vector<Noeud*> ensemble, 
+        double safeDistance = 0);
 
     virtual void draw() = 0;
 

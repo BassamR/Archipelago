@@ -163,13 +163,14 @@ bool Noeud::testIdenticalUid(const vector<Noeud*> ensemble) {
     return false;
 }
 
-bool Noeud::testNodeNodeSuperposition(const vector<Noeud*> ensemble) {
+bool Noeud::testNodeNodeSuperposition(const vector<Noeud*> ensemble, 
+    double safeDistance) {
     if(ensemble.empty() == true) {
         return false;
     }
 
      for(unsigned int i = 0; i < ensemble.size(); ++i) {
-         if(intersectionCC(getPosition(), ensemble[i]->getPosition())) {
+         if(intersectionCC(getPosition(), ensemble[i]->getPosition(), safeDistance)) {
             cout << error::node_node_superposition(getUid(), 
                 ensemble[i]->getUid()) << endl;
             return true;
@@ -179,9 +180,10 @@ bool Noeud::testNodeNodeSuperposition(const vector<Noeud*> ensemble) {
     return false;
 }
 
-bool Noeud::testNodeValidity(const vector<Noeud*> ensemble) {
+bool Noeud::testNodeValidity(const vector<Noeud*> ensemble, double safeDistance) {
     bool notValid = testCapacityProblem() or testReservedUid()
-            or testIdenticalUid(ensemble) or testNodeNodeSuperposition(ensemble);
+            or testIdenticalUid(ensemble) 
+                or testNodeNodeSuperposition(ensemble, safeDistance);
 
     if(notValid == true) {
         return false; //noeud IS NOT valid

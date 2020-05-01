@@ -152,7 +152,7 @@ void Canvas::handleLeftClick() {
             return;
         } else {
             if(villeObject->clickOnNode(pressPoint)) {
-                villeObject->createLien(pressPoint);
+                villeObject->createLien(pressPoint, dist_min);
                 guiObject->refreshCriteres();
             } else {
                 cout << "cannot create a link with nothingness" << endl;
@@ -203,17 +203,20 @@ void Canvas::handleRightClick(Coords clickLocation) {
 
 void Canvas::createNode() {
     if(housingPressed) {
-        villeObject->createHousing(uidCounter, pressPoint.x, pressPoint.y, min_capacity);
+        villeObject->createHousing(uidCounter, pressPoint.x, pressPoint.y, 
+            min_capacity, dist_min);
         ++uidCounter;
         return;
     }
     if(transportPressed) {
-        villeObject->createTransport(uidCounter, pressPoint.x, pressPoint.y, min_capacity);
+        villeObject->createTransport(uidCounter, pressPoint.x, pressPoint.y, 
+            min_capacity, dist_min);
         ++uidCounter;
         return;
     }
     if(productionPressed) {
-        villeObject->createProduction(uidCounter, pressPoint.x, pressPoint.y, min_capacity);
+        villeObject->createProduction(uidCounter, pressPoint.x, pressPoint.y, 
+            min_capacity, dist_min);
         ++uidCounter;
         return;
     }

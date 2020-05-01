@@ -30,12 +30,15 @@ public:
     int getActiveNode();
     Noeud* getNode(unsigned int index);
 
-    bool createHousing(unsigned int uid, double x, double y, unsigned int size);
-    bool createProduction(unsigned int uid, double x, double y, unsigned int size);
-    bool createTransport(unsigned int uid, double x, double y, unsigned int size);
+    bool createHousing(unsigned int uid, double x, double y, unsigned int size,
+        double safeDistance = 0);
+    bool createProduction(unsigned int uid, double x, double y, unsigned int size, 
+        double safeDistance = 0);
+    bool createTransport(unsigned int uid, double x, double y, unsigned int size,
+        double safeDistance = 0);
 
-    bool createLien(unsigned int uid1, unsigned int uid2);
-    bool createLien(Coords coords);
+    bool createLien(unsigned int uid1, unsigned int uid2, double safeDistance = 0);
+    bool createLien(Coords coords, double safeDistance = 0);
 
     void deleteNode(Coords coord);
     void deleteLink();
@@ -46,8 +49,10 @@ public:
     bool testLinkVacuum(unsigned int uid1, unsigned int uid2);
     bool testMultipleSameLink(unsigned int uid1, unsigned int uid2);
     bool testSelfLinkNode(unsigned int uid1, unsigned int uid2);
-    bool testNodeLinkSuperposition(unsigned int uid1, unsigned int uid2);
-    bool testLinkValidity(unsigned int uid1, unsigned int uid2);
+    bool testNodeLinkSuperposition(unsigned int uid1, unsigned int uid2, 
+        double safeDistance = 0);
+    bool testLinkValidity(unsigned int uid1, unsigned int uid2, 
+        double safeDistance = 0);
 
     bool testMaxLink();
 
