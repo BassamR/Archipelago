@@ -85,7 +85,7 @@ private:
     Gtk::Frame mFrameCanvas, mFrameGeneral, mFrameDisplay, 
             mFrameEditor, mFrameInformations;
 
-    Gtk::Button mButtonExit, mButtonNew, mButtonOpen, mButtonSave, mButtonZoomIn, 
+    Gtk::Button mButtonExit, mButtonNew, mButtonOpen, mButtonSave, mButtonZoomIn,
             mButtonZoomOut, mButtonZoomR;
 
     Gtk::ToggleButton mTButtonShortest, mTButtonEditLink;

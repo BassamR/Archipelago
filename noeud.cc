@@ -220,6 +220,10 @@ vector<Noeud*> Noeud::getShortestTrans() {
     return empty;
 }
 
+void Noeud::drawShortestPath() {
+    return;
+}
+
 //Housing methods:
 string Housing::getType() {
     return "housing";
@@ -324,6 +328,33 @@ double Housing::mtaHT() {
     }
 
     return mtaHT;
+}
+
+void Housing::drawShortestPath() {
+    setColor(GREEN);
+
+    if(not shortestPathToProd.empty()) {
+        for(unsigned int i = 0; i < shortestPathToProd.size()-1; ++i) {
+            drawSegment(shortestPathToProd[i]->getCoords(), 
+                shortestPathToProd[i+1]->getCoords());
+        }
+
+        for(unsigned int i = 0; i < shortestPathToProd.size()-1; ++i) {
+            shortestPathToProd[i]->draw();
+        }
+    }
+
+    if(not shortestPathToTrans.empty()) {
+        for(unsigned int i = 0; i < shortestPathToTrans.size()-1; ++i) {
+            drawSegment(shortestPathToTrans[i]->getCoords(), 
+                shortestPathToTrans[i+1]->getCoords());
+        }
+
+        for(unsigned int i = 0; i < shortestPathToTrans.size()-1; ++i) {
+            shortestPathToTrans[i]->draw();
+        }
+    }
+    return;
 }
 
 //Transport methods:

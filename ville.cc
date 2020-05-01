@@ -426,6 +426,17 @@ void Ville::resetVille() {
     activeNode = noActiveNode;
 }
 
+void Ville::drawShortestPath() {
+    if(activeNode == noActiveNode) return;
+
+    if(ensembleNoeuds[activeNode]->getType() == "housing") {
+        ensembleNoeuds[activeNode]->drawShortestPath();
+    }
+
+    setColor(RED);
+    ensembleNoeuds[activeNode]->draw();
+}
+
 //Link info methods:
 double Ville::linkDistance(unsigned int index) {    
     Vecteur distance;

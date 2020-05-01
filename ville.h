@@ -55,6 +55,7 @@ public:
     void drawLinks();
     void saveVille(std::string nomFichier);
     void resetVille();
+    void drawShortestPath();
 
     double linkDistance(unsigned int index);
     double linkCapacity(unsigned int index);

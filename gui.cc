@@ -68,11 +68,12 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
 
     if(not empty) {
         makeBgWhite();
-        Ville::getVilleInstance()->drawLinks();
-        Ville::getVilleInstance()->drawNodes();
+        villeObject->drawLinks();
+        villeObject->drawNodes();
+        if(shortestPathPressed) villeObject->drawShortestPath();
     } else {
         makeBgWhite();
-        Ville::getVilleInstance()->resetVille();
+        villeObject->resetVille();
     }
 
     return true;
@@ -191,9 +192,9 @@ void Canvas::handleLeftClick() {
 }
 
 void Canvas::handleRightClick(Coords clickLocation) {
-    int activeNode = Ville::getVilleInstance()->getActiveNode();
+    int activeNode = villeObject->getActiveNode();
     if(activeNode != noActiveNode) {
-        Ville::getVilleInstance()->getNode(activeNode)->setCoords(clickLocation.x, 
+        villeObject->getNode(activeNode)->setCoords(clickLocation.x, 
             clickLocation.y);
         guiObject->refreshCriteres();
     }
@@ -303,6 +304,7 @@ void Gui::onButtonClickNew() {
     villeObject->resetVille();
     mArea.clear();
     refreshCriteres();
+    uidCounter = villeObject->findBiggestUid();
 }
 
 void Gui::onButtonClickOpen() {
@@ -328,6 +330,7 @@ void Gui::onButtonClickOpen() {
             
             mArea.draw();
             refreshCriteres();
+            uidCounter = villeObject->findBiggestUid();
             break;
         }
 
@@ -391,10 +394,14 @@ void Gui::onTButtonClickShortest() {
 
 void Gui::onTButtonPressShortest() {
     cout << "shortest path button pressed" << endl;
+    mArea.setShortestPathPressed(true);
+    mArea.draw();
 }
 
 void Gui::onTButtonReleaseShortest() {
     cout << "shortest path button released" << endl;
+    mArea.setShortestPathPressed(false);
+    mArea.draw();
 }
 
 //Gui edit link togglebutton
@@ -532,9 +539,9 @@ void Gui::initInformations() {
     mBoxLeft.pack_start(mFrameInformations, false, false);
     mFrameInformations.add(mLabelCriteres);
 
-    string enj = convertCritereToString(Ville::getVilleInstance()->critereENJ());
-    string ci = convertCritereToString(Ville::getVilleInstance()->critereCI());
-    string mta = convertCritereToString(Ville::getVilleInstance()->critereMTA());
+    string enj = convertCritereToString(villeObject->critereENJ());
+    string ci = convertCritereToString(villeObject->critereCI());
+    string mta = convertCritereToString(villeObject->critereMTA());
 
     mLabelCriteres.set_text(string("ENJ: ") + enj + string("\nCI: ") + ci 
             + string("\nMTA: ") + mta);

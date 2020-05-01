@@ -76,6 +76,8 @@ public:
 
     virtual std::vector<Noeud*> getShortestProd();
     virtual std::vector<Noeud*> getShortestTrans();
+
+    virtual void drawShortestPath();
 };
 
 class Housing: public Noeud {
@@ -103,6 +105,8 @@ public:
 
     double mtaHP() override;
     double mtaHT() override;
+
+    void drawShortestPath() override;
 };
 
 class Transport: public Noeud {
