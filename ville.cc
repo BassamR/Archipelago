@@ -24,22 +24,6 @@ static Ville ville;
 static void initVille(string line, bool& continueLecture);
 static void outputNode(ofstream& str, vector<Noeud*> nodes);
 
-//Constructor, destructor, getters/setters:
-Ville::Ville(): activeNode(noActiveNode) {}
-Ville::~Ville() {}
-
-Ville* Ville::getVilleInstance() {
-    return &ville;
-}
-
-int Ville::getActiveNode() {
-    return activeNode;
-}
-
-Noeud* Ville::getNode(unsigned int index) {
-    return ensembleNoeuds[index];
-}
-
 //Reading/Outputting functions:
 void lecture(char* nomFichier) {
     ville.resetVille();
@@ -152,6 +136,22 @@ static void outputNode(ofstream& str, vector<Noeud*> nodes) {
     str << "\n" << "\n";
 }
 
+//Constructor, destructor, getters/setters:
+Ville::Ville(): activeNode(noActiveNode) {}
+Ville::~Ville() {}
+
+Ville* Ville::getVilleInstance() {
+    return &ville;
+}
+
+int Ville::getActiveNode() {
+    return activeNode;
+}
+
+Noeud* Ville::getNode(unsigned int index) {
+    return ensembleNoeuds[index];
+}
+
 //Ville methods:
 bool Ville::createHousing(unsigned int uid, double x, double y, unsigned int size) {
     Housing* newHouse = new Housing(uid, x, y, size);
@@ -236,34 +236,6 @@ void Ville::deleteNode(Coords coord) {
     
     cout << "ville deleting a node" << endl;
 
-    // if(appartientCercle(ensembleNoeuds[activeNode]->getPosition(), coord)) {
-    //     for(unsigned int i = 0; i < liens.size(); ++i) {
-    //         if(liens[i][0] == ensembleNoeuds[activeNode]) {
-    //             // swap(liens[i], liens.back());
-    //             // liens.pop_back();
-    //             liens.erase(liens.begin() + i);
-    //             --i;
-    //         }
-    //         if(liens[i][1] == ensembleNoeuds[activeNode]) {
-    //             // std::swap(liens[i], liens.back());
-    //             // liens.pop_back();
-    //             liens.erase(liens.begin() + i);
-    //             --i;
-    //         }
-    //     }
-
-    
-
-
-    //     swap(ensembleNoeuds[activeNode], ensembleNoeuds.back());
-    //     delete ensembleNoeuds.back();
-    //     ensembleNoeuds.back() = nullptr;
-    //     ensembleNoeuds.pop_back();
-    //     activeNode = noActiveNode;
-    //     return;
-    // }
-
-    // activeNode = noActiveNode;
     return; //stub for rendu 3
 }
 
@@ -548,7 +520,6 @@ void Ville::resetActiveNode() {
     activeNode = noActiveNode;
 }
 
-
 bool Ville::clickOnNode(Coords clickLocation) {
     for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
         if(appartientCercle(ensembleNoeuds[i]->getPosition(), clickLocation)) {
@@ -565,4 +536,14 @@ bool Ville::clickOnActiveNode(Coords clickLocation) {
         return true;
     }
     return false;
+}
+
+int Ville::findBiggestUid() {
+    unsigned int biggestUid(0);
+    for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
+        if(ensembleNoeuds[i]->getUid() > biggestUid) {
+            biggestUid = ensembleNoeuds[i]->getUid();
+        }
+    }
+    return biggestUid+1; //+1 for safety
 }

@@ -20,6 +20,7 @@
 using namespace std;
 
 //Static methods used for Dijkstra
+static void initTN(vector<Noeud*>& tn);
 static void initTA(vector<unsigned int>& ta, const vector<Noeud*>& tn);
 static void sortTA(vector<unsigned int>& ta, const vector<Noeud*>& tn, Noeud* index);
 static bool tnEmpty(const vector<Noeud*>& tn);
@@ -45,25 +46,7 @@ Production::Production(unsigned int uid, double x, double y, unsigned int size):
     Noeud(uid, x, y, size) {
 }
 
-Noeud::~Noeud() {
-    //Ville: delete ensembleNoeuds[i]; (delete calls this destructor)
-    //then swap and pop_back to properly remove from main vector
-    //then update link matrix
-    //remove node from its neighbors' list of connections
-    // bool keepGoing = true;
-
-    // for(unsigned int i = 0; i < liens.size(); ++i) {
-    //     keepGoing = true;
-    //     for(unsigned int j = 0; keepGoing and j < liens[i]->getLiens().size(); ++j) {
-    //         if(liens[i]->getLiens()[j] == this) {
-    //             liens[i]->getLiens()[j]->removeLien(j);
-    //             keepGoing = false;
-    //         }
-    //     }
-    // }
-
-    cout << "node number " << uid << " being destructed" << endl;
-}
+Noeud::~Noeud() {}
 
 //General methods:
 unsigned int Noeud::getUid() {
@@ -262,11 +245,7 @@ vector<Noeud*> Housing::getShortestTrans() {
 
 void Housing::dijkstra(vector<Noeud*>& tn, string nodeType) {
     //initialize
-    for(unsigned int i = 0; i < tn.size(); ++i) {
-        tn[i]->setIn(true);
-        tn[i]->setAccess(infinite_time);
-        tn[i]->setParent(nullptr);
-    }
+    initTN(tn);
     access = 0; //current node = beginning node
     vector<unsigned int> ta;
     initTA(ta, tn);
@@ -276,14 +255,8 @@ void Housing::dijkstra(vector<Noeud*>& tn, string nodeType) {
     while(not tnEmpty(tn)) {
         unsigned int n = findMinAccess(ta, tn);
         if(tn[n]->getType() == nodeType and tn[n]->getParent() != nullptr) {
-            if(nodeType == "transport") {
-                updateShortestPathToTrans(tn, tn[n]);
-                return;
-            }
-            if(nodeType == "production") {
-                updateShortestPathToProd(tn, tn[n]);
-                return;
-            }
+            if(nodeType == "transport") updateShortestPathToTrans(tn, tn[n]);
+            if(nodeType == "production") updateShortestPathToProd(tn, tn[n]);
             return;
         }
 
@@ -402,6 +375,14 @@ void Production::draw() {
 }
 
 //Static Dijkstra methods definition
+void initTN(vector<Noeud*>& tn) {
+    for(unsigned int i = 0; i < tn.size(); ++i) {
+        tn[i]->setIn(true);
+        tn[i]->setAccess(infinite_time);
+        tn[i]->setParent(nullptr);
+    }   
+}
+
 void initTA(vector<unsigned int>& ta, const vector<Noeud*>& tn) {
     for(unsigned int i = 0; i < tn.size(); ++i) {
         ta.push_back(i);

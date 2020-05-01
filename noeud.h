@@ -89,10 +89,10 @@ public:
     std::string getType();
     void draw();
 
-    bool testMaxLink();
+    bool testMaxLink() override;
 
-    std::vector<Noeud*> getShortestProd();
-    std::vector<Noeud*> getShortestTrans();
+    std::vector<Noeud*> getShortestProd() override;
+    std::vector<Noeud*> getShortestTrans() override;
 
     void dijkstra(std::vector<Noeud*>& tn, std::string nodeType) override;
 

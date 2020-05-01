@@ -69,6 +69,8 @@ public:
 
     bool clickOnNode(Coords clickLocation);
     bool clickOnActiveNode(Coords clickLocation);
+
+    int findBiggestUid();
 };
 
 #endif

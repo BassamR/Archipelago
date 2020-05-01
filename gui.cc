@@ -10,7 +10,6 @@
 #include <iostream>
 #include <string>
 #include <sstream>
-#include <gtkmm/application.h>
 #include <cairomm/context.h>
 #include <gtkmm/filechooser.h>
 #include <gtkmm/filechooserdialog.h>
@@ -21,10 +20,10 @@
 using namespace std;
 
 //Static functions and variables
+static string convertCritereToString(const double& critere);
 static Gui* guiObject(nullptr);
 static Ville* villeObject(Ville::getVilleInstance());
-static int uidCounter(1000);
-static string convertCritereToString(const double& critere);
+static int uidCounter(0); //used for rendu3 to properly manage uid's of created nodes
 
 //Canvas constructor/destructor:
 Canvas::Canvas(): empty(false), shortestPathPressed(false), editLinkPressed(false) {
@@ -41,7 +40,7 @@ Canvas::Canvas(): empty(false), shortestPathPressed(false), editLinkPressed(fals
 
 Canvas::~Canvas() {}
 
-//Canvas methods:
+//Canvas refresh and event override methods:
 void Canvas::refresh() {
     auto win = get_window();
     if(win) {
@@ -51,17 +50,6 @@ void Canvas::refresh() {
     }
 }
 
-void Canvas::clear() {
-    empty = true;
-    refresh();
-}
-
-void Canvas::draw() {
-    empty = false;
-    refresh();
-}
-
-//Canvas event override methods:
 bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     Gtk::Allocation allocation = get_allocation();
     frame.width = allocation.get_width();
@@ -71,7 +59,6 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     xc = frame.width/2;
     yc = frame.height/2;
 
-    //cr->set_identity_matrix();
     cr->translate(xc, yc);
     cr->scale(frame.width/(frame.xMax - frame.xMin), 
         -frame.height/(frame.yMax - frame.yMin));
@@ -82,7 +69,7 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     if(not empty) {
         makeBgWhite();
         Ville::getVilleInstance()->drawLinks();
-        Ville::getVilleInstance()->drawNodes(); //draws the city
+        Ville::getVilleInstance()->drawNodes();
     } else {
         makeBgWhite();
         Ville::getVilleInstance()->resetVille();
@@ -136,7 +123,7 @@ bool Canvas::on_button_release_event(GdkEventButton* event) {
     return true;
 } //mouse event stub for rendu 3
 
-//Canvas utility methods:
+//Canvas utility methods, event handling:
 void Canvas::convertCoordsToModele(Coords& clickLocation) {
     double newX = (clickLocation.x/frame.width) 
         * (frame.xMax-frame.xMin) + frame.xMin;
@@ -147,27 +134,6 @@ void Canvas::convertCoordsToModele(Coords& clickLocation) {
     clickLocation.y = newY;
 }
 
-void Canvas::setShortestPathPressed(bool value) {
-    shortestPathPressed = value;
-}
-
-void Canvas::setEditLinkPressed(bool value) {
-    editLinkPressed = value;
-}
-
-void Canvas::setHousingButtonPressed(bool value) {
-    housingPressed = value;
-}
-
-void Canvas::setTransportButtonPressed(bool value) {
-    transportPressed = value;
-}
-
-void Canvas::setProductionButtonPressed(bool value) {
-    productionPressed = value;
-}
-
-//Canvas event handling methods:
 void Canvas::handleLeftClick() {
     if(pressPoint.x != releasePoint.x or pressPoint.y != releasePoint.y) {
         if(villeObject->getActiveNode() != noActiveNode) {
@@ -252,6 +218,37 @@ void Canvas::createNode() {
     }
 }
 
+//Canvas public methods, setters:
+void Canvas::clear() {
+    empty = true;
+    refresh();
+}
+
+void Canvas::draw() {
+    empty = false;
+    refresh();
+}
+
+void Canvas::setShortestPathPressed(bool value) {
+    shortestPathPressed = value;
+}
+
+void Canvas::setEditLinkPressed(bool value) {
+    editLinkPressed = value;
+}
+
+void Canvas::setHousingButtonPressed(bool value) {
+    housingPressed = value;
+}
+
+void Canvas::setTransportButtonPressed(bool value) {
+    transportPressed = value;
+}
+
+void Canvas::setProductionButtonPressed(bool value) {
+    productionPressed = value;
+}
+
 //Gui constructor/destructor:
 Gui::Gui():
     mBox(Gtk::ORIENTATION_HORIZONTAL, 10), mBoxLeft(Gtk::ORIENTATION_VERTICAL, 10),
@@ -273,6 +270,7 @@ Gui::Gui():
     mRButtonH("housing"), mRButtonT("transport"), mRButtonP("production") {
     //General setup
     guiObject = this;
+    uidCounter = villeObject->findBiggestUid();
     setupGui();
 
     //Add general frame
@@ -298,20 +296,16 @@ Gui::~Gui() {}
 
 //Gui clickable buttons:
 void Gui::onButtonClickExit() {
-    cout << "exit button clicked" << endl;
     hide(); //exits the app
 }
 
 void Gui::onButtonClickNew() {
-    cout << "new button clicked" << endl;
-    Ville::getVilleInstance()->resetVille();
+    villeObject->resetVille();
     mArea.clear();
     refreshCriteres();
 }
 
 void Gui::onButtonClickOpen() {
-    cout << "open button clicked" << endl;
-
     Gtk::FileChooserDialog dialog("Please choose a file",
             Gtk::FILE_CHOOSER_ACTION_OPEN);
     //dialog.set_transient_for(*this); 
@@ -349,8 +343,6 @@ void Gui::onButtonClickOpen() {
 }
 
 void Gui::onButtonClickSave() {
-    cout << "save button clicked" << endl;
-
     Gtk::FileChooserDialog dialog("Please choose a file",
             Gtk::FILE_CHOOSER_ACTION_SAVE);
     //dialog.set_transient_for(*this);
@@ -364,8 +356,7 @@ void Gui::onButtonClickSave() {
     switch(result) {
         case(Gtk::RESPONSE_OK): {
             string filename = dialog.get_filename();
-            
-            Ville::getVilleInstance()->saveVille(filename);
+            villeObject->saveVille(filename);
             break;
         }
 
@@ -378,7 +369,6 @@ void Gui::onButtonClickSave() {
             break;
         }
     }
-
 }
 
 void Gui::onButtonClickZoomIn() {
@@ -469,16 +459,6 @@ void Gui::onRButtonPressP() {
 void Gui::onRButtonReleaseP() {
     cout << "production radiobutton released" << endl;
     mArea.setProductionButtonPressed(false);
-}
-
-//Misc MyGui methods:
-void Gui::refreshCriteres() {
-    string enj = convertCritereToString(Ville::getVilleInstance()->critereENJ());
-    string ci = convertCritereToString(Ville::getVilleInstance()->critereCI());
-    string mta = convertCritereToString(Ville::getVilleInstance()->critereMTA());
-
-    mLabelCriteres.set_text(string("ENJ: ") + enj + string("\nCI: ") + ci 
-            + string("\nMTA: ") + mta);
 }
 
 //Gui methods to better organize gui constructor:
@@ -588,6 +568,16 @@ void Gui::connectButtons() {
     mRButtonP.signal_clicked().connect(sigc::mem_fun(*this,
                     &Gui::onRButtonClickP)); 
 } //connect buttons to signal handlers
+
+//Misc MyGui methods:
+void Gui::refreshCriteres() {
+    string enj = convertCritereToString(Ville::getVilleInstance()->critereENJ());
+    string ci = convertCritereToString(Ville::getVilleInstance()->critereCI());
+    string mta = convertCritereToString(Ville::getVilleInstance()->critereMTA());
+
+    mLabelCriteres.set_text(string("ENJ: ") + enj + string("\nCI: ") + ci 
+            + string("\nMTA: ") + mta);
+}
 
 //Static functions definition
 string convertCritereToString(const double& critere) {
