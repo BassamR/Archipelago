@@ -177,6 +177,7 @@ bool Noeud::testNodeNodeSuperposition(const vector<Noeud*> ensemble,
     }
 
      for(unsigned int i = 0; i < ensemble.size(); ++i) {
+         if(ensemble[i] == this) continue;
          if(intersectionCC(getPosition(), ensemble[i]->getPosition(), safeDistance)) {
             cout << error::node_node_superposition(getUid(), 
                 ensemble[i]->getUid()) << endl;
@@ -199,6 +200,7 @@ bool Noeud::testNodeValidity(const vector<Noeud*> ensemble, double safeDistance)
     return true;
 } //runs before creating a node
 
+//Misc node functions:
 void Noeud::dijkstra(vector<Noeud*>& tn, string nodeType) {
     return;
 }
@@ -320,13 +322,15 @@ void Housing::updateShortestPathToTrans(vector<Noeud*>& ensemble, Noeud* goal) {
 
 double Housing::mtaHP() {
     if(shortestPathToProd.empty()) return infinite_time;
-    double mtaHP = shortestPathToProd[0]->getAccess();
+    //the first element of the vector is the arrival node
+    double mtaHP = shortestPathToProd.front()->getAccess();
     return mtaHP;
 }
 
 double Housing::mtaHT() {
     if(shortestPathToTrans.empty()) return infinite_time;
-    double mtaHT = shortestPathToTrans[0]->getAccess();
+    //the first element of the vector is the arrival node
+    double mtaHT = shortestPathToTrans.front()->getAccess();
     return mtaHT;
 }
 

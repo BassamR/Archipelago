@@ -12,6 +12,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <cmath>
 #include "ville.h"
 #include "noeud.h"
 #include "tools.h"
@@ -619,6 +620,64 @@ bool Ville::clickOnActiveNode(Coords clickLocation) {
         return true;
     }
     return false;
+}
+
+void Ville::changeNodeCoords(Coords clickLocation) {
+    if(activeNode == noActiveNode) return;
+    Noeud* node = ensembleNoeuds[activeNode];
+
+    double oldX = node->getCoords().x;
+    double oldY = node->getCoords().y;
+
+    node->setCoords(clickLocation.x, clickLocation.y);
+    if(node->testNodeNodeSuperposition(ensembleNoeuds, dist_min)) {
+        node->setCoords(oldX, oldY);
+        return;
+    }
+
+    for(unsigned int i = 0; i < liens.size(); ++i) {
+        if(testNodeLinkSuperposition(liens[i][0]->getUid(), 
+            liens[i][1]->getUid(), dist_min)) {
+            node->setCoords(oldX, oldY);
+            return;
+        }
+    }
+}
+
+void Ville::changeNodeSize(Coords click1, Coords click2) {
+    if(activeNode == noActiveNode) return;
+    Noeud* node = ensembleNoeuds[activeNode];
+
+    Vecteur firstRadius, secondRadius;
+    creeVecteur(node->getCoords(), click1, firstRadius);
+    creeVecteur(node->getCoords(), click2, secondRadius);
+
+    double rayonCourant = node->getPosition().rayon;
+    double rayonDebut = norme(firstRadius);
+    double rayonFin = norme(secondRadius);
+
+    unsigned int oldSize = node->getSize();
+    double newSize = pow(rayonCourant+(rayonFin-rayonDebut), 2);
+    node->setSize(newSize);
+
+    if(node->testCapacityProblem()) {
+        node->setSize(oldSize);
+        return;
+    }
+
+    if(node->testNodeNodeSuperposition(ensembleNoeuds, dist_min)) {
+        node->setSize(oldSize);
+        return;
+    }
+
+    for(unsigned int i = 0; i < liens.size(); ++i) {
+        if(testNodeLinkSuperposition(liens[i][0]->getUid(), 
+            liens[i][1]->getUid(), dist_min)) {
+            node->setSize(oldSize);
+            return;
+        }
+    }
+
 }
 
 int Ville::findBiggestUid() {
