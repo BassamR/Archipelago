@@ -87,7 +87,14 @@ void Noeud::setLiens(Noeud* linkUid) {
     liens.push_back(linkUid);
 }
 
-void Noeud::removeLien(unsigned int index) {
+void Noeud::removeLien(Noeud* node) {
+    int index = noActiveNode;
+    for(unsigned int i = 0; i < liens.size(); ++i) {
+        if(liens[i] == node) index = i;
+    }
+
+    if(index == noActiveNode) return;
+
     swap(liens[index], liens.back());
     liens.pop_back();
 }
@@ -253,6 +260,8 @@ void Housing::dijkstra(vector<Noeud*>& tn, string nodeType) {
     //initialize
     initTN(tn);
     access = 0; //current node = beginning node
+    if(nodeType == "transport") shortestPathToTrans.clear();
+    if(nodeType == "production") shortestPathToProd.clear(); //clear up old paths
     vector<unsigned int> ta;
     initTA(ta, tn);
     sortTA(ta, tn, this);
@@ -287,11 +296,10 @@ void Housing::dijkstra(vector<Noeud*>& tn, string nodeType) {
             }
         }
     }
-    return;
 }
 
 void Housing::updateShortestPathToProd(vector<Noeud*>& ensemble, Noeud* goal) {
-    if(not shortestPathToProd.empty()) shortestPathToProd.clear();
+    shortestPathToProd.clear();
     Noeud* newParent = goal;
 
     while(newParent != nullptr) {
@@ -301,7 +309,7 @@ void Housing::updateShortestPathToProd(vector<Noeud*>& ensemble, Noeud* goal) {
 }
 
 void Housing::updateShortestPathToTrans(vector<Noeud*>& ensemble, Noeud* goal) {
-    if(not shortestPathToTrans.empty()) shortestPathToTrans.clear();
+    shortestPathToTrans.clear();
     Noeud* newParent = goal;
 
     while(newParent != nullptr) {
@@ -312,23 +320,13 @@ void Housing::updateShortestPathToTrans(vector<Noeud*>& ensemble, Noeud* goal) {
 
 double Housing::mtaHP() {
     if(shortestPathToProd.empty()) return infinite_time;
-    double mtaHP(0);
-    
-    for(unsigned int i = 0; i < shortestPathToProd.size()-1; ++i) {
-        mtaHP += linkValue(shortestPathToProd[i], shortestPathToProd[i+1]);
-    }
-
+    double mtaHP = shortestPathToProd[0]->getAccess();
     return mtaHP;
 }
 
 double Housing::mtaHT() {
     if(shortestPathToTrans.empty()) return infinite_time;
-    double mtaHT(0);
-    
-    for(unsigned int i = 0; i < shortestPathToTrans.size()-1; ++i) {
-        mtaHT += linkValue(shortestPathToTrans[i], shortestPathToTrans[i+1]);
-    }
-
+    double mtaHT = shortestPathToTrans[0]->getAccess();
     return mtaHT;
 }
 

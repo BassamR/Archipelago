@@ -206,32 +206,34 @@ bool Ville::createLien(unsigned int uid1, unsigned int uid2,
     }
 }
 
-bool Ville::createLien(Coords coords, double safeDistance) {
-    if(activeNode == noActiveNode) return false;
+void Ville::handleLink(Coords coords, double safeDistance) {
+    if(activeNode == noActiveNode) return;
+
     unsigned int nodeIndex = findNoeudIndex(coords);
 
-    unsigned int uid1 = ensembleNoeuds[activeNode]->getUid();
-    unsigned int uid2 = ensembleNoeuds[nodeIndex]->getUid();
+    for(unsigned int i = 0; i < ensembleNoeuds[activeNode]->getLiens().size(); ++i) {
+        if(ensembleNoeuds[activeNode]->getLiens()[i] == ensembleNoeuds[nodeIndex]) {
+            deleteLink(ensembleNoeuds[activeNode], ensembleNoeuds[nodeIndex]);
+            return;
+        }
+    }
 
-    bool maxLink(false);
-
+    bool maxLink = false;
     if(ensembleNoeuds[activeNode]->getType() == "housing") {
         if(ensembleNoeuds[activeNode]->getLiens().size() == max_link) maxLink = true;
     }
+    if(ensembleNoeuds[nodeIndex]->getType() == "housing") {
+        if(ensembleNoeuds[nodeIndex]->getLiens().size() == max_link) maxLink = true;
+    }
 
-    if((not testLinkValidity(uid1, uid2, safeDistance)) or maxLink) {
-        if(maxLink) {
-            cout << error::max_link(ensembleNoeuds[activeNode]->getUid()) << endl;
-        }
-        return false;
+    if(maxLink) {
+        cout << error::max_link(ensembleNoeuds[activeNode]->getUid()) << endl;
+        return;
      } else {
-        Noeud* noeud1 = ensembleNoeuds[activeNode];
-        Noeud* noeud2 = ensembleNoeuds[nodeIndex];
-
-        liens.push_back(vector<Noeud*>{noeud1, noeud2});
-        noeud1->setLiens(noeud2);
-        noeud2->setLiens(noeud1);
-        return true;
+        unsigned int uid1 = ensembleNoeuds[activeNode]->getUid();
+        unsigned int uid2 = ensembleNoeuds[nodeIndex]->getUid();
+        createLien(uid1, uid2, dist_min);
+        return;
     }
 }
 
@@ -240,11 +242,72 @@ void Ville::deleteNode(Coords coord) {
     
     cout << "ville deleting a node" << endl;
 
+    // for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
+    //     ensembleNoeuds[i]->removeLien(ensembleNoeuds[activeNode]);
+    // }
+    // cout << "initial remove done" << endl;
+    // vector<int> indexesToDelete;
+
+    // int counter = 0;
+    // for(unsigned int i = 0; i < liens.size(); ++i) {
+    //     if(liens[i][0] == ensembleNoeuds[activeNode] 
+    //         or liens[i][1] == ensembleNoeuds[activeNode]) {
+    //         // swap(liens[i], liens.back());
+    //         // ++counter;
+    //         // --i;
+    //         indexesToDelete.push_back(i);
+    //     }
+    // }
+    //if(indexesToDelete.empty()) cout << "empty" << endl;
+    
+    // for(unsigned int i = 0; i < indexesToDelete.size(); ++i) {
+    //     swap(liens[indexesToDelete[i]], liens.back());
+    //     liens.pop_back();
+    // }
+
+    // for(unsigned int i = 0; i < ensembleNoeuds[activeNode]->getLiens().size(); ++i) {
+    //     deleteLink(ensembleNoeuds[activeNode], ensembleNoeuds[activeNode]->getLiens()[i]);
+    //     cout << i << endl;
+    // }
+
+
+    // cout << "hi0"; //not even cout'ed
+    // delete ensembleNoeuds[activeNode];
+    // cout << "hi";
+    // swap(ensembleNoeuds[activeNode], ensembleNoeuds.back());
+    // cout << "hi2";
+    // ensembleNoeuds.pop_back();
+    // activeNode = noActiveNode;
+
     return; //stub for rendu 3
 }
 
-void Ville::deleteLink() {
-    return; //stub for rendu 3
+void Ville::deleteLink(Noeud* noeud1, Noeud* noeud2) {
+    cout << "deletelink called" << endl;
+    noeud1->removeLien(noeud2);
+    noeud2->removeLien(noeud1);
+    int index;
+    bool keepGoing = true;
+    cout << "hi12";
+
+    for(unsigned int i = 0; i < liens.size() and keepGoing; ++i) {
+        if(liens[i][0] == noeud1) {
+            if(liens[i][1] == noeud2) {
+                index = i;
+                keepGoing = false;
+            }
+        }
+        if(liens[i][0] == noeud2) {
+            if(liens[i][1] == noeud1) {
+                index = i;
+                keepGoing = false;
+            }
+        }
+    }
+    cout << "hi5";
+    swap(liens[index], liens.back());
+    liens.pop_back();
+    return;
 }
 
 unsigned int Ville::findNoeudIndex(unsigned int uid) {
@@ -503,22 +566,23 @@ double Ville::critereCI() {
 
 double Ville::critereMTA() {
     double mta(0), mtaCount(0), nbH(0);
-
     for(unsigned int i = 0; i < ensembleNoeuds.size(); ++i) {
         if(ensembleNoeuds[i]->getType() == "housing") {
             ++nbH;
 
             ensembleNoeuds[i]->dijkstra(ensembleNoeuds, "production");
-            ensembleNoeuds[i]->dijkstra(ensembleNoeuds, "transport");
+            double mtaHP = ensembleNoeuds[i]->mtaHP();
 
-            mtaCount += ensembleNoeuds[i]->mtaHP() + ensembleNoeuds[i]->mtaHT();
+            ensembleNoeuds[i]->dijkstra(ensembleNoeuds, "transport");
+            double mtaHT = ensembleNoeuds[i]->mtaHT();
+
+            mtaCount += mtaHP + mtaHT;
         }
     }
 
     if(nbH == 0) return 0; //cannot make an average on 0 nodes
 
     mta = mtaCount/nbH;
-
     return mta;
 }
 

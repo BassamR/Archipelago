@@ -140,7 +140,6 @@ void Canvas::handleLeftClick() {
         if(villeObject->getActiveNode() != noActiveNode) {
             //change size
             cout << "im changing a size of a node" << endl;
-        } else {
             return;
         }
         return;
@@ -152,7 +151,7 @@ void Canvas::handleLeftClick() {
             return;
         } else {
             if(villeObject->clickOnNode(pressPoint)) {
-                villeObject->createLien(pressPoint, dist_min);
+                villeObject->handleLink(pressPoint, dist_min);
                 guiObject->refreshCriteres();
             } else {
                 cout << "cannot create a link with nothingness" << endl;
@@ -181,7 +180,7 @@ void Canvas::handleLeftClick() {
                 villeObject->setActiveNode(pressPoint);
             } else {
                 villeObject->deleteNode(pressPoint);
-                //guiObject->refreshCriteres();
+                guiObject->refreshCriteres();
             }
         } else {
             villeObject->resetActiveNode();
@@ -581,9 +580,9 @@ void Gui::connectButtons() {
 
 //Misc MyGui methods:
 void Gui::refreshCriteres() {
-    string enj = convertCritereToString(Ville::getVilleInstance()->critereENJ());
-    string ci = convertCritereToString(Ville::getVilleInstance()->critereCI());
-    string mta = convertCritereToString(Ville::getVilleInstance()->critereMTA());
+    string enj = convertCritereToString(villeObject->critereENJ());
+    string ci = convertCritereToString(villeObject->critereCI());
+    string mta = convertCritereToString(villeObject->critereMTA());
 
     mLabelCriteres.set_text(string("ENJ: ") + enj + string("\nCI: ") + ci 
             + string("\nMTA: ") + mta);

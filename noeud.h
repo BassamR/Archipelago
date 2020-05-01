@@ -43,7 +43,7 @@ public:
 
     std::vector<Noeud*> getLiens();
     void setLiens(Noeud* linkUid);
-    void removeLien(unsigned int index);
+    void removeLien(Noeud* node);
 
     bool getIn();
     void setIn(bool value);
@@ -69,7 +69,8 @@ public:
 
     virtual void dijkstra(std::vector<Noeud*>& tn, std::string nodeType);
 
-    virtual void updateShortestPathToProd(std::vector<Noeud*>& ensemble, Noeud* goal);
+    virtual void updateShortestPathToProd(std::vector<Noeud*>& ensemble, 
+        Noeud* goal);
     virtual void updateShortestPathToTrans(std::vector<Noeud*>& ensemble, 
         Noeud* goal);
 
