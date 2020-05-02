@@ -23,7 +23,7 @@ using namespace std;
 static string convertCritereToString(const double& critere);
 static Gui* guiObject(nullptr);
 static Ville* villeObject(Ville::getVilleInstance());
-static int uidCounter(0); //used for rendu3 to properly manage uid's of created nodes
+static int uidCounter(0); //used to manage uid's of created nodes
 static constexpr double initialScale(1.0);
 
 //Canvas constructor/destructor:
@@ -263,10 +263,10 @@ double Canvas::getScale() {
 }
 
 void Canvas::multiplieFrame() {
-    frame.xMin = -dim_max*scale;
-    frame.xMax = dim_max*scale;
-    frame.yMin = -dim_max*scale;
-    frame.yMax = dim_max*scale;
+    frame.xMin = -dim_max/scale;
+    frame.xMax = dim_max/scale;
+    frame.yMin = -dim_max/scale;
+    frame.yMax = dim_max/scale;
 }
 
 void Canvas::resetFrame() {
@@ -332,6 +332,7 @@ void Gui::onButtonClickNew() {
     villeObject->resetVille();
     mArea.clear();
     mArea.resetFrame();
+    mLabelZoom.set_text(string("zoom: ") + string("x") + to_string(initialScale));
     refreshCriteres();
     uidCounter = villeObject->findBiggestUid();
 }
@@ -357,6 +358,8 @@ void Gui::onButtonClickOpen() {
             char* filenameChar = const_cast<char*>(filename.c_str());
             lecture(filenameChar);
             
+            mArea.resetFrame();
+            mLabelZoom.set_text(string("zoom: ") + string("x") + to_string(initialScale));
             mArea.draw();
             refreshCriteres();
             uidCounter = villeObject->findBiggestUid();
@@ -405,26 +408,38 @@ void Gui::onButtonClickSave() {
 
 void Gui::onButtonClickZoomIn() {
     double currentScale = mArea.getScale();
-    if(currentScale <= min_zoom+0.05) return; //because bad precision
 
-    mArea.setScale(currentScale-delta_zoom);
-    mArea.multiplieFrame();
-    mArea.draw();
-}
-
-void Gui::onButtonClickZoomOut() {
-    double currentScale = mArea.getScale();
-    if(currentScale >= max_zoom) return;
+    if(currentScale >= max_zoom) {
+        mLabelZoom.set_text(string("zoom: ") + string("x") + to_string(currentScale));
+        return;
+    }
 
     mArea.setScale(currentScale+delta_zoom);
     mArea.multiplieFrame();
     mArea.draw();
+    mLabelZoom.set_text(string("zoom: ") + string("x") 
+        + to_string(currentScale+delta_zoom));
+}
+
+void Gui::onButtonClickZoomOut() {
+    double currentScale = mArea.getScale();
     
+    if(currentScale <= min_zoom + 0.05 or currentScale <= min_zoom - 0.05) {
+        mLabelZoom.set_text(string("zoom: ") + string("x") + to_string(currentScale));
+        return;
+    }
+
+    mArea.setScale(currentScale-delta_zoom);
+    mArea.multiplieFrame();
+    mArea.draw();
+    mLabelZoom.set_text(string("zoom: ") + string("x") 
+        + to_string(currentScale-delta_zoom));
 }
 
 void Gui::onButtonClickZoomR() {
     mArea.resetFrame();
     mArea.draw();
+    mLabelZoom.set_text(string("zoom: ") + string("x") + to_string(mArea.getScale()));
 }
 
 //Shortest path togglebutton
@@ -434,13 +449,11 @@ void Gui::onTButtonClickShortest() {
 }
 
 void Gui::onTButtonPressShortest() {
-    cout << "shortest path button pressed" << endl;
     mArea.setShortestPathPressed(true);
     mArea.draw();
 }
 
 void Gui::onTButtonReleaseShortest() {
-    cout << "shortest path button released" << endl;
     mArea.setShortestPathPressed(false);
     mArea.draw();
 }
@@ -452,12 +465,10 @@ void Gui::onTButtonClickEditLink() {
 }
 
 void Gui::onTButtonPressEditLink() {
-    cout << "edit link button pressed" << endl;
     mArea.setEditLinkPressed(true);
 }
 
 void Gui::onTButtonReleaseEditLink() {
-    cout << "edit link button released" << endl;
     mArea.setEditLinkPressed(false);
 }
 
@@ -468,12 +479,10 @@ void Gui::onRButtonClickH() {
 }
 
 void Gui::onRButtonPressH() {
-    cout << "housing radiobutton pressed" << endl;
     mArea.setHousingButtonPressed(true);
 }
 
 void Gui::onRButtonReleaseH() {
-    cout << "housing radiobutton released" << endl;
     mArea.setHousingButtonPressed(false);
 }
 
@@ -484,12 +493,10 @@ void Gui::onRButtonClickT() {
 }
 
 void Gui::onRButtonPressT() {
-    cout << "transport radiobutton pressed" << endl;
     mArea.setTransportButtonPressed(true);
 }
 
 void Gui::onRButtonReleaseT() {
-    cout << "transport radiobutton released" << endl;
     mArea.setTransportButtonPressed(false);
 }
 
@@ -500,12 +507,10 @@ void Gui::onRButtonClickP() {
 }
 
 void Gui::onRButtonPressP() {
-    cout << "production radiobutton pressed" << endl;
     mArea.setProductionButtonPressed(true);
 }
 
 void Gui::onRButtonReleaseP() {
-    cout << "production radiobutton released" << endl;
     mArea.setProductionButtonPressed(false);
 }
 
@@ -559,7 +564,7 @@ void Gui::initDisplay() {
 
     //Add zoom label
     mBoxDisplay.pack_start(mLabelZoom);
-    mLabelZoom.set_text(string("zoom: ") + string("1.00x")); //temp nonfunctional zoom
+    mLabelZoom.set_text(string("zoom: ") + string("x") + to_string(mArea.getScale()));
 } //initialize dislay section of gui
 
 void Gui::initEditor() {
