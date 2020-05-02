@@ -47,6 +47,8 @@ private:
     Coords pressPoint;
     Coords releasePoint;
 
+    double scale;
+
     // Override default signal handler:
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
@@ -74,6 +76,12 @@ public:
     void setHousingButtonPressed(bool value);
     void setTransportButtonPressed(bool value);
     void setProductionButtonPressed(bool value);
+
+    void setScale(double value);
+    double getScale();
+
+    void multiplieFrame();
+    void resetFrame();
 };
 
 class Gui: public Gtk::Window {
@@ -130,6 +138,8 @@ private:
     void initEditor();
     void initInformations();
     void connectButtons();
+
+    bool on_key_press_event(GdkEventKey* keyEvent) override;
 
 public:
     Gui();

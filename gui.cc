@@ -24,9 +24,12 @@ static string convertCritereToString(const double& critere);
 static Gui* guiObject(nullptr);
 static Ville* villeObject(Ville::getVilleInstance());
 static int uidCounter(0); //used for rendu3 to properly manage uid's of created nodes
+static constexpr double initialScale(1.0);
 
 //Canvas constructor/destructor:
-Canvas::Canvas(): empty(false), shortestPathPressed(false), editLinkPressed(false) {
+Canvas::Canvas(): empty(false), shortestPathPressed(false), editLinkPressed(false),
+    housingPressed(true), transportPressed(false), productionPressed(false),
+    scale(initialScale) {
     add_events(Gdk::BUTTON_PRESS_MASK);
     add_events(Gdk::BUTTON_RELEASE_MASK);
     
@@ -168,7 +171,6 @@ void Canvas::handleLeftClick() {
         } else {
             createNode();
             guiObject->refreshCriteres();
-            villeObject->setActiveNode(pressPoint);
         }
         draw();
         return;
@@ -251,6 +253,31 @@ void Canvas::setProductionButtonPressed(bool value) {
     productionPressed = value;
 }
 
+//Canvas zoom handling
+void Canvas::setScale(double value) {
+    scale = value;
+}
+
+double Canvas::getScale() {
+    return scale;
+}
+
+void Canvas::multiplieFrame() {
+    frame.xMin = -dim_max*scale;
+    frame.xMax = dim_max*scale;
+    frame.yMin = -dim_max*scale;
+    frame.yMax = dim_max*scale;
+}
+
+void Canvas::resetFrame() {
+    scale = initialScale;
+
+    frame.xMin = -dim_max;
+    frame.xMax = dim_max;
+    frame.yMin = -dim_max;
+    frame.yMax = dim_max;
+}
+
 //Gui constructor/destructor:
 Gui::Gui():
     mBox(Gtk::ORIENTATION_HORIZONTAL, 10), mBoxLeft(Gtk::ORIENTATION_VERTICAL, 10),
@@ -304,6 +331,7 @@ void Gui::onButtonClickExit() {
 void Gui::onButtonClickNew() {
     villeObject->resetVille();
     mArea.clear();
+    mArea.resetFrame();
     refreshCriteres();
     uidCounter = villeObject->findBiggestUid();
 }
@@ -376,15 +404,27 @@ void Gui::onButtonClickSave() {
 }
 
 void Gui::onButtonClickZoomIn() {
-    cout << "zoomIn button clicked" << endl;
+    double currentScale = mArea.getScale();
+    if(currentScale <= min_zoom+0.05) return; //because bad precision
+
+    mArea.setScale(currentScale-delta_zoom);
+    mArea.multiplieFrame();
+    mArea.draw();
 }
 
 void Gui::onButtonClickZoomOut() {
-    cout << "zoomOut button clicked" << endl;
+    double currentScale = mArea.getScale();
+    if(currentScale >= max_zoom) return;
+
+    mArea.setScale(currentScale+delta_zoom);
+    mArea.multiplieFrame();
+    mArea.draw();
+    
 }
 
 void Gui::onButtonClickZoomR() {
-    cout << "zoomReset button clicked" << endl;
+    mArea.resetFrame();
+    mArea.draw();
 }
 
 //Shortest path togglebutton
@@ -576,6 +616,28 @@ void Gui::connectButtons() {
     mRButtonP.signal_clicked().connect(sigc::mem_fun(*this,
                     &Gui::onRButtonClickP)); 
 } //connect buttons to signal handlers
+
+//Keyboard handling:
+bool Gui::on_key_press_event(GdkEventKey* keyEvent) {
+    if(keyEvent->type == GDK_KEY_PRESS) {
+        switch(gdk_keyval_to_unicode(keyEvent->keyval)) {
+            case 'i':
+                onButtonClickZoomIn();
+                break;
+
+            case 'o':
+                onButtonClickZoomOut();
+                break;
+
+            case 'r':
+                onButtonClickZoomR();
+                break;
+
+            default: break;
+        }
+    }
+    return Gtk::Window::on_key_press_event(keyEvent);
+}
 
 //Misc MyGui methods:
 void Gui::refreshCriteres() {
