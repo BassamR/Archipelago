@@ -181,7 +181,7 @@ void Canvas::handleLeftClick() {
             if(not villeObject->clickOnActiveNode(pressPoint)) {
                 villeObject->setActiveNode(pressPoint);
             } else {
-                villeObject->deleteNode(pressPoint);
+                villeObject->deleteActiveNode();
                 guiObject->refreshCriteres();
             }
         } else {

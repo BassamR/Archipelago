@@ -40,7 +40,7 @@ public:
     bool createLien(unsigned int uid1, unsigned int uid2, double safeDistance = 0);
     void handleLink(Coords coords, double safeDistance = 0);
 
-    void deleteNode(Coords coord);
+    void deleteActiveNode();
     void deleteLink(Noeud* noeud1, Noeud* noeud2);
 
     unsigned int findNoeudIndex(unsigned int uid);
