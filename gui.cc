@@ -97,7 +97,6 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
 }
 
 bool Canvas::on_button_press_event(GdkEventButton* event) {
-    //Left click = 1, right click = 3
     if(event->type == GDK_BUTTON_PRESS and event->button == GTK_MOUSE_LEFT) {
         double x = event->x;
         double y = event->y;
@@ -215,21 +214,18 @@ void Canvas::createNode() {
         villeObject->createHousing(uidCounter, pressPoint.x, pressPoint.y, 
             min_capacity, dist_min);
         ++uidCounter;
-        //if(uidCounter == no_link) ++uidCounter;
         return;
     }
     if(transportPressed) {
         villeObject->createTransport(uidCounter, pressPoint.x, pressPoint.y, 
             min_capacity, dist_min);
         ++uidCounter;
-        //if(uidCounter == no_link) ++uidCounter;
         return;
     }
     if(productionPressed) {
         villeObject->createProduction(uidCounter, pressPoint.x, pressPoint.y, 
             min_capacity, dist_min);
         ++uidCounter;
-        //if(uidCounter == no_link) ++uidCounter;
         return;
     }
 }
@@ -540,7 +536,7 @@ void Gui::setupGui() {
     add(mBox);
 
     //Fill main box
-    mBox.pack_start(mBoxLeft);
+    mBox.pack_start(mBoxLeft, Gtk::PACK_SHRINK);
     mBox.pack_start(mBoxRight);
 
     //Start canvas
