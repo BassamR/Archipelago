@@ -14,6 +14,7 @@
 #include <gtkmm/filechooser.h>
 #include <gtkmm/filechooserdialog.h>
 #include "gui.h"
+#include "gui_mouse_buttons.h"
 #include "ville.h"
 #include "graphic_gui.h"
 #include "constantes.h"
@@ -23,7 +24,7 @@ using namespace std;
 static string convertCritereToString(const double& critere);
 static Gui* guiObject(nullptr);
 static Ville* villeObject(Ville::getVilleInstance());
-static int uidCounter(0); //used to manage uid's of created nodes
+static unsigned int uidCounter(0); //used to manage uid's of created nodes
 static constexpr double initialScale(1.0);
 
 //Canvas constructor/destructor:
@@ -62,6 +63,20 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     xc = frame.width/2;
     yc = frame.height/2;
 
+    if(allocation.get_width() != allocation.get_height()) {
+        int width(allocation.get_width()), height(allocation.get_width());
+
+        if(allocation.get_width() > allocation.get_height()) {
+            width = allocation.get_height();
+            height = allocation.get_height();
+        }
+
+        frame.width = width;
+        frame.height = height;
+        xc = frame.width/2;
+        yc = frame.height/2;
+    }
+
     cr->translate(xc, yc);
     cr->scale(frame.width/(frame.xMax - frame.xMin), 
         -frame.height/(frame.yMax - frame.yMin));
@@ -78,13 +93,12 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
         makeBgWhite();
         villeObject->resetVille();
     }
-
     return true;
 }
 
 bool Canvas::on_button_press_event(GdkEventButton* event) {
     //Left click = 1, right click = 3
-    if((gint)event->type == Gdk::BUTTON_PRESS and event->button == 1) {
+    if(event->type == GDK_BUTTON_PRESS and event->button == GTK_MOUSE_LEFT) {
         double x = event->x;
         double y = event->y;
 
@@ -94,22 +108,11 @@ bool Canvas::on_button_press_event(GdkEventButton* event) {
         return true;
     }
 
-    if((gint)event->type == Gdk::BUTTON_PRESS and event->button == 3) {
-        double x1 = event->x;
-        double y1 = event->y;
-
-        Coords rightClickLocation{x1, y1};
-        convertCoordsToModele(rightClickLocation);
-        handleRightClick(rightClickLocation);
-
-        return true;
-    }
-
     return true;
 }
 
 bool Canvas::on_button_release_event(GdkEventButton* event) {
-    if((gint)event->type == Gdk::BUTTON_RELEASE and event->button == 1) {
+    if(event->type == GDK_BUTTON_RELEASE and event->button == GTK_MOUSE_LEFT) {
         double x = event->x;
         double y = event->y;
 
@@ -120,12 +123,18 @@ bool Canvas::on_button_release_event(GdkEventButton* event) {
         return true;
     }
 
-    if((gint)event->type == Gdk::BUTTON_RELEASE and event->button == 3) {
+    if(event->type == GDK_BUTTON_RELEASE and event->button == GTK_MOUSE_RIGHT) {
+        double x = event->x;
+        double y = event->y;
+
+        Coords rightClickLocation{x, y};
+        convertCoordsToModele(rightClickLocation);
+        handleRightClick(rightClickLocation);
         return true;
     }
 
     return true;
-} //mouse event stub for rendu 3
+}
 
 //Canvas utility methods, event handling:
 void Canvas::convertCoordsToModele(Coords& clickLocation) {
@@ -206,18 +215,21 @@ void Canvas::createNode() {
         villeObject->createHousing(uidCounter, pressPoint.x, pressPoint.y, 
             min_capacity, dist_min);
         ++uidCounter;
+        //if(uidCounter == no_link) ++uidCounter;
         return;
     }
     if(transportPressed) {
         villeObject->createTransport(uidCounter, pressPoint.x, pressPoint.y, 
             min_capacity, dist_min);
         ++uidCounter;
+        //if(uidCounter == no_link) ++uidCounter;
         return;
     }
     if(productionPressed) {
         villeObject->createProduction(uidCounter, pressPoint.x, pressPoint.y, 
             min_capacity, dist_min);
         ++uidCounter;
+        //if(uidCounter == no_link) ++uidCounter;
         return;
     }
 }
@@ -287,11 +299,11 @@ Gui::Gui():
     mFrameGeneral("General"), mFrameDisplay("Display"), mFrameEditor("Editor"),
     mFrameInformations("Informations"), 
 
-    mButtonExit("exit"), mButtonNew("new"), mButtonOpen("open"), mButtonSave("save"), 
-    mButtonZoomIn("zoom in (i)"), mButtonZoomOut("zoom out (o)"), 
-    mButtonZoomR("zoom reset (r)"),
+    mButtonExit("Exit"), mButtonNew("New"), mButtonOpen("Open"), mButtonSave("Save"), 
+    mButtonZoomIn("Zoom In (i)"), mButtonZoomOut("Zoom Out (o)"), 
+    mButtonZoomR("Zoom Reset (r)"),
 
-    mTButtonShortest("shortest path"), mTButtonEditLink("edit link"),
+    mTButtonShortest("Shortest Path"), mTButtonEditLink("Edit Link"),
 
     mBBGeneral(Gtk::ORIENTATION_VERTICAL), mBBDisplay(Gtk::ORIENTATION_VERTICAL), 
     mBBEditor(Gtk::ORIENTATION_VERTICAL), mBBInformations(Gtk::ORIENTATION_VERTICAL),
@@ -416,6 +428,7 @@ void Gui::onButtonClickZoomIn() {
 
     mArea.setScale(currentScale+delta_zoom);
     mArea.multiplieFrame();
+    decrementLineWidth();
     mArea.draw();
     mLabelZoom.set_text(string("zoom: ") + string("x") 
         + to_string(currentScale+delta_zoom));
@@ -424,13 +437,14 @@ void Gui::onButtonClickZoomIn() {
 void Gui::onButtonClickZoomOut() {
     double currentScale = mArea.getScale();
     
-    if(currentScale <= min_zoom + 0.05 or currentScale <= min_zoom - 0.05) {
+    if(currentScale >= min_zoom-epsil_zero and currentScale <= min_zoom+epsil_zero) {
         mLabelZoom.set_text(string("zoom: ") + string("x") + to_string(currentScale));
         return;
     }
 
     mArea.setScale(currentScale-delta_zoom);
     mArea.multiplieFrame();
+    incrementLineWidth();
     mArea.draw();
     mLabelZoom.set_text(string("zoom: ") + string("x") 
         + to_string(currentScale-delta_zoom));
@@ -438,6 +452,7 @@ void Gui::onButtonClickZoomOut() {
 
 void Gui::onButtonClickZoomR() {
     mArea.resetFrame();
+    resetLineWidth();
     mArea.draw();
     mLabelZoom.set_text(string("zoom: ") + string("x") + to_string(mArea.getScale()));
 }
@@ -530,7 +545,7 @@ void Gui::setupGui() {
 
     //Start canvas
     mArea.set_size_request(default_drawing_size, default_drawing_size);
-    mBoxRight.pack_start(mFrameCanvas, false, false);
+    mBoxRight.pack_start(mFrameCanvas, true, true); //bool expand, bool fill
     mFrameCanvas.add(mArea);
 }
 

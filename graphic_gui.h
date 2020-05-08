@@ -16,4 +16,8 @@
 
 void graphicSetContext(const Cairo::RefPtr<Cairo::Context>& cr);
 
+void incrementLineWidth();
+void decrementLineWidth();
+void resetLineWidth();
+
 #endif

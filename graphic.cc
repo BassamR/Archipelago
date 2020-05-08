@@ -10,8 +10,15 @@
 #include <cmath>
 #include "graphic_gui.h"
 
+#define WHITE_RGB 1.0, 1.0, 1.0
+#define BLACK_RGB 0.0, 0.0, 0.0
+#define RED_RGB 1.0, 0.0, 0.0
+#define GREEN_RGB 0.0, 1.0, 0.0
+#define DEFAULT_LINE_WIDTH 6.5
+
+static constexpr double zoomIncrement(1.2);
+static double lineWidth(DEFAULT_LINE_WIDTH);
 static const Cairo::RefPtr<Cairo::Context>* ptcr(nullptr);
-static const double lineWidth = 6.0;
 
 void graphicSetContext(const Cairo::RefPtr<Cairo::Context>& cr) {
     static bool init(false);
@@ -21,8 +28,20 @@ void graphicSetContext(const Cairo::RefPtr<Cairo::Context>& cr) {
     }
 }
 
+void incrementLineWidth() {
+    lineWidth *= zoomIncrement;
+}
+
+void decrementLineWidth() {
+    lineWidth /= zoomIncrement;
+}
+
+void resetLineWidth() {
+    lineWidth = DEFAULT_LINE_WIDTH;
+}
+
 void makeBgWhite() {
-    (*ptcr)->set_source_rgb(1, 1, 1);
+    (*ptcr)->set_source_rgb(WHITE_RGB);
     (*ptcr)->paint();
 }
 
@@ -30,13 +49,13 @@ void makeBgWhite() {
 void setColorGraphic(Color couleur) {
     switch(couleur) {
         case BLACK:
-            (*ptcr)->set_source_rgb(0.0, 0.0, 0.0);
+            (*ptcr)->set_source_rgb(BLACK_RGB);
             break;
         case RED:
-            (*ptcr)->set_source_rgb(1.0, 0.0, 0.0);
+            (*ptcr)->set_source_rgb(RED_RGB);
             break;
         case GREEN:
-            (*ptcr)->set_source_rgb(0.0, 1.0, 0.0);
+            (*ptcr)->set_source_rgb(GREEN_RGB);
             break;
         default: break;
     }
@@ -47,7 +66,7 @@ void drawCircleGraphic(double x, double y, double r) {
 
     (*ptcr)->save();
     (*ptcr)->arc(x, y, r, 0.0, 2 * M_PI);
-    (*ptcr)->set_source_rgb(1.0, 1.0, 1.0);
+    (*ptcr)->set_source_rgb(WHITE_RGB);
     (*ptcr)->fill_preserve();
 
     (*ptcr)->restore();
