@@ -10,6 +10,7 @@
 #ifndef GUI_MOUSE_BUTTONS_HEADER_H
 #define GUI_MOUSE_BUTTONS_HEADER_H
 
+//in gtk left click = 1, right click = 3
 #define GTK_MOUSE_LEFT 1
 #define GTK_MOUSE_RIGHT 3
 
