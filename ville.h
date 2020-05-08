@@ -80,6 +80,7 @@ public:
     void changeNodeSize(Coords click1, Coords click2);
 
     int findBiggestUid();
+    //unsigned int findNextUid();
 };
 
 #endif

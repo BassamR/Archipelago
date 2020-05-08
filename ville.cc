@@ -20,6 +20,9 @@
 #include "constantes.h"
 using namespace std;
 
+#define FIRST_NODE 0
+#define SECOND_NODE 1
+
 //Declaration of local variables/functions:
 static Ville ville;
 static void initVille(string line, bool& continueLecture);
@@ -261,14 +264,14 @@ void Ville::deleteLink(Noeud* noeud1, Noeud* noeud2) {
     bool keepGoing = true;
 
     for(unsigned int i = 0; i < liens.size() and keepGoing; ++i) {
-        if(liens[i][0] == noeud1) {
-            if(liens[i][1] == noeud2) {
+        if(liens[i][FIRST_NODE] == noeud1) {
+            if(liens[i][SECOND_NODE] == noeud2) {
                 index = i;
                 keepGoing = false;
             }
         }
-        if(liens[i][0] == noeud2) {
-            if(liens[i][1] == noeud1) {
+        if(liens[i][FIRST_NODE] == noeud2) {
+            if(liens[i][SECOND_NODE] == noeud1) {
                 index = i;
                 keepGoing = false;
             }
@@ -326,8 +329,11 @@ bool Ville::testMultipleSameLink(unsigned int uid1, unsigned int uid2) {
     }
 
     for(unsigned int i = 0; i < liens.size(); ++i) {
-        if((liens[i][0]->getUid() == uid1 and liens[i][1]->getUid() == uid2) or
-           (liens[i][0]->getUid() == uid2 and liens[i][1]->getUid() == uid1)) {
+        bool firstEquality = liens[i][FIRST_NODE]->getUid() == uid1 
+            and liens[i][SECOND_NODE]->getUid() == uid2;
+        bool secondEquality = liens[i][0]->getUid() == uid2 
+            and liens[i][SECOND_NODE]->getUid() == uid1;
+        if(firstEquality or secondEquality) {
             cout << error::multiple_same_link(uid1, uid2) << endl;
             return true;
         }
@@ -403,7 +409,8 @@ void Ville::drawLinks() {
 
     setColor(BLACK);
     for(unsigned int i = 0; i < liens.size(); ++i) {
-        drawSegment(liens[i][0]->getCoords(), liens[i][1]->getCoords());
+        drawSegment(liens[i][FIRST_NODE]->getCoords(), 
+            liens[i][SECOND_NODE]->getCoords());
     }
 }
 
@@ -441,7 +448,8 @@ void Ville::saveVille(string nomFichier) {
         fichier << nbL << " #nb links" << "\n";
         for(unsigned int i = 0; i < liens.size(); ++i) {
             fichier << "\t";
-            fichier << liens[i][0]->getUid() << " " << liens[i][1]->getUid() << "\n";
+            fichier << liens[i][FIRST_NODE]->getUid() << " ";
+            fichier << liens[i][SECOND_NODE]->getUid() << "\n";
         }
     }
 
@@ -480,22 +488,23 @@ void Ville::drawShortestPath() {
 //Link info methods:
 double Ville::linkDistance(unsigned int index) {    
     Vecteur distance;
-    creeVecteur(liens[index][0]->getCoords(), liens[index][1]->getCoords(), distance);
+    creeVecteur(liens[index][FIRST_NODE]->getCoords(), 
+        liens[index][SECOND_NODE]->getCoords(), distance);
 
     return norme(distance);
 }
 
 double Ville::linkCapacity(unsigned int index) {
-    int size1 = liens[index][0]->getSize();
-    int size2 = liens[index][1]->getSize();
+    int size1 = liens[index][FIRST_NODE]->getSize();
+    int size2 = liens[index][SECOND_NODE]->getSize();
 
     if(size1 >= size2) return size2;
     else return size1;
 }
 
 double Ville::linkSpeed(unsigned int index) {
-    string type1 = liens[index][0]->getType();
-    string type2 = liens[index][1]->getType();
+    string type1 = liens[index][FIRST_NODE]->getType();
+    string type2 = liens[index][SECOND_NODE]->getType();
 
     if(type1 == "transport" and type2 == "transport") return fast_speed;
     
@@ -604,8 +613,8 @@ void Ville::changeNodeCoords(Coords clickLocation) {
     }
 
     for(unsigned int i = 0; i < liens.size(); ++i) {
-        if(testNodeLinkSuperposition(liens[i][0]->getUid(), 
-            liens[i][1]->getUid(), dist_min)) {
+        if(testNodeLinkSuperposition(liens[i][FIRST_NODE]->getUid(), 
+            liens[i][SECOND_NODE]->getUid(), dist_min)) {
             node->setCoords(oldX, oldY);
             return;
         }
@@ -639,8 +648,8 @@ void Ville::changeNodeSize(Coords click1, Coords click2) {
     }
 
     for(unsigned int i = 0; i < liens.size(); ++i) {
-        if(testNodeLinkSuperposition(liens[i][0]->getUid(), 
-            liens[i][1]->getUid(), dist_min)) {
+        if(testNodeLinkSuperposition(liens[i][FIRST_NODE]->getUid(), 
+            liens[i][SECOND_NODE]->getUid(), dist_min)) {
             node->setSize(oldSize);
             return;
         }
@@ -654,6 +663,13 @@ int Ville::findBiggestUid() {
         if(ensembleNoeuds[i]->getUid() > biggestUid) {
             biggestUid = ensembleNoeuds[i]->getUid();
         }
-    }
+    }    
     return biggestUid+1; //+1 for safety
 }
+
+// unsigned int Ville::findNextUid() {
+//     unsigned int nextUid = 0;
+//     for(unsigned int i = 0; i < no_link; ++i) {
+
+//     }
+// }
