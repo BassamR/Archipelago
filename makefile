@@ -24,7 +24,7 @@ noeud.o: noeud.cc noeud.h error.h tools.h constantes.h graphic_color.h
 ville.o: ville.cc ville.h noeud.h tools.h error.h constantes.h graphic_color.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-gui.o: gui.cc gui.h graphic_gui.h constantes.h
+gui.o: gui.cc gui.h graphic_gui.h gui_mouse_buttons.h constantes.h
 	$(CXX) $(CXXFLAGS) $(LINKING) -c $< -o $@ $(LINKING)
 
 projet.o: projet.cc ville.h gui.h
