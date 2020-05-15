@@ -69,10 +69,8 @@ public:
 
     virtual void dijkstra(std::vector<Noeud*>& tn, std::string nodeType);
 
-    virtual void updateShortestPathToProd(std::vector<Noeud*>& ensemble, 
-        Noeud* goal);
-    virtual void updateShortestPathToTrans(std::vector<Noeud*>& ensemble, 
-        Noeud* goal);
+    virtual void updateShortestPathToProd(Noeud* goal);
+    virtual void updateShortestPathToTrans(Noeud* goal);
 
     virtual double mtaHP();
     virtual double mtaHT();
@@ -101,10 +99,8 @@ public:
 
     void dijkstra(std::vector<Noeud*>& tn, std::string nodeType) override;
 
-    void updateShortestPathToProd(std::vector<Noeud*>& ensemble, 
-        Noeud* goal) override;
-    void updateShortestPathToTrans(std::vector<Noeud*>& ensemble, 
-        Noeud* goal) override;
+    void updateShortestPathToProd(Noeud* goal) override;
+    void updateShortestPathToTrans(Noeud* goal) override;
 
     double mtaHP() override;
     double mtaHT() override;

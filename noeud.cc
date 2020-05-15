@@ -12,7 +12,6 @@
 #include <string>
 #include <vector>
 #include <fstream>
-#include <algorithm>
 #include "noeud.h"
 #include "error.h"
 #include "tools.h"
@@ -205,11 +204,11 @@ void Noeud::dijkstra(vector<Noeud*>& tn, string nodeType) {
     return;
 }
 
-void Noeud::updateShortestPathToProd(vector<Noeud*>& ensemble, Noeud* goal) {
+void Noeud::updateShortestPathToProd(Noeud* goal) {
     return;
 }
 
-void Noeud::updateShortestPathToTrans(vector<Noeud*>& ensemble, Noeud* goal) {
+void Noeud::updateShortestPathToTrans(Noeud* goal) {
     return;
 }
 
@@ -272,8 +271,8 @@ void Housing::dijkstra(vector<Noeud*>& tn, string nodeType) {
     while(not tnEmpty(tn)) {
         unsigned int n = findMinAccess(ta, tn);
         if(tn[n]->getType() == nodeType and tn[n]->getParent() != nullptr) {
-            if(nodeType == "transport") updateShortestPathToTrans(tn, tn[n]);
-            if(nodeType == "production") updateShortestPathToProd(tn, tn[n]);
+            if(nodeType == "transport") updateShortestPathToTrans(tn[n]);
+            if(nodeType == "production") updateShortestPathToProd(tn[n]);
             return;
         }
 
@@ -300,7 +299,7 @@ void Housing::dijkstra(vector<Noeud*>& tn, string nodeType) {
     }
 }
 
-void Housing::updateShortestPathToProd(vector<Noeud*>& ensemble, Noeud* goal) {
+void Housing::updateShortestPathToProd(Noeud* goal) {
     shortestPathToProd.clear();
     Noeud* newParent = goal;
 
@@ -310,7 +309,7 @@ void Housing::updateShortestPathToProd(vector<Noeud*>& ensemble, Noeud* goal) {
     }
 }
 
-void Housing::updateShortestPathToTrans(vector<Noeud*>& ensemble, Noeud* goal) {
+void Housing::updateShortestPathToTrans(Noeud* goal) {
     shortestPathToTrans.clear();
     Noeud* newParent = goal;
 
