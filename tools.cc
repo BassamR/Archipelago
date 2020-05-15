@@ -13,12 +13,12 @@
 #include "graphic.h"
 using namespace std;
 
-void creeVecteur(Coords p1, Coords p2, Vecteur& v) {
+void creeVecteur(const Coords& p1, const Coords& p2, Vecteur& v) {
      v.a = p2.x - p1.x;
      v.b = p2.y - p1.y;
 }
 
-double norme(Vecteur v) {
+double norme(const Vecteur& v) {
     return sqrt(v.a * v.a + v.b * v.b);
 }
 
@@ -50,11 +50,20 @@ bool intersectionCS(Cercle c, Cercle s, Cercle t, double safeDistance) {
     creeVecteur(s.centre, c.centre, sc);
 
     //produit scalaire: ct.cs = |ct||cs|cos(ct;cs)
-    double angleCTCS = acos((ct.a * cs.a + ct.b * cs.b)/(norme(cs)*norme(ct))); 
-    double angleSTSC = acos((st.a * sc.a + st.b * sc.b)/(norme(st)*norme(sc)));
+    double scalar1 = (ct.a * cs.a + ct.b * cs.b)/(norme(cs)*norme(ct));
+    double scalar2 = (st.a * sc.a + st.b * sc.b)/(norme(st)*norme(sc));
 
-    if(angleCTCS >= M_PI/2 or angleCTCS <= -M_PI/2 or angleSTSC >= M_PI/2 or 
-        angleSTSC <= -M_PI/2) {
+    //arccos defined for x in [-1, 1], deal with precision issues for double
+    if(scalar1 < -1) scalar1 = -1.;
+    if(scalar1 > 1) scalar1 = 1.;
+    if(scalar2 < -1) scalar2 = -1.;
+    if(scalar2 > 1) scalar2 = 1.;
+
+    double angleCTCS = acos(scalar1);
+    double angleSTSC = acos(scalar2);
+
+    if(angleCTCS >= M_PI/2.0 or angleCTCS <= -M_PI/2.0 or angleSTSC >= M_PI/2.0 or 
+        angleSTSC <= -M_PI/2.0) {
         return false;
     }
 

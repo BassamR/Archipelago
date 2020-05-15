@@ -27,8 +27,8 @@ struct Cercle {
      double rayon;
 };
 
-void creeVecteur(Coords p1, Coords p2, Vecteur& v);
-double norme(Vecteur v);
+void creeVecteur(const Coords& p1, const Coords& p2, Vecteur& v);
+double norme(const Vecteur& v);
 bool intersectionCC(Cercle c1, Cercle c2, double safeDistance = 0);
 bool intersectionCS(Cercle c, Cercle s, Cercle t, double safeDistance = 0);
 //safedistance=0 pour la lecture, =dist_min pour l'ajout d'un noeud manuellement
