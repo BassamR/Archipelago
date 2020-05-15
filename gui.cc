@@ -149,7 +149,7 @@ void Canvas::convertCoordsToModele(Coords& clickLocation) {
 void Canvas::handleLeftClick() {
     if(pressPoint.x != releasePoint.x or pressPoint.y != releasePoint.y) {
         if(villeObject->getActiveNode() != noActiveNode) {
-            villeObject->changeNodeSize(pressPoint, releasePoint);
+            villeObject->changeActiveNodeSize(pressPoint, releasePoint);
             guiObject->refreshCriteres();
             draw();
         }
@@ -203,7 +203,7 @@ void Canvas::handleLeftClick() {
 void Canvas::handleRightClick(Coords clickLocation) {
     int activeNode = villeObject->getActiveNode();
     if(activeNode != noActiveNode) {
-        villeObject->changeNodeCoords(clickLocation);
+        villeObject->changeActiveNodeCoords(clickLocation);
         guiObject->refreshCriteres();
     }
     draw();
