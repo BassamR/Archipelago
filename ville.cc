@@ -162,6 +162,7 @@ bool Ville::createHousing(unsigned int uid, double x, double y, unsigned int siz
     Housing* newHouse = new Housing(uid, x, y, size);
 
     if(newHouse->testNodeValidity(ensembleNoeuds, safeDistance) == false) {
+        delete newHouse;
         return false;
     } else {
         ensembleNoeuds.push_back(newHouse);
@@ -174,6 +175,7 @@ bool Ville::createProduction(unsigned int uid, double x, double y, unsigned int 
     Production* newProd = new Production(uid, x, y, size);
 
     if(newProd->testNodeValidity(ensembleNoeuds, safeDistance) == false) {
+        delete newProd;
         return false;    
     } else {
         ensembleNoeuds.push_back(newProd);
@@ -186,6 +188,7 @@ bool Ville::createTransport(unsigned int uid, double x, double y, unsigned int s
     Transport* newTrans = new Transport(uid, x, y, size);
 
     if(newTrans->testNodeValidity(ensembleNoeuds, safeDistance) == false) {
+        delete newTrans;
         return false;   
     } else {
         ensembleNoeuds.push_back(newTrans);
