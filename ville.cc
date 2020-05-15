@@ -331,7 +331,7 @@ bool Ville::testMultipleSameLink(unsigned int uid1, unsigned int uid2) {
     for(unsigned int i = 0; i < liens.size(); ++i) {
         bool firstEquality = liens[i][FIRST_NODE]->getUid() == uid1 
             and liens[i][SECOND_NODE]->getUid() == uid2;
-        bool secondEquality = liens[i][0]->getUid() == uid2 
+        bool secondEquality = liens[i][FIRST_NODE]->getUid() == uid2 
             and liens[i][SECOND_NODE]->getUid() == uid1;
         if(firstEquality or secondEquality) {
             cout << error::multiple_same_link(uid1, uid2) << endl;
@@ -599,7 +599,7 @@ bool Ville::clickOnActiveNode(Coords clickLocation) {
     return false;
 }
 
-void Ville::changeNodeCoords(Coords clickLocation) {
+void Ville::changeActiveNodeCoords(Coords clickLocation) {
     if(activeNode == noActiveNode) return;
     Noeud* node = ensembleNoeuds[activeNode];
 
@@ -621,7 +621,7 @@ void Ville::changeNodeCoords(Coords clickLocation) {
     }
 }
 
-void Ville::changeNodeSize(Coords click1, Coords click2) {
+void Ville::changeActiveNodeSize(Coords click1, Coords click2) {
     if(activeNode == noActiveNode) return;
     Noeud* node = ensembleNoeuds[activeNode];
 
@@ -666,10 +666,3 @@ int Ville::findBiggestUid() {
     }    
     return biggestUid+1; //+1 for safety
 }
-
-// unsigned int Ville::findNextUid() {
-//     unsigned int nextUid = 0;
-//     for(unsigned int i = 0; i < no_link; ++i) {
-
-//     }
-// }

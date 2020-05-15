@@ -76,11 +76,10 @@ public:
     bool clickOnNode(Coords clickLocation);
     bool clickOnActiveNode(Coords clickLocation);
 
-    void changeNodeCoords(Coords clickLocation);
-    void changeNodeSize(Coords click1, Coords click2);
+    void changeActiveNodeCoords(Coords clickLocation);
+    void changeActiveNodeSize(Coords click1, Coords click2);
 
     int findBiggestUid();
-    //unsigned int findNextUid();
 };
 
 #endif
