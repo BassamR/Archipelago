@@ -2,7 +2,7 @@
 * \name gui.cc
 * \author Hugo Masson, Bassam El Rawas (Sciper 314886, 310635)
 * \date May 2020
-* \version 1.0
+* \version 2.0
 */
 
 //Architecture: Fig 11 b1
@@ -348,7 +348,7 @@ void Gui::onButtonClickNew() {
 void Gui::onButtonClickOpen() {
     Gtk::FileChooserDialog dialog("Please choose a file",
             Gtk::FILE_CHOOSER_ACTION_OPEN);
-    //dialog.set_transient_for(*this); 
+    dialog.set_transient_for(*this); 
     //if i add this, Open works on VM but not on windows...
 
     //Add response buttons the the dialog:
@@ -388,7 +388,7 @@ void Gui::onButtonClickOpen() {
 void Gui::onButtonClickSave() {
     Gtk::FileChooserDialog dialog("Please choose a file",
             Gtk::FILE_CHOOSER_ACTION_SAVE);
-    //dialog.set_transient_for(*this);
+    dialog.set_transient_for(*this);
     //if i add this, Save works on VM but not on windows...
 
     dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);

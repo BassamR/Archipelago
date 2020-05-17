@@ -2,7 +2,7 @@
 * \name ville.cc
 * \author Hugo Masson, Bassam El Rawas (Sciper 314886, 310635)
 * \date May 2020
-* \version 2.0
+* \version 3.0
 */
 
 //Architecture: Fig 11 b1

@@ -2,7 +2,7 @@
 * \name gui.h
 * \author Hugo Masson, Bassam El Rawas (Sciper 314886, 310635)
 * \date May 2020
-* \version 1.0
+* \version 2.0
 */
 
 //Architecture: Fig 11 b1

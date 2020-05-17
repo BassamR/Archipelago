@@ -2,7 +2,7 @@
 * \name tools.cc
 * \author Hugo Masson, Bassam El Rawas (Sciper 314886, 310635)
 * \date May 2020
-* \version 2.0
+* \version 3.0
 */
 
 //Architecture: Fig 11 b1
@@ -62,7 +62,7 @@ bool intersectionCS(Cercle c, Cercle s, Cercle t, double safeDistance) {
     double angleCTCS = acos(scalar1);
     double angleSTSC = acos(scalar2);
 
-    if(angleCTCS >= M_PI/2.0 or angleCTCS <= -M_PI/2.0 or angleSTSC >= M_PI/2.0 or 
+    if(angleCTCS >= M_PI/2.0 or angleCTCS <= -M_PI/2.0 or angleSTSC >= M_PI/2.0 or
         angleSTSC <= -M_PI/2.0) {
         return false;
     }
