@@ -70,11 +70,8 @@ bool intersectionCS(Cercle c, Cercle s, Cercle t, double safeDistance) {
     //distance entre le lien c-s et le centre du noeud t
     double dist = norme(ct)*sin(angleCTCS);
     
-    if(dist <= t.rayon + safeDistance) {
-        return true;
-    } else {
-        return false;
-    }
+    if(dist <= t.rayon + safeDistance) return true;
+    else return false;
 }
 
 bool appartientCercle(Cercle cercle, Coords coords) {
