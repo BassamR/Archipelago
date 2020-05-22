@@ -158,14 +158,14 @@ void Canvas::handleLeftClick() {
 
     if(editLinkPressed) {
         if(villeObject->getActiveNode() == noActiveNode) {
-            cout << "need an activeNode to create links" << endl;
+            cout << "Need an activeNode to create links" << endl;
             return;
         } else {
             if(villeObject->clickOnNode(pressPoint)) {
                 villeObject->handleLink(pressPoint, dist_min);
                 guiObject->refreshCriteres();
             } else {
-                cout << "cannot create a link with nothingness" << endl;
+                cout << "Cannot create a link with nothingness" << endl;
             }
             draw();
             return;
@@ -476,7 +476,12 @@ void Gui::onTButtonClickEditLink() {
 }
 
 void Gui::onTButtonPressEditLink() {
-    mArea.setEditLinkPressed(true);
+    if(villeObject->getActiveNode() == noActiveNode) {
+        cout << "Select a node before trying to create links" << endl;
+        mTButtonEditLink.set_active(false);
+    } else {
+        mArea.setEditLinkPressed(true);
+    }
 }
 
 void Gui::onTButtonReleaseEditLink() {
