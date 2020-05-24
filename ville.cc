@@ -641,7 +641,8 @@ void Ville::changeActiveNodeSize(Coords click1, Coords click2) {
     node->setSize(newSize);
 
     if(node->testCapacityProblem()) {
-        node->setSize(oldSize);
+        if(newSize < min_capacity) node->setSize(min_capacity);
+        if(newSize > max_capacity) node->setSize(max_capacity);
         return;
     }
 
@@ -657,7 +658,6 @@ void Ville::changeActiveNodeSize(Coords click1, Coords click2) {
             return;
         }
     }
-
 }
 
 int Ville::findBiggestUid() {
